@@ -502,13 +502,17 @@ function renderConfig(isP){
 function pool(){return BANK.filter(function(q){if(S.practica&&S.module&&q.m!==S.module)return false;if(S.diff!=='todas'&&q.d!==S.diff)return false;return true;});}
 function startQuiz(){var p=pool();if(!p.length){alert('No hay preguntas con esos filtros. Prueba otra combinación.');return;}
   var n=Math.min(S.count,p.length),q;
+  var seen=store('gh_pnl_seen')||[];
+  var pend=p.filter(function(x){return seen.indexOf(x.q)<0;});
+  if(pend.length<n){seen=[];pend=p.slice();} /* memoria tipo baraja: reinicia el ciclo al agotar el pool */
   if(!S.practica){ /* examen: estratifica por tipo para asegurar variedad */
-    var by={};p.forEach(function(x){(by[x.t]=by[x.t]||[]).push(x);});
+    var by={};pend.forEach(function(x){(by[x.t]=by[x.t]||[]).push(x);});
     var picks=[];Object.keys(shuffleObj(by)).forEach(function(t){if(picks.length<n)picks.push(shuffle(by[t])[0]);});
-    var rest=shuffle(p.filter(function(x){return picks.indexOf(x)<0;}));
+    var rest=shuffle(pend.filter(function(x){return picks.indexOf(x)<0;}));
     while(picks.length<n&&rest.length)picks.push(rest.pop());
     q=shuffle(picks).slice(0,n);
-  } else { q=shuffle(p).slice(0,n); }
+  } else { q=shuffle(pend).slice(0,n); }
+  q.forEach(function(x){seen.push(x.q);});if(seen.length>400)seen=seen.slice(-250);store('gh_pnl_seen',seen);
   S.queue=q;S.idx=0;S.answers=[];S.ans=S.queue.map(function(){return null;});S.start=Date.now();renderQuiz();}
 function shuffleObj(o){var ks=shuffle(Object.keys(o)),r={};ks.forEach(function(k){r[k]=o[k];});return r;}
 
