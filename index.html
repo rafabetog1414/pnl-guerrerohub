@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- build:417-m67refuerzo -->
+<!-- build:entrenador-srs-sim -->
 <html lang="es">
 <head>
 <meta charset="utf-8">
@@ -736,7 +736,7 @@ function renderConfig(isP){
   done();
 }
 function pool(){return BANK.filter(function(q){if(S.practica&&S.module&&q.m!==S.module)return false;if(S.diff!=='todas'&&q.d!==S.diff)return false;return true;});}
-function startQuiz(){var p=pool();if(!p.length){alert('No hay preguntas con esos filtros. Prueba otra combinación.');return;}
+function startQuiz(){S.srs=false;var p=pool();if(!p.length){alert('No hay preguntas con esos filtros. Prueba otra combinación.');return;}
   var n=Math.min(S.count,p.length),q;
   var seen=store('gh_pnl_seen')||[];
   var pend=p.filter(function(x){return seen.indexOf(x.q)<0;});
@@ -911,6 +911,347 @@ function renderHistory(){app.innerHTML='';var c=el('<div class="card"></div>');v
   if(hist.length){var b2=el('<button class="btn1 btn2"><i data-lucide="trash-2"></i> Borrar</button>');b2.onclick=function(){if(confirm('¿Borrar todo el historial?')){store('gh_pnl_hist',[]);renderHistory();}};nav.appendChild(b2);}
   app.appendChild(nav);done();
 }
+
+/* ==== BLOQUE ENTRENADOR (inyectado) ==== */
+var NEWCSS="/* ===== Entrenador: SRS + Confianza + Simulador ===== */\n.daily{position:relative;overflow:hidden;background:var(--grad-hero);color:#fff;border:none}\n.daily .ov{color:var(--ice)}\n.daily h2{color:#fff}\n.daily .lead{color:#DDE7FF}\n.daily .dstats{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 18px}\n.daily .ds{flex:1;min-width:96px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:12px 14px}\n.daily .ds .dv{font:600 26px/1 var(--fsans);display:flex;align-items:center;gap:6px}\n.daily .ds .dk{font-size:12px;color:#C6D6FF;margin-top:4px}\n.daily .streakwrap{display:inline-flex;align-items:center;gap:7px;background:rgba(255,214,102,.16);border:1px solid rgba(255,214,102,.35);color:#FFE39A;padding:5px 11px;border-radius:999px;font-size:13px;font-weight:600;margin-bottom:6px}\n.daily .startbig{width:100%;border:none;cursor:pointer;background:#fff;color:var(--royal);font:600 16px var(--fsans);padding:15px;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:var(--sh-cta)}\n.daily .startbig:hover{background:#F0F4FF}\n.daily .startbig i{width:20px;height:20px}\n.daily .ds .dv i{width:20px;height:20px;color:#FFD666}\n\n.mode.s{background:linear-gradient(135deg,#3A1E7A,#7A3FF2);color:#fff}.mode.s h3{color:#fff}.mode.s p{color:#EADBFF}.mode.s .mi{background:rgba(255,255,255,.16)}\n\n/* Confianza calibrada */\n.confbar{margin-top:14px;border:1px dashed var(--hairline);background:var(--ice-soft);border-radius:14px;padding:13px 14px}\n.confbar .cq{font-size:13px;color:var(--caption);font-weight:600;margin-bottom:9px;display:flex;align-items:center;gap:6px}\n.confbar .cq i{width:16px;height:16px}\n.confrow{display:flex;gap:10px}\n.cbtn{flex:1;cursor:pointer;border-radius:12px;padding:11px;font:600 14px var(--fsans);display:flex;align-items:center;justify-content:center;gap:7px;transition:.15s}\n.cbtn i{width:17px;height:17px}\n.cbtn.cs{background:#EAF6EE;border:1.5px solid #B9E0C6;color:var(--ok-ink)}\n.cbtn.cs:hover{background:#DBEEE1}\n.cbtn.cd{background:#FFF6E6;border:1.5px solid #F3D9A9;color:#8A6410}\n.cbtn.cd:hover{background:#FBEECF}\n.oc{margin-top:8px;display:flex;gap:8px;align-items:flex-start;background:var(--bad-bg);border:1px solid #F3C6CD;color:var(--bad-ink);border-radius:10px;padding:9px 11px;font-size:13px;line-height:1.4}\n.oc i{width:17px;height:17px;flex:none;margin-top:1px}\n.gc{margin-top:8px;display:flex;gap:8px;align-items:flex-start;background:var(--ok-bg);border:1px solid #C3E6CF;color:var(--ok-ink);border-radius:10px;padding:9px 11px;font-size:13px;line-height:1.4}\n.gc i{width:17px;height:17px;flex:none;margin-top:1px}\n.cflag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:999px;margin-left:auto}\n.cflag.s{background:#EAF6EE;color:var(--ok-ink)}\n.cflag.d{background:#FFF6E6;color:#8A6410}\n.cflag i{width:13px;height:13px}\n\n/* Simulador */\n.simintro{background:linear-gradient(135deg,#2A1163,#7A3FF2);color:#fff;border:none}\n.simintro .ov{color:#E6D9FF}\n.simintro h2,.simintro h3{color:#fff}\n.simcard{cursor:pointer;text-align:left;width:100%;border:1.5px solid var(--hairline);background:#fff;border-radius:16px;padding:16px 18px;display:block;transition:.15s;margin-bottom:12px}\n.simcard:hover{border-color:#7A3FF2;box-shadow:var(--sh-md);transform:translateY(-1px)}\n.simcard .st{font:600 17px var(--fsans);color:var(--ink);margin-bottom:4px}\n.simcard .sp{font-size:13.5px;color:var(--body);line-height:1.45}\n.simcard .sm{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#7A3FF2;margin-top:9px}\n.simcard .sm i{width:14px;height:14px}\n.simscene{background:var(--ice-soft);border:1px solid var(--hairline);border-radius:12px;padding:12px 14px;font-size:13.5px;color:var(--body);line-height:1.5;margin-bottom:14px}\n.simscene b{color:var(--ink)}\n.simhist{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}\n.bub{max-width:86%;padding:10px 13px;border-radius:14px;font-size:14px;line-height:1.45}\n.bub.them{align-self:flex-start;background:#fff;border:1px solid var(--hairline);border-bottom-left-radius:5px;color:var(--ink)}\n.bub.me{align-self:flex-end;background:var(--grad-band);color:#fff;border-bottom-right-radius:5px}\n.bub .who{font-size:11px;font-weight:700;opacity:.7;margin-bottom:3px;letter-spacing:.02em}\n.simnow{background:#fff;border:1px solid var(--hairline);border-left:4px solid #7A3FF2;border-radius:12px;padding:13px 15px;margin-bottom:14px}\n.simnow .who{font-size:11px;font-weight:700;color:#7A3FF2;margin-bottom:4px}\n.simnow .line{font-size:15px;color:var(--ink);line-height:1.5}\n.simops{display:flex;flex-direction:column;gap:9px}\n.simop{cursor:pointer;text-align:left;border:1.5px solid var(--hairline);background:#fff;border-radius:12px;padding:12px 14px;font-size:14px;color:var(--ink);line-height:1.4;transition:.13s}\n.simop:hover{border-color:#7A3FF2;background:#FAF7FF}\n.simop.dis{opacity:.5;pointer-events:none}\n.simop.pick{border-color:#7A3FF2;background:#F3ECFF}\n.simfb{margin-top:12px;border-radius:12px;padding:12px 14px;font-size:13.5px;line-height:1.5;display:flex;gap:9px}\n.simfb i{width:18px;height:18px;flex:none;margin-top:1px}\n.simfb.good{background:var(--ok-bg);border:1px solid #C3E6CF;color:var(--ok-ink)}\n.simfb.bad{background:var(--bad-bg);border:1px solid #F3C6CD;color:var(--bad-ink)}\n.simfb.mid{background:#FFF6E6;border:1px solid #F3D9A9;color:#8A6410}\n.simfb b{display:block;margin-bottom:2px}\n.simmeter{display:flex;gap:6px;margin-bottom:14px}\n.simmeter .dot{width:9px;height:9px;border-radius:50%;background:var(--hairline)}\n.simmeter .dot.g{background:var(--ok)}\n.simmeter .dot.b{background:var(--bad)}\n.simend .ring2{width:118px;height:118px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;margin:4px auto 14px}\n.simend h2{text-align:center}\n.simend .sub{text-align:center;color:var(--caption);font-size:14px;margin-bottom:6px}\n.tips{margin-top:6px}\n.tip{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--hairline);font-size:14px;color:var(--body);line-height:1.45}\n.tip i{width:17px;height:17px;flex:none;margin-top:2px;color:#7A3FF2}\n";
+/* ================= ENTRENADOR: SRS + Confianza + Simulador ================= */
+document.head.insertAdjacentHTML('beforeend','<style>'+NEWCSS+'</style>');
+Object.assign(ICO,{
+ zap:'<path d="M13 3 5 13h6l-1 8 8-10h-6z" fill="currentColor" stroke="none"/>',
+ flame:'<path d="M12 3c1 3-2 4-2 7a2 2 0 0 0 4 0c0-1 0-1 .3-1.7C16 11 17 13 17 15a5 5 0 0 1-10 0c0-4 3-6 5-12z"/>',
+ gauge:'<path d="M12 13l4-4"/><path d="M3.5 15a9 9 0 1 1 17 0"/><circle cx="12" cy="13" r="1.4" fill="currentColor" stroke="none"/>',
+ sparkles:'<path d="M12 4l1.6 4.4L18 10l-4.4 1.6L12 16l-1.6-4.4L6 10l4.4-1.6z" fill="currentColor" stroke="none"/><path d="M18 15l.7 1.8L20.5 17.5 18.7 18.2 18 20l-.7-1.8L15.5 17.5 17.3 16.8z" fill="currentColor" stroke="none"/>',
+ "alert-triangle":'<path d="M12 4 2.5 20h19z"/><path d="M12 10v4"/><path d="M12 17.2v.1" stroke-width="2.4"/>',
+ "thumbs-up":'<path d="M7 11v9H4v-9z"/><path d="M7 11l4-7c1.4 0 2.3 1.2 2 2.6L12.5 10H18a2 2 0 0 1 2 2.3l-1 6A2 2 0 0 1 17 20H7"/>',
+ "chevron-right":'<path d="M9 6l6 6-6 6"/>',
+ repeat:'<path d="M17 3l3 3-3 3"/><path d="M4 11V9a3 3 0 0 1 3-3h13"/><path d="M7 21l-3-3 3-3"/><path d="M20 13v2a3 3 0 0 1-3 3H4"/>',
+ award:'<circle cx="12" cy="9" r="5.2"/><path d="M8.6 13.1 7 21l5-2.6L17 21l-1.6-7.9"/>',
+ play:'<path d="M8 5l11 7-11 7z" fill="currentColor" stroke="none"/>',
+ brain:'<path d="M12 6a3 3 0 0 0-6 0 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 6 0z"/><path d="M12 6a3 3 0 0 1 6 0 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-6 0"/>',
+ "calendar-check":'<rect x="4" y="5" width="16" height="16" rx="2.5"/><path d="M4 9.5h16M8 3v3M16 3v3"/><path d="M9 15l2 2 4-4"/>',
+ users:'<circle cx="9" cy="9" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a3.2 3.2 0 0 1 0 6"/><path d="M18 13.5a5.5 5.5 0 0 1 2.5 4.5"/>',
+ "help-circle":'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 4.5 1.5c0 1.6-2 2-2 3.2"/><path d="M12 17.2v.1" stroke-width="2.4"/>',
+ "message-square":'<path d="M4 5h16v12H8l-4 3z"/>'
+});
+
+/* ---------- Persistencia SRS ---------- */
+function nowTs(){return Date.now();}
+function qid(q){var h=5381,str=q.q||'';for(var i=0;i<str.length;i++){h=((h*33)^str.charCodeAt(i))>>>0;}return 'q'+h.toString(36);}
+function srsAll(){return store('gh_pnl_srs')||{};}
+function recordSRS(q,ok,conf){
+  var all=srsAll(),id=qid(q),r=all[id]||{ease:2.5,iv:0,reps:0,lapses:0,sf:0};
+  var quality=conf==='seguro'?(ok?5:0):conf==='dudo'?(ok?3:1):(ok?4:1);
+  if(quality<3){r.reps=0;r.iv=1;r.lapses++;if(conf==='seguro'&&!ok)r.sf++;}
+  else{r.reps++;r.iv=r.reps===1?1:r.reps===2?3:Math.round(r.iv*r.ease);
+       r.ease=Math.max(1.3,r.ease+(0.1-(5-quality)*(0.08+(5-quality)*0.02)));}
+  r.due=nowTs()+r.iv*86400000;r.seen=nowTs();r.lastOk=ok;
+  all[id]=r;store('gh_pnl_srs',all);
+}
+function srsStats(){var all=srsAll(),now=nowTs(),dom=0,due=0,seen=0;
+  for(var k in all){seen++;var r=all[k];if(r.reps>=3&&r.lastOk)dom++;if(r.due&&r.due<=now)due++;}
+  return {seen:seen,dom:dom,due:due,total:BANK.length,fresh:BANK.length-seen};}
+
+/* ---------- Racha ---------- */
+function dayKey(d){d=d||new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+function getStreak(){return store('gh_pnl_streak')||{last:null,count:0};}
+function bumpStreak(){var s=getStreak(),t=dayKey();if(s.last===t)return;
+  var y=new Date();y.setDate(y.getDate()-1);
+  s.count=(s.last===dayKey(y))?(s.count+1):1;s.last=t;store('gh_pnl_streak',s);}
+
+/* ---------- Sesión diaria (Practicar hoy) ---------- */
+function startDaily(){
+  var all=srsAll(),now=nowTs(),N=12;
+  var tagged=BANK.map(function(q){return {q:q,r:all[qid(q)]};});
+  var due=tagged.filter(function(x){return x.r&&x.r.due&&x.r.due<=now;}).sort(function(a,b){return a.r.due-b.r.due;});
+  var fresh=shuffle(tagged.filter(function(x){return !x.r;}));
+  var pick=due.slice(0,N).map(function(x){return x.q;});
+  var i=0;while(pick.length<N&&i<fresh.length){pick.push(fresh[i].q);i++;}
+  if(pick.length<N){var soon=tagged.filter(function(x){return x.r;}).sort(function(a,b){return a.r.due-b.r.due;});
+    var j=0;while(pick.length<N&&j<soon.length){if(pick.indexOf(soon[j].q)<0)pick.push(soon[j].q);j++;}}
+  if(!pick.length){alert('¡Vas al día! No hay nada pendiente por repasar ahora.');return;}
+  BANK.forEach(function(q){delete q._order;delete q._iorder;delete q._lorder;});
+  S.queue=shuffle(pick);S.idx=0;S.answers=[];S.ans=S.queue.map(function(){return null;});
+  S.start=Date.now();S.practica=true;S.srs=true;renderQuiz();
+}
+
+/* ---------- Confianza calibrada (override de onSubmit) ---------- */
+function showConfidence(st){
+  st.fb.innerHTML='<div class="confbar"><div class="cq"><i data-lucide="gauge"></i> Antes de ver la respuesta: ¿qué tan seguro estás?</div>'+
+    '<div class="confrow"><button class="cbtn cs"><i data-lucide="thumbs-up"></i> Estoy seguro</button>'+
+    '<button class="cbtn cd"><i data-lucide="help-circle"></i> Tengo dudas</button></div></div>';
+  st.fb.querySelector('.cs').onclick=function(){st.conf='seguro';commitAnswer(st);};
+  st.fb.querySelector('.cd').onclick=function(){st.conf='dudo';commitAnswer(st);};
+  st.submit.disabled=true;icons();
+}
+function commitAnswer(st){
+  var last=(S.idx===S.queue.length-1);
+  st.locked=true;var ok=grade(st);
+  S.ans[S.idx]={answered:true,ok:ok,input:capture(st),conf:st.conf};
+  recordSRS(st.q,ok,st.conf);
+  st.hint.classList.add('hide');markCorrections(st);showFeedbackC(st,ok,st.conf);
+  st.submit.innerHTML=(last?'Ver resultados <i data-lucide="flag"></i>':'Siguiente <i data-lucide="arrow-right"></i>');
+  st.submit.disabled=false;st.next=true;icons();
+}
+onSubmit=function(st){
+  var last=(S.idx===S.queue.length-1);
+  if(S.practica||S.srs){
+    if(!st.locked){ if(!st.conf){showConfidence(st);return;} commitAnswer(st); }
+    else advance();
+  } else {
+    var ok2=grade(st);S.ans[S.idx]={answered:true,ok:ok2,input:capture(st)};recordSRS(st.q,ok2,'examen');
+    if(last)finish();else advance();
+  }
+};
+function showFeedbackC(st,ok,conf){
+  var q=st.q,extra='';
+  if(!ok&&(q.t==='asociar'||q.t==='ordenar'||q.t==='clasificar'))extra='<div class="expl" style="margin-top:3px">Mira arriba: en verde lo correcto, en rojo lo que fallaste.</div>';
+  var note='';
+  if(conf==='seguro'&&!ok)note='<div class="oc"><i data-lucide="alert-triangle"></i><div><b>Exceso de confianza.</b> Estabas seguro y fallaste — justo el punto ciego a vigilar. Esta vuelve pronto.</div></div>';
+  else if(conf==='dudo'&&ok)note='<div class="gc"><i data-lucide="sparkles"></i><div>Acertaste aunque dudabas. La reforzamos para que la próxima la respondas con seguridad.</div></div>';
+  st.fb.innerHTML='<div class="fb '+(ok?'ok':'bad')+'"><span class="fi"><i data-lucide="'+(ok?'check-circle':'x-circle')+'"></i></span><div><b>'+(ok?'¡Correcto!':'Incorrecto')+'</b><div class="expl">'+q.e+'</div>'+extra+'</div></div>'+note;
+  icons();
+}
+
+/* ---------- Racha al terminar sesión diaria ---------- */
+var _finish_orig=finish;
+finish=function(){ if(S.srs)bumpStreak(); _finish_orig(); };
+
+/* ================= SIMULADOR ================= */
+var SIMS=[
+{id:'rojo',titulo:'El cliente que solo quiere hablar de gente',perfil:'Dueña de spa · perfil ROJO (relaciones)',
+ contexto:'Vendes un <b>software de reservas</b>. La dueña es cálida, te recibe con café y quiere hablar de su equipo y de sus clientas. Pierde citas por una agenda desordenada, pero también vigila la caja. Tu misión: conectar por su color, instalar el dolor y cerrar con un paso concreto.',
+ start:'n1',
+ nodes:{
+  n1:{who:'Cliente',cliente:'¡Bienvenido! Mira, aquí lo más importante para mí es que mis clientas se sientan como en casa. ¿Tú de qué me querías hablar?',
+    ops:[
+     {t:'Le sigo la conversación por las personas: "Se nota; ese trato cercano es tu sello. ¿Y cómo llevas hoy la agenda de esas clientas?"',fx:'good',fb:'Entraste por su color (rojo): validaste el vínculo y de ahí giraste al tema. Así baja la guardia y te deja entrar.',to:'n2'},
+     {t:'Voy directo a las cifras: "Te traigo un sistema con 20 reportes de ocupación y facturación."',fx:'bad',fb:'Le hablaste en azul a un perfil rojo. Se enfría: para ella primero son las personas, no los reportes.',to:'n2b'},
+     {t:'Abro con la visión: "Esto va a transformar por completo tu negocio hacia el futuro."',fx:'mid',fb:'Eso es amarillo (visión). No es tu peor error, pero todavía no conectaste con lo que ELLA valora ni tocaste su dolor.',to:'n2'}
+    ]},
+  n2b:{who:'Cliente',cliente:'Ay, reportes… la verdad no soy muy de números. Yo lo que quiero es que mi gente esté bien atendida.',
+    ops:[
+     {t:'Reencuadro hacia su mundo: "Claro, y justo por eso: cuando una clienta llega y su cita se perdió, ¿a quién le duele esa mala experiencia?"',fx:'good',fb:'Recuperaste el rumbo: conectaste el sistema con SU dolor real (la clienta mal atendida), no con los números.',to:'n3'},
+     {t:'Insisto con la ficha técnica: "Pero es que el sistema hace muchísimas cosas más, míralas."',fx:'bad',fb:'Doblaste la apuesta en el color equivocado. La estás perdiendo.',to:'n3'}
+    ]},
+  n2:{who:'Cliente',cliente:'Uf, la agenda… te confieso que es un lío. A veces dos clientas caen a la misma hora, o alguien reservó y no queda registro. Pero bueno, siempre lo hemos resuelto a las buenas.',
+    ops:[
+     {t:'Instalo el dolor con una verdad evidente: "Y cuando eso pasa, una clienta se va incómoda… y esas no suelen volver ni recomendarte, ¿cierto?"',fx:'good',fb:'Convertiste el problema operativo en un dolor emocional que ella siente (perder a la clienta y su recomendación). Ahí sí despierta la urgencia.',to:'n3'},
+     {t:'Minimizo: "Bueno, si siempre lo resuelven, quizá no es tan grave."',fx:'bad',fb:'Apagaste tu propia venta. Le diste permiso para no cambiar nada.',to:'n3'},
+     {t:'Salto al precio: "Por menos de lo que crees te soluciono eso."',fx:'mid',fb:'Fuiste al precio antes de dimensionar el dolor. Sin dolor instalado, todo precio parece caro.',to:'n3'}
+    ]},
+  n3:{who:'Cliente',cliente:'Ahora que lo dices… la semana pasada se me cruzaron dos citas y una señora se fue molesta. Eso sí me dolió. ¿Y tu sistema cómo evitaría eso?',
+    ops:[
+     {t:'Presento en su color + un dato: "Cada clienta queda con su hora bloqueada y le llega un recordatorio con tu nombre; sientes que ninguna se pierde, y de paso llenas los huecos de la agenda."',fx:'good',fb:'Bailaste bien: abriste por la emoción (ninguna se pierde, su sello) y cerraste con el beneficio de caja (llenar huecos). Rojo + azul.',to:'n4'},
+     {t:'Solo especificaciones: "Tiene sincronización en la nube, API y panel configurable."',fx:'bad',fb:'Volviste al tecnicismo. Ella no compra features, compra tranquilidad y clientas felices.',to:'n4'}
+    ]},
+  n4:{who:'Cliente',cliente:'Me gusta… pero me da miedo que sea complicado de usar y que mi equipo no lo agarre. Además, no sé si ahora es el momento.',
+    ops:[
+     {t:'Vacuno la objeción: "Es normal ese temor; por eso lo dejamos andando contigo y capacitamos a tu equipo en una tarde, sin que pierdas ni una cita en la transición."',fx:'good',fb:'Anticipaste el miedo real (complejidad/cambio) y lo desactivaste con la implementación acompañada. Eso destraba.',to:'n5'},
+     {t:'Bajo el precio para convencer: "Mira, te hago un descuento y ya."',fx:'bad',fb:'La duda no era el precio, era el miedo al cambio. Bajar precio no lo resuelve y devalúas tu solución.',to:'n5'}
+    ]},
+  n5:{who:'Cliente',cliente:'Ok, me convenciste. Déjame pensarlo con calma y cualquier cosa yo te escribo.',
+    ops:[
+     {t:'Cierro con instrucciones concretas: "Perfecto. Te dejo todo listo hoy, mañana paso a las 10 y en esa tarde tu equipo ya queda entrenado. ¿Te sirve el jueves para arrancar?"',fx:'good',fb:'Cerraste dando el siguiente paso con fecha, en su tono cálido pero concreto. Eso es cerrar con instrucciones.',to:'win'},
+     {t:'Lo dejo abierto: "Claro, sin problema, cuando quieras me avisas."',fx:'bad',fb:'Cerraste sin instrucciones. "Yo te aviso" en ventas casi siempre es silencio. Perdiste el impulso.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'¡Listo! El jueves arrancamos. Me diste justo la tranquilidad que necesitaba.',
+    msg:'Cierre logrado. Conectaste por su color, instalaste el dolor, bailaste entre emoción y caja, vacunaste el miedo al cambio y cerraste con un paso concreto.'},
+  lose:{end:true,res:'lose',cliente:'Sí, yo te escribo… (y nunca escribe).',
+    msg:'Se enfrió en la meta. Todo iba bien hasta el cierre: sin instrucciones ni fecha, la venta se diluyó.'}
+ }},
+{id:'comite',titulo:'El comité con dos jefes opuestos',perfil:'Fintech · CTO azul-verde vs CEO amarillo',
+ contexto:'Presentas una plataforma a un comité. El <b>CTO</b> quiere estabilidad, procesos y datos (azul-verde). El <b>CEO</b> quiere romper el mercado y la visión grande (amarillo). Son colores opuestos en la misma sala. Tu misión: bailar entre ambos sin perder a ninguno.',
+ start:'m1',
+ nodes:{
+  m1:{who:'CEO',cliente:'CEO: A mí háblame de lo grande. ¿Esto nos convierte en líderes del mercado o no?',
+    ops:[
+     {t:'Le doy visión al CEO y anuncio que enseguida aterrizo para el CTO: "Los posiciona como referentes; y para que sea sólido, en un momento te muestro, [CTO], cómo lo sostiene la operación."',fx:'good',fb:'Perfecto: respondiste en amarillo al CEO y tendiste un puente al CTO para no perderlo. Anunciaste el baile.',to:'m2'},
+     {t:'Arranco con la arquitectura técnica para verme serio.',fx:'bad',fb:'Le respondiste al CEO en azul. Se aburre y desconecta justo el que más decide la visión.',to:'m2'},
+     {t:'Digo "es el mejor del mercado" sin más.',fx:'mid',fb:'Frase de folleto: ni visión concreta para el CEO ni solidez para el CTO. Suena vacío.',to:'m2'}
+    ]},
+  m2:{who:'CTO',cliente:'CTO: Bonito el discurso, pero yo necesito saber si esto se cae en producción. ¿Qué tan estable y seguro es?',
+    ops:[
+     {t:'Cambio de color hacia el CTO: "Justo. Corre con 99.9% de disponibilidad, migración por fases y respaldo diario; nada entra sin pasar pruebas."',fx:'good',fb:'Bailaste al azul-verde: datos, proceso y control. Le hablaste en su idioma exacto.',to:'m3'},
+     {t:'Le insisto en la visión: "No te preocupes por eso, piensa en el impacto de mercado."',fx:'bad',fb:'Ignoraste su pregunta y su color. Para un CTO, "no te preocupes" es una alarma roja.',to:'m3'}
+    ]},
+  m3:{who:'CEO',cliente:'CEO: A ver, no me enreden en detalles. ¿En cuánto lo tenemos vivo y marcando diferencia?',
+    ops:[
+     {t:'Vuelvo al amarillo, con un puente al plan: "En 8 semanas están en el aire liderando; y ese plan por fases que le gusta al equipo técnico es justo lo que lo hace rápido y seguro a la vez."',fx:'good',fb:'Giraste de nuevo al CEO uniendo su urgencia con la solidez del CTO. Los cerraste a los dos en una sola frase.',to:'m4'},
+     {t:'Me quedo en el detalle técnico que venía explicando.',fx:'bad',fb:'Perdiste el ritmo del baile: dejaste al CEO esperando en su color. Se impacienta.',to:'m4'}
+    ]},
+  m4:{who:'CTO',cliente:'CTO: Me interesa, pero cambiar de sistema siempre nos ha costado caos. ¿Cómo evito eso?',
+    ops:[
+     {t:'Vacuno el miedo al cambio: "Por eso migramos en paralelo: el sistema viejo sigue vivo hasta que el nuevo esté validado. Cero caos, cero caída."',fx:'good',fb:'Anticipaste su dolor histórico (el caos de migrar) y lo desactivaste con un cómo concreto. Confianza ganada.',to:'m5'},
+     {t:'"Tranquilo, eso nunca falla."',fx:'bad',fb:'Promesa vacía a un perfil que vive de los datos. Suena a que no lo has pensado.',to:'m5'}
+    ]},
+  m5:{who:'CEO',cliente:'CEO: Bien, me gusta. ¿Qué sigue?',
+    ops:[
+     {t:'Cierro con instrucciones para ambos: "Les mando hoy el plan por fases; el equipo técnico lo revisa el miércoles y arrancamos el lunes para tenerlos vivos en 8 semanas. ¿Lo dejamos así?"',fx:'good',fb:'Cierre con paso concreto que satisface al CEO (fecha y velocidad) y al CTO (plan revisable). Bailaste hasta el final.',to:'gana'},
+     {t:'"Cuando lo discutan internamente me dicen."',fx:'bad',fb:'Delegaste el cierre. Un comité sin siguiente paso concreto se enfría entre reuniones.',to:'pierde'}
+    ]},
+  gana:{end:true,res:'win',cliente:'CEO: Hecho, arrancamos el lunes. / CTO: Con ese plan por fases, cuenten conmigo.',
+    msg:'Cierre a dos bandas. Bailaste entre el amarillo del CEO y el azul-verde del CTO, vacunaste el miedo a migrar y cerraste con un paso que sirve a ambos.'},
+  pierde:{end:true,res:'lose',cliente:'CEO: Lo vemos internamente… (la decisión se pierde entre correos).',
+    msg:'Los tenías a los dos y soltaste el cierre. En comités, sin siguiente paso concreto, la venta muere en la bandeja de entrada.'}
+ }},
+{id:'precio',titulo:'La objeción de precio que no era el precio',perfil:'Ferretería · dueño desconfiado',
+ contexto:'Vendes un <b>sistema de inventario</b> a una ferretería que pierde ventas por quiebres de stock. El dueño es práctico y desconfiado. Ya le mostraste el valor; ahora vienen las objeciones. Tu misión: no rendirte al precio y descubrir la objeción real.',
+ start:'p1',
+ nodes:{
+  p1:{who:'Cliente',cliente:'Todo muy bonito, pero está caro. Yo llevo 20 años con mi cuaderno y me ha ido bien.',
+    ops:[
+     {t:'Reencuadro con su dolor, sin bajar precio: "Lo entiendo. Dígame algo: cuando un cliente pide algo que creía tener y no está, ¿cuánto vale esa venta que se va a la competencia?"',fx:'good',fb:'No mordiste el anzuelo del precio: lo llevaste al costo de NO tenerlo (ventas perdidas). Así el precio se vuelve pequeño.',to:'p2'},
+     {t:'Bajo el precio de inmediato: "Le puedo hacer un descuento del 20%."',fx:'bad',fb:'Cediste al primer roce. Devaluaste tu producto y confirmaste que "estaba caro". La objeción real ni la exploraste.',to:'p2b'},
+     {t:'Discuto: "No es caro, usted no ha visto todo lo que hace."',fx:'mid',fb:'Lo pusiste a la defensiva. Rebatir de frente endurece la objeción en vez de disolverla.',to:'p2'}
+    ]},
+  p2b:{who:'Cliente',cliente:'¿Ya ve? Si me baja el precio es que estaba inflado. Igual no sé, me da cosa aprender algo nuevo a mi edad.',
+    ops:[
+     {t:'Ahí está la objeción real: "Le confieso que muchos me dicen eso, y luego lo usan con un dedo. ¿Y si le muestro lo fácil que es antes de que decida?"',fx:'good',fb:'Descubriste que el precio era humo: el freno real es el miedo a lo nuevo. Ahí sí puedes trabajar.',to:'p3'},
+     {t:'Bajo el precio otra vez.',fx:'bad',fb:'Segunda rebaja: ahora sí no cierras, porque el problema nunca fue el precio.',to:'p4'}
+    ]},
+  p2:{who:'Cliente',cliente:'Bueno… la verdad sí, la semana pasada perdí tres ventas de tornillos especiales porque pensé que tenía y no. Pero igual, cambiar a un sistema… yo no soy de computadores.',
+    ops:[
+     {t:'Escucho la objeción real: "Ahí está lo importante. El precio no era el problema, ¿verdad? Es que le preocupa que sea complicado."',fx:'good',fb:'Cazaste la objeción de fondo. Cuando el precio insiste después de instalar el dolor, casi siempre esconde otra cosa.',to:'p3'},
+     {t:'Sigo hablando de precio: "Por eso, el retorno paga el sistema en dos meses."',fx:'mid',fb:'Buen dato, pero te quedaste en el precio cuando él te acaba de mostrar que su miedo es otro (la tecnología).',to:'p3'}
+    ]},
+  p3:{who:'Cliente',cliente:'Pues sí… me da miedo llenarme de una máquina que no sé usar y que se me vuelva un problema.',
+    ops:[
+     {t:'Vacuno con una prueba concreta: "Le propongo algo: lo instalo, se lo dejo andando una semana y le enseño en 15 minutos. Si no le simplifica la vida, lo quitamos."',fx:'good',fb:'Desactivaste el miedo con bajo riesgo (prueba + facilidad + salida). Para un desconfiado, eso vale más que cualquier descuento.',to:'p4'},
+     {t:'"Es facilísimo, no se preocupe."',fx:'bad',fb:'A un desconfiado, "no se preocupe" no le basta. Necesita una prueba concreta, no una promesa.',to:'p4'}
+    ]},
+  p4:{who:'Cliente',cliente:'Mmm… suena razonable. ¿Y entonces qué tendría que hacer?',
+    ops:[
+     {t:'Cierro con instrucciones: "Nada complicado: mañana paso, lo instalo y le enseño en la tarde. El viernes ya lo está usando solo. ¿Le cuadra mañana a las 9?"',fx:'good',fb:'Cerraste con un paso concreto y fácil, en su tono práctico. Le quitaste el trabajo de decidir "cómo".',to:'ok'},
+     {t:'"Piénselo con calma y me avisa."',fx:'bad',fb:'Después de todo el trabajo, soltaste el cierre. "Piénselo" con un desconfiado es un no lento.',to:'no'}
+    ]},
+  ok:{end:true,res:'win',cliente:'Listo, mañana a las 9 lo espero. Si es como dice, le mando a mi compadre que tiene otra ferretería.',
+    msg:'Cierre y hasta referido. No te rendiste al precio, descubriste que el freno real era el miedo a la tecnología, lo vacunaste con una prueba y cerraste con un paso concreto.'},
+  no:{end:true,res:'lose',cliente:'Lo pienso y le aviso… (sigue con su cuaderno).',
+    msg:'Hiciste el trabajo difícil —descubrir la objeción real y vacunarla— y lo perdiste en el cierre por no dar instrucciones concretas.'}
+ }}
+];
+var SS=null;
+function renderSimList(){
+  app.innerHTML='';
+  var c=el('<div class="card simintro"></div>');
+  c.innerHTML='<button class="backlink" id="sback" style="color:#E6D9FF"><i data-lucide="arrow-left"></i> Atrás</button>'+
+   '<div class="ov">Simulador de conversación</div><h2 class="big">Entrena la venta en vivo</h2>'+
+   '<p class="lead" style="color:#E6D9FF">Elige un escenario. Cada decisión que tomas cambia la reacción del cliente. No hay puntaje que memorizar: hay una conversación real que ganar o perder.</p>';
+  app.appendChild(c);c.querySelector('#sback').onclick=renderHome;
+  var list=el('<div></div>');
+  SIMS.forEach(function(sim){
+    var b=el('<button class="simcard"><div class="st">'+sim.titulo+'</div><div class="sp">'+sim.perfil+'</div><div class="sm"><i data-lucide="play"></i> Empezar conversación</div></button>');
+    b.onclick=function(){startSim(sim);};list.appendChild(b);
+  });
+  app.appendChild(list);done();
+}
+function startSim(sim){SS={sim:sim,node:sim.start,hist:[],good:0,bad:0,picks:0,intro:true};renderSimNode();}
+function renderSimNode(){
+  var sim=SS.sim,node=sim.nodes[SS.node];
+  if(node.end)return renderSimEnd(node);
+  app.innerHTML='';
+  var c=el('<div class="card"></div>');
+  var h='<button class="backlink" id="sqb"><i data-lucide="arrow-left"></i> Salir</button>';
+  h+='<div class="qhead"><span class="badge" style="background:#7A3FF2"><i data-lucide="message-square"></i> Simulador</span><span class="ttype">'+sim.titulo+'</span></div>';
+  c.innerHTML=h;
+  if(SS.intro)c.appendChild(el('<div class="simscene">'+sim.contexto+'</div>'));
+  var meter=el('<div class="simmeter"></div>');
+  for(var i=0;i<SS.picks;i++){var d=document.createElement('div');d.className='dot '+(SS.hist[i]&&SS.hist[i].fx==='good'?'g':(SS.hist[i]&&SS.hist[i].fx==='bad'?'b':''));meter.appendChild(d);}
+  if(SS.picks)c.appendChild(meter);
+  if(SS.hist.length){var hist=el('<div class="simhist"></div>');
+    SS.hist.forEach(function(turn){
+      hist.appendChild(el('<div class="bub them"><div class="who">'+turn.who+'</div>'+turn.cliente+'</div>'));
+      hist.appendChild(el('<div class="bub me"><div class="who">TÚ</div>'+turn.mine+'</div>'));
+    });c.appendChild(hist);}
+  c.appendChild(el('<div class="simnow"><div class="who">'+(node.who||'Cliente')+'</div><div class="line">'+node.cliente+'</div></div>'));
+  var fb=el('<div id="simfb"></div>');
+  var ops=el('<div class="simops"></div>');
+  node.ops.forEach(function(op){
+    var b=el('<button class="simop">'+op.t+'</button>');
+    b.onclick=function(){pickOp(node,op,b,ops,fb);};
+    ops.appendChild(b);
+  });
+  c.appendChild(ops);c.appendChild(fb);app.appendChild(c);
+  c.querySelector('#sqb').onclick=function(){if(confirm('¿Salir del simulador? Se pierde esta conversación.'))renderSimList();};
+  done();
+}
+function pickOp(node,op,btn,ops,fb){
+  Array.prototype.forEach.call(ops.children,function(x){x.classList.add('dis');});
+  btn.classList.remove('dis');btn.classList.add('pick');
+  SS.picks++;if(op.fx==='good')SS.good++;else if(op.fx==='bad')SS.bad++;
+  SS._pending={node:node,op:op};
+  var lbl=op.fx==='good'?'Buena decisión':op.fx==='bad'?'Cuidado':'Se puede mejorar';
+  var ic=op.fx==='good'?'check-circle':op.fx==='bad'?'x-circle':'alert-triangle';
+  fb.innerHTML='<div class="simfb '+op.fx+'"><i data-lucide="'+ic+'"></i><div><b>'+lbl+'</b>'+op.fb+'</div></div>'+
+    '<div class="nav"><button class="btn1" id="scont">Continuar <i data-lucide="arrow-right"></i></button></div>';
+  fb.querySelector('#scont').onclick=function(){
+    SS.hist.push({who:node.who||'Cliente',cliente:node.cliente,mine:op.t,fx:op.fx});
+    SS.intro=false;SS.node=op.to;renderSimNode();
+  };
+  icons();
+}
+function renderSimEnd(node){
+  SS.hist.push({who:'Cliente',cliente:'…',mine:'(cierre)',fx:'neutral'});SS.hist.pop();
+  app.innerHTML='';
+  var win=node.res==='win';
+  var c=el('<div class="card simend"></div>');
+  var grad=win?'var(--grad-band)':'linear-gradient(135deg,#9B2333,#D5334A)';
+  c.innerHTML='<div class="ring2" style="background:'+grad+'"><i data-lucide="'+(win?'award':'repeat')+'" style="width:34px;height:34px"></i></div>'+
+    '<h2>'+(win?'Venta cerrada':'Se enfrió')+'</h2><div class="sub">'+SS.sim.titulo+'</div>';
+  c.innerHTML+='<div class="stats"><div class="stat"><div class="v" style="color:var(--ok)">'+SS.good+'</div><div class="k">Buenas jugadas</div></div><div class="stat"><div class="v" style="color:var(--bad)">'+SS.bad+'</div><div class="k">Errores</div></div><div class="stat"><div class="v">'+SS.picks+'</div><div class="k">Decisiones</div></div></div>';
+  c.innerHTML+='<div class="simfb '+(win?'good':'bad')+'" style="margin-top:4px"><i data-lucide="'+(win?'thumbs-up':'alert-triangle')+'"></i><div><b>'+node.cliente+'</b>'+node.msg+'</div></div>';
+  app.appendChild(c);
+  var rc=el('<div class="card plain"></div>');
+  rc.innerHTML='<div class="ov">Tu conversación, jugada por jugada</div><div class="tips" style="margin-top:8px"></div>';
+  var tips=rc.querySelector('.tips');
+  SS.hist.forEach(function(turn,i){
+    var ic=turn.fx==='good'?'check-circle':turn.fx==='bad'?'x-circle':'alert-triangle';
+    var col=turn.fx==='good'?'var(--ok)':turn.fx==='bad'?'var(--bad)':'#B8860B';
+    tips.appendChild(el('<div class="tip"><i data-lucide="'+ic+'" style="color:'+col+'"></i><div><b>Turno '+(i+1)+':</b> '+turn.mine+'</div></div>'));
+  });
+  app.appendChild(rc);
+  var nav=el('<div class="nav"></div>');
+  var b1=el('<button class="btn1"><i data-lucide="repeat"></i> Repetir escenario</button>');b1.onclick=function(){startSim(SS.sim);};
+  var b2=el('<button class="btn1 btn2"><i data-lucide="message-square"></i> Otro escenario</button>');b2.onclick=renderSimList;
+  var b3=el('<button class="btn1 btn2"><i data-lucide="home"></i> Inicio</button>');b3.onclick=goHome;
+  nav.appendChild(b1);nav.appendChild(b2);nav.appendChild(b3);app.appendChild(nav);done();
+}
+
+/* ================= HOME (rediseñada) ================= */
+renderHome=function(){
+  S.srs=false;
+  app.innerHTML='';
+  var st=srsStats(),stk=getStreak(),pend=st.due+Math.max(0,Math.min(12-st.due,st.fresh));
+  var d=el('<div class="card daily"></div>');
+  var streakHtml=stk.count>0?'<div class="streakwrap"><i data-lucide="flame"></i> Racha de '+stk.count+' día'+(stk.count>1?'s':'')+'</div>':'';
+  d.innerHTML=streakHtml+
+    '<div class="ov">Tu entrenamiento diario</div><h2 class="big">Practicar hoy</h2>'+
+    '<p class="lead">Sesión corta con repaso espaciado: primero lo que estás por olvidar, mezclando módulos. Responde marcando qué tan seguro estás.</p>'+
+    '<div class="dstats">'+
+    '<div class="ds"><div class="dv"><i data-lucide="calendar-check"></i>'+pend+'</div><div class="dk">para repasar hoy</div></div>'+
+    '<div class="ds"><div class="dv"><i data-lucide="brain"></i>'+st.dom+'</div><div class="dk">dominadas</div></div>'+
+    '<div class="ds"><div class="dv"><i data-lucide="layers"></i>'+st.seen+'/'+st.total+'</div><div class="dk">vistas</div></div>'+
+    '</div>'+
+    '<button class="startbig" id="goDaily"><i data-lucide="zap"></i> Empezar sesión de hoy</button>';
+  app.appendChild(d);d.querySelector('#goDaily').onclick=startDaily;
+
+  var c=el('<div class="card"></div>');
+  c.innerHTML='<div class="ov">O elige un modo</div><h2 class="big" style="font-size:22px">Practica a tu manera</h2>'+
+    '<div class="modes">'+
+    '<button class="mode s" id="mSim"><div class="mi"><i data-lucide="message-square"></i></div><h3>Simulador</h3><p>Conversaciones ramificadas: cada decisión cambia la reacción del cliente. Entrena la venta en vivo.</p></button>'+
+    '<button class="mode p" onclick="cfg(true)"><div class="mi"><i data-lucide="target"></i></div><h3>Práctica</h3><p>Casos avanzados por módulo, con feedback y explicación en cada pregunta.</p></button>'+
+    '<button class="mode e" onclick="cfg(false)"><div class="mi"><i data-lucide="medal"></i></div><h3>Examen</h3><p>Evalúate: mezcla aleatoria, calificación al final y desglose por módulo.</p></button>'+
+    '</div>'+
+    '<button class="ghost-btn" onclick="renderHistory()"><i data-lucide="trending-up"></i> Ver mi progreso</button>';
+  app.appendChild(c);c.querySelector('#mSim').onclick=renderSimList;
+
+  var info=el('<div class="card plain"></div>');
+  info.innerHTML='<div class="ov">Sobre esta herramienta</div><p class="lead" style="margin-top:8px">Banco de <b>'+BANK.length+' preguntas</b> sobre los 8 módulos, con <b>repaso espaciado</b> que reprograma lo que fallas, <b>confianza calibrada</b> para cazar puntos ciegos, y un <b>simulador</b> de conversaciones reales. Tu progreso se guarda en este navegador.</p>';
+  app.appendChild(info);
+  app.appendChild(el('<div class="foot">Herramienta personal de aprendizaje de Rafael Guerrero · Sin fines comerciales</div>'));
+  done();
+};
+
 renderHome();
 </script>
 </body>
