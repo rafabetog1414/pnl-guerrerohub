@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- build:excelencia-100-avanzado -->
+<!-- build:excelencia-filtros-avanzado -->
 <html lang="es">
 <head>
 <meta charset="utf-8">
@@ -747,7 +747,7 @@ function renderConfig(isP){
     for(var k=1;k<=8;k++)rows.push({v:k,num:('0'+k),nm:MODULES[k].name,color:MODULES[k].color});
     rows.forEach(function(o){var on=S.module===o.v;var b=el('<button class="modrow'+(on?' on':'')+'"><span class="mnum" style="background:'+o.color+'">'+o.num+'</span><span class="mnm">'+o.nm+'</span><span class="mck">'+(on?'<i data-lucide="check-circle"></i>':'')+'</span></button>');if(on)b.style.borderColor=(o.v?MODULES[o.v].color:'var(--electric)');b.onclick=function(){S.module=o.v;renderConfig(isP);};mods.appendChild(b);});}
   var diffs=c.querySelector('#diffs');
-  if(diffs){[["todas","Todas"],["basico","Básico"],["intermedio","Intermedio"],["avanzado","Avanzado"]].forEach(function(o){var b=el('<button class="chip'+(S.diff===o[0]?' on':'')+'">'+o[1]+'</button>');b.onclick=function(){S.diff=o[0];renderConfig(isP);};diffs.appendChild(b);});}
+  if(diffs){(function(){var present={};BANK.forEach(function(q){present[q.d]=1;});var all=[["basico","Básico"],["intermedio","Intermedio"],["avanzado","Avanzado"]].filter(function(o){return present[o[0]];});var opts=(all.length>1?[["todas","Todas"]]:[]).concat(all);if(!opts.some(function(o){return o[0]===S.diff;}))S.diff=opts[0][0];opts.forEach(function(o){var b=el('<button class="chip'+(S.diff===o[0]?' on':'')+'">'+o[1]+'</button>');b.onclick=function(){S.diff=o[0];renderConfig(isP);};diffs.appendChild(b);});})();}
   var counts=c.querySelector('#counts');
   (isP?[5,10,15,20]:[5,10,15,20,30]).forEach(function(n){var b=el('<button class="chip'+(S.count===n?' on':'')+'">'+n+'</button>');b.onclick=function(){S.count=n;renderConfig(isP);};counts.appendChild(b);});
   c.querySelector('#startBtn').onclick=startQuiz;
