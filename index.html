@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- build:practica-avanzada-plus -->
+<!-- build:casos-aleatorios -->
 <html lang="es">
 <head>
 <meta charset="utf-8">
@@ -1198,6 +1198,166 @@ var SIMS=[
     msg:'Cierre y puerta a referidos. Entraste por su orgullo, instalaste el dolor invisible, lo tradujiste a plata, convertiste el "soy pyme" en la razón para hacerlo, probaste el retorno y cerraste con un paso concreto.'},
   pierde:{end:true,res:'lose',cliente:'Listo, cualquier cosa te escribo… (y la semana se lo traga).',
     msg:'Hiciste el trabajo difícil —instalar el dolor y vacunar objeciones— y lo perdiste en el cierre. Sin un siguiente paso con fecha, hasta un prospecto convencido se enfría.'}
+ }},
+{id:'correo',titulo:'Mandame la propuesta por correo',perfil:'Gerente ocupado · brush-off clasico',
+ contexto:'Buscas venderle una <b>consultoria de CX</b> a un gerente. Apenas oye la palabra "consultoria" te suelta el clásico "mándame algo por correo y lo reviso". Tu misión: no caer en el correo-cementerio, ganar 30 segundos, tocar un dolor y conseguir una reunión real.',
+ start:'n1',
+ nodes:{
+  n1:{who:'Gerente',cliente:'Mira, estoy corriendo. Mándame la propuesta por correo y yo la reviso, ¿va?',
+    ops:[
+     {t:'"Con gusto, pero para no mandarte un genérico que se pierda: en 30 segundos, ¿hoy sabes cuántos clientes no te vuelven y por qué?"',fx:'good',fb:'Aceptaste sin pelear y de inmediato ganaste el micro-momento con una pregunta de dolor. Así el correo deja de ser una excusa para sacarte.',to:'n2'},
+     {t:'"Claro, ya te la mando." Y te despides.',fx:'bad',fb:'Caíste en el brush-off. Ese correo entra al cementerio de propuestas sin leer. Perdiste la oportunidad de crear interés.',to:'lose'},
+     {t:'"Te cuento todo lo que hacemos: 30 temas, 21 formatos, 240 fuentes..."',fx:'mid',fb:'Le hablaste de ti, no de su dolor, y encima de pie y apurado. No engancha.',to:'n2'}
+    ]},
+  n2:{who:'Gerente',cliente:'Pues… no llevo esa cuenta. ¿Por qué lo preguntas?',
+    ops:[
+     {t:'"Porque ahí suele estar la plata que se fuga en silencio. Dame 20 minutos el jueves y te lo muestro con tus propios números."',fx:'good',fb:'Instalaste un mini-dolor y pediste un compromiso pequeño y concreto (20 minutos con fecha), no una venta.',to:'n3'},
+     {t:'"Te lo explico todo aquí mismo, rápido." Y arrancas un discurso de pie.',fx:'bad',fb:'Quemaste el interés en el pasillo. Sin una cita real, el momento se diluye.',to:'n3'}
+    ]},
+  n3:{who:'Gerente',cliente:'20 minutos… ¿y para qué exactamente?',
+    ops:[
+     {t:'"Para mostrarte, con tus datos, cuántos clientes estás perdiendo y 3 acciones concretas. ¿Te va el jueves a las 10 o el viernes a las 9?"',fx:'good',fb:'Cerraste la cita con instrucción y alternativa doble. Le facilitaste decir que sí.',to:'win'},
+     {t:'"Cuando puedas me avisas y coordinamos."',fx:'bad',fb:'Soltaste el cierre. "Me avisas" casi siempre es silencio. Volviste al punto de partida.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'Está bien, el jueves a las 10. Pero que sean 20 minutos, ¿eh?',
+    msg:'Convertiste un brush-off en una reunión real. No caíste en el correo, tocaste el dolor y cerraste una cita con fecha.'},
+  lose:{end:true,res:'lose',cliente:'Listo, quedo atento al correo… (que nunca abrirá).',
+    msg:'El "mándame un correo" es una cortina de humo. Sin tocar un dolor y sin cerrar una cita, la propuesta se pierde.'}
+ }},
+{id:'tiempo',titulo:'El que no tiene tiempo',perfil:'Dueño de tienda · abrupto, cree que no lo necesita',
+ contexto:'Entras a una tienda a ofrecer tu <b>consultoria de CX</b>. El dueño te atiende de mala gana, entre clientes. Tienes segundos antes de que te despache. Misión: enganchar con un set de síes que aterrice en su dolor, sin jerga.',
+ start:'n1',
+ nodes:{
+  n1:{who:'Dueño',cliente:'Rápido que tengo clientes. ¿Usted qué vende?',
+    ops:[
+     {t:'"Rápido: usted vende bien, entra gente, y aun así algunos no vuelven y no sabe por qué, ¿cierto? De eso vengo."',fx:'good',fb:'Set de síes exprés que aterriza en su dolor. En una frase le mostraste que entiendes su negocio.',to:'n2'},
+     {t:'"Vendo consultoria de experiencia del cliente para optimizar su customer journey."',fx:'bad',fb:'Jerga a un dueño apurado. No entendió nada y ya te está sacando.',to:'lose'},
+     {t:'"Le muestro un catálogo con todo lo que ofrezco."',fx:'mid',fb:'Le pusiste un menú en la cara sin tocar ningún dolor. No hay gancho.',to:'n2'}
+    ]},
+  n2:{who:'Dueño',cliente:'Mmm, algo de eso pasa. ¿Y?',
+    ops:[
+     {t:'"Cada cliente que no vuelve es plata que se va callada. Le propongo un diagnóstico corto, sin quitarle tiempo a su gente."',fx:'good',fb:'Tradujiste el dolor a plata y bajaste el riesgo (corto, sin cargar a su equipo).',to:'n3'},
+     {t:'"Le explico mi metodología completa paso a paso."',fx:'bad',fb:'Volviste a hablar de ti y de tu proceso. El dueño no compra metodología, compra dejar de perder plata.',to:'n3'}
+    ]},
+  n3:{who:'Dueño',cliente:'¿Y eso cuánto me cuesta y cuánto me quita?',
+    ops:[
+     {t:'"Poco de las dos: el diagnóstico lo hago yo con su info y salimos con 3 acciones. ¿Le paso mañana a las 8, antes de abrir?"',fx:'good',fb:'Vacunaste el miedo al tiempo y cerraste con una fecha que no le estorba. Impecable.',to:'win'},
+     {t:'"Le mando la información y lo piensa con calma."',fx:'bad',fb:'Después de engancharlo, soltaste el cierre. Un dueño ocupado no "lo piensa": lo olvida.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'Bueno, mañana a las 8. Pero puntual que abro temprano.',
+    msg:'Con un dueño apurado ganaste con frases cortas: set de síes, dolor a plata, bajo riesgo y cierre con fecha.'},
+  lose:{end:true,res:'lose',cliente:'Ahí me manda algo… ahora sí, con permiso.',
+    msg:'Con perfiles apurados, la jerga o el menú de servicios te sacan. Solo engancha un dolor concreto y un paso pequeño.'}
+ }},
+{id:'precio2',titulo:'El comprador que solo habla de precio',perfil:'Jefe de compras · azul frio, todo es precio',
+ contexto:'Te sientas con un jefe de compras para tu <b>consultoria de CX</b>. Es frío, directo y todo lo mide en precio. Misión: no competir por precio, llevarlo al costo de NO tenerlo y cerrar un diagnóstico que lo cuantifique.',
+ start:'n1',
+ nodes:{
+  n1:{who:'Compras',cliente:'Vamos al grano: ¿cuánto cuesta y por qué debería pagar eso?',
+    ops:[
+     {t:'"Antes del precio, un dato: ¿cuánto les cuesta hoy cada cliente que se va por una mala experiencia? Sobre eso se mide el retorno."',fx:'good',fb:'No mordiste el anzuelo. Llevaste la conversación al costo de no tenerlo, donde el precio se vuelve pequeño.',to:'n2'},
+     {t:'Le das el precio pelado de una.',fx:'bad',fb:'Entraste a su juego de precio sin instalar valor. Ahora todo será una negociación a la baja.',to:'n2b'},
+     {t:'"Somos la opción más económica del mercado."',fx:'mid',fb:'Competir por barato es una carrera al fondo. Además, un comprador serio desconfía del más barato.',to:'n2'}
+    ]},
+  n2:{who:'Compras',cliente:'No llevamos esa cuenta exacta, pero asumimos que es poco.',
+    ops:[
+     {t:'"Ese es el punto ciego. Te propongo un diagnóstico que lo cuantifica: cuánto pierden y cuánto vale recuperarlo."',fx:'good',fb:'Convertiste la falta de dato en la razón para el diagnóstico. Le hablas en su idioma: números.',to:'n3'},
+     {t:'Insistes en lo barato que eres.',fx:'bad',fb:'Seguiste en el precio cuando el terreno que él respeta es el retorno medible.',to:'n3'}
+    ]},
+  n2b:{who:'Compras',cliente:'Ya veo, entonces es caro. Siguiente proveedor.',
+    ops:[
+     {t:'"El precio sin retorno no dice nada. Déjame medir cuánto pierden y usted decide con números en la mano."',fx:'good',fb:'Rescataste la conversación sacándola del precio y llevándola al retorno.',to:'n3'},
+     {t:'Bajas el precio para que no se vaya.',fx:'bad',fb:'Confirmaste que era caro y perdiste autoridad. Difícil cerrar bien desde ahí.',to:'lose'}
+    ]},
+  n3:{who:'Compras',cliente:'Bien. Muéstreme ese número. ¿Qué sigue?',
+    ops:[
+     {t:'"Arrancamos con un diagnóstico esta semana; me pasa los datos y le entrego el número de pérdida y el retorno. ¿El jueves?"',fx:'good',fb:'Cerraste con un paso concreto que promete justo lo que él valora: cifras.',to:'win'},
+     {t:'"Le mando una cotización y quedo atento."',fx:'bad',fb:'Volviste a poner el precio en el centro y soltaste el cierre.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'Me gusta que hable con números. El jueves entonces.',
+    msg:'A un comprador de precio lo ganaste sin bajar el precio: lo llevaste al costo de no tenerlo y cerraste un diagnóstico medible.'},
+  lose:{end:true,res:'lose',cliente:'Mándeme la cotización y vemos… (compara solo por precio y se va con el más barato).',
+    msg:'Si juegas en el terreno del precio, pierdes. La salida es el retorno: cuánto pierde por no actuar.'}
+ }},
+{id:'proveedor',titulo:'Ya tengo proveedor',perfil:'Gerente satisfecho · no quiere cambiar',
+ contexto:'El prospecto ya trabaja con otro proveedor y está cómodo. Vender aquí no es atacar al otro, es abrir una grieta con una pregunta y ofrecer medir, sin pedir que cambie.',
+ start:'n1',
+ nodes:{
+  n1:{who:'Gerente',cliente:'Gracias, pero ya trabajamos con alguien y estamos bien.',
+    ops:[
+     {t:'"Me parece bien, se nota que son ordenados. Solo por curiosidad: ¿ese proveedor les mide cuántos clientes recuperan al mes?"',fx:'good',fb:'No atacaste al otro; abriste una grieta con una pregunta que probablemente no sepa responder.',to:'n2'},
+     {t:'"Nosotros somos mejores que ellos, se lo aseguro."',fx:'bad',fb:'Atacar al proveedor actual pone al cliente a defenderlo. Perdiste.',to:'lose'},
+     {t:'"Le muestro por qué somos diferentes y todo lo que hacemos."',fx:'mid',fb:'Te centraste en ti. Todavía no le diste una razón para siquiera mirar.',to:'n2'}
+    ]},
+  n2:{who:'Gerente',cliente:'Pues… reportes nos dan, pero de recuperación de clientes no sabría decirte.',
+    ops:[
+     {t:'"Ese vacío suele costar más de lo que parece. Te ofrezco medirlo sin compromiso, para que compares con datos."',fx:'good',fb:'Convertiste el vacío en un dolor y ofreciste un diagnóstico de bajo riesgo, no un cambio de proveedor.',to:'n3'},
+     {t:'Sigues comparándote con el otro proveedor.',fx:'bad',fb:'La comparación directa lo incomoda. El foco debe ser su vacío, no el rival.',to:'n3'}
+    ]},
+  n3:{who:'Gerente',cliente:'No quiero cambiar por cambiar, la verdad.',
+    ops:[
+     {t:'"Y no te lo pido: te pido medir. Un diagnóstico corto y decides con datos, sin mover nada aún. ¿Te va el martes?"',fx:'good',fb:'Vacunaste el miedo al cambio (no le pides cambiar, le pides medir) y cerraste un micro-paso.',to:'win'},
+     {t:'"Cuando quieras cambiar, me llamas."',fx:'bad',fb:'Le dejaste la pelota y una salida fácil. No volverá.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'Visto así, medir no me cuesta nada. El martes lo vemos.',
+    msg:'No desbancaste al otro atacándolo: abriste una grieta con una pregunta y pediste medir, no cambiar. Así entra el pie.'},
+  lose:{end:true,res:'lose',cliente:'Estamos bien así, gracias.',
+    msg:'Contra un "ya tengo proveedor", atacar o compararte de frente cierra la puerta. La llave es una pregunta que abra una grieta.'}
+ }},
+{id:'queja',titulo:'El cliente enojado por una mala experiencia',perfil:'Cliente molesto · falla repetida, amenaza con irse',
+ contexto:'Un cliente tuyo está furioso por una falla que se repitió. Amenaza con cancelar. Este es el arte de convertir una queja en lealtad: primero la emoción, luego la solución y el futuro. No es venta nueva: es no perderlo y, si se puede, ganarlo más.',
+ start:'n1',
+ nodes:{
+  n1:{who:'Cliente',cliente:'Es la segunda vez que me fallan. Así no se puede, voy a cancelar todo.',
+    ops:[
+     {t:'"Tienes toda la razón en estar molesto, y te pido disculpas. Cuéntame exactamente qué pasó para arreglarlo hoy."',fx:'good',fb:'Validaste la emoción primero (su color en ese momento es rojo puro) y te abriste a escuchar. Eso baja la temperatura.',to:'n2'},
+     {t:'"Es que el sistema estaba caído, no fue culpa nuestra."',fx:'bad',fb:'Te justificaste antes de reconocer su molestia. Para un cliente enojado, la excusa es gasolina.',to:'n2b'},
+     {t:'"Te doy un descuento y listo."',fx:'mid',fb:'Compraste su silencio sin resolver ni reconocer. El dolor sigue y la próxima falla estalla peor.',to:'n2'}
+    ]},
+  n2:{who:'Cliente',cliente:'Perdí tiempo y quedé mal frente a mi propio cliente por culpa de ustedes.',
+    ops:[
+     {t:'"Me hago cargo. Lo resuelvo hoy mismo y te aviso cuando esté; y para que no se repita, te dejo un canal directo conmigo."',fx:'good',fb:'Te responsabilizaste, diste solución concreta y aseguraste el futuro. Eso reconstruye la confianza.',to:'n3'},
+     {t:'"Bueno, esas cosas pasan a veces."',fx:'bad',fb:'Minimizaste su daño. Sintió que no te importa. Lo perdiste emocionalmente.',to:'n3'}
+    ]},
+  n2b:{who:'Cliente',cliente:'No me interesan tus excusas.',
+    ops:[
+     {t:'"Tienes razón, las excusas sobran. Me hago cargo y lo soluciono ahora mismo."',fx:'good',fb:'Buen rescate: soltaste la defensa y pasaste a responsabilizarte. Es lo único que él quiere oír.',to:'n3'},
+     {t:'Sigues explicando por qué no fue tu culpa.',fx:'bad',fb:'Insististe en defenderte. El cliente ya decidió irse.',to:'lose'}
+    ]},
+  n3:{who:'Cliente',cliente:'Bueno… a ver si de verdad lo arreglan esta vez.',
+    ops:[
+     {t:'"Dame hasta las 3, te confirmo resuelto y te llamo personalmente para verificar que quedaste bien."',fx:'good',fb:'Cerraste con compromiso, fecha y seguimiento proactivo. Así una queja se vuelve lealtad.',to:'win'},
+     {t:'"Cualquier cosa nos escribes."',fx:'bad',fb:'Le devolviste a él la carga del seguimiento. Después de fallar, eso se siente como abandono.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'La verdad, así sí da gusto. Me quedo, y ojalá sigan atendiendo así.',
+    msg:'Convertiste la queja en lealtad: validaste la emoción, te hiciste cargo, resolviste y aseguraste el seguimiento. Un cliente bien recuperado suele volverse más fiel que uno que nunca tuvo problemas.'},
+  lose:{end:true,res:'lose',cliente:'No, ya perdí la confianza. Cancelo.',
+    msg:'Ante una queja, justificarte o minimizar el daño acelera la fuga. El orden es: emoción, hacerse cargo, solución y futuro.'}
+ }},
+{id:'rrhh',titulo:'Vender capacitacion CX al area de Talento',perfil:'Lider de Talento · quiere desarrollo, cuida presupuesto',
+ contexto:'Le ofreces un <b>programa de formación en CX</b> a la líder de Talento de una empresa mediana. Recibe muchas propuestas de cursos. Misión: no vender temario, vender un resultado de negocio medible, y darle con qué justificar el presupuesto arriba.',
+ start:'n1',
+ nodes:{
+  n1:{who:'Talento',cliente:'De capacitaciones recibimos muchas propuestas. ¿Qué tiene la tuya de distinto?',
+    ops:[
+     {t:'"Que no es un curso suelto: parte del dolor real, que sus equipos den un servicio que haga volver al cliente. ¿Hoy miden si la formación mueve esa aguja?"',fx:'good',fb:'Cambiaste el marco de "curso" a "resultado de negocio" y abriste con una pregunta que expone un vacío.',to:'n2'},
+     {t:'Le recitas los 30 temas del temario.',fx:'bad',fb:'Un temario más entre muchos. No diste ninguna razón de negocio para elegirte.',to:'n2'},
+     {t:'"Somos muy académicos, con más de 240 fuentes."',fx:'mid',fb:'Hablaste de tu rigor, no de su resultado. A Talento le importa el impacto, no tu bibliografía.',to:'n2'}
+    ]},
+  n2:{who:'Talento',cliente:'Medir el impacto de la formación… la verdad, no siempre lo hacemos.',
+    ops:[
+     {t:'"Justo ahí entramos: un piloto a la medida con indicadores de servicio antes y después. Ves si movió la aguja."',fx:'good',fb:'Propusiste un piloto medible: bajo riesgo para ella y prueba de retorno. Es lo que necesita para vender arriba.',to:'n3'},
+     {t:'"Te paso el catálogo completo para que escojas temas."',fx:'bad',fb:'La devolviste al modo "elegir temas de un menú". Perdiste el ángulo de negocio.',to:'n3'}
+    ]},
+  n3:{who:'Talento',cliente:'Interesante, pero tengo que justificar el presupuesto ante la gerencia.',
+    ops:[
+     {t:'"Te doy el caso con el retorno esperado para que lo lleves a comité, y arrancamos con el piloto. ¿Agendamos la presentación el jueves?"',fx:'good',fb:'Le diste munición para el comité y cerraste con fecha. Le resolviste el "cómo lo justifico".',to:'win'},
+     {t:'"Cuando lo aprueben, me avisas."',fx:'bad',fb:'La dejaste sola frente al comité y soltaste el cierre. El proyecto se pierde en la aprobación.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'Con ese caso de retorno sí puedo defenderlo. El jueves lo presentamos.',
+    msg:'A Talento no le vendiste temario: le vendiste un resultado medible y le diste con qué convencer al comité. Y cerraste con fecha.'},
+  lose:{end:true,res:'lose',cliente:'Lo dejo anotado y si se aprueba te contacto… (nunca llega a comité).',
+    msg:'Vender un curso por su temario te vuelve una propuesta más. Vender un resultado medible, y facilitar la aprobación interna, es lo que cierra.'}
  }}
 ];
 var SS=null;
@@ -1242,7 +1402,7 @@ function renderSimNode(){
     ops.appendChild(b);
   });
   c.appendChild(ops);c.appendChild(fb);app.appendChild(c);
-  c.querySelector('#sqb').onclick=function(){if(confirm('¿Salir del simulador? Se pierde esta conversación.'))renderSimList();};
+  c.querySelector('#sqb').onclick=function(){if(confirm('¿Salir del simulador? Se pierde esta conversación.'))renderHome();};
   done();
 }
 function pickOp(node,op,btn,ops,fb){
@@ -1282,7 +1442,7 @@ function renderSimEnd(node){
   app.appendChild(rc);
   var nav=el('<div class="nav"></div>');
   var b1=el('<button class="btn1"><i data-lucide="repeat"></i> Repetir escenario</button>');b1.onclick=function(){startSim(SS.sim);};
-  var b2=el('<button class="btn1 btn2"><i data-lucide="message-square"></i> Otro escenario</button>');b2.onclick=renderSimList;
+  var b2=el('<button class="btn1 btn2"><i data-lucide="message-square"></i> Otro escenario</button>');b2.onclick=startRandomSim;
   var b3=el('<button class="btn1 btn2"><i data-lucide="home"></i> Inicio</button>');b3.onclick=goHome;
   nav.appendChild(b1);nav.appendChild(b2);nav.appendChild(b3);app.appendChild(nav);done();
 }
@@ -1318,9 +1478,58 @@ var RETOS=[
   {q:'Quieres que actúe hoy. ¿Cuál set de síes usas?',o:['"Atiendes bien, entran pacientes nuevos, y aun así muchos no vuelven al control, ¿verdad?"','"Seguro atiendes fatal a tus pacientes"','"Nadie en el rubro retiene bien a sus pacientes"','"Mi método es el mejor que vas a encontrar"'],c:0,e:'Encadenas verdades obvias que aterrizan en el dolor sin acusarla.'},
   {q:'Duda: "me interesa, pero mi equipo ya está saturado y no tengo tiempo". ¿Cómo lo vacunas?',o:['"Empezamos pequeño: un diagnóstico corto que hago yo, y salimos con 3 acciones concretas"','"Tranquila, esto es rapidísimo, no te preocupes"','Bajarle el precio para que se anime','Insistir en todas las funciones del servicio'],c:0,e:'Desactivas el miedo al esfuerzo con bajo riesgo y una primera entrega concreta.'},
   {q:'Es cálida y asintió a todo, pero no se compromete. ¿Cuál es el mejor cierre para su color?',o:['Cálido y concreto: "¿Arrancamos el lunes? Te llamo mañana para coordinar el diagnóstico"','Mandarle más información para que decida sola','Dejarla que lo piense sin ninguna fecha','Bajarle el precio para presionar el cierre'],c:0,e:'Cierras en su color: cercano, pero con un paso concreto y una fecha.'}
+ ]},
+{id:'capa',titulo:'Capacitacion CX a una empresa mediana',perfil:'Comité · Talento (amarillo) y Operaciones (verde)',
+ contexto:'Vendes un <b>programa de formación en CX</b> a una empresa mediana. En la mesa están la <b>líder de Talento</b> (amarilla, quiere desarrollo) y el <b>jefe de Operaciones</b> (verde, quiere indicadores y orden). Sostén la venta ante los dos.',
+ pasos:[
+  {q:'Abres la reunión. ¿Cómo evitas que suene a "otro curso más"?',o:['Conectas la formación con un resultado: equipos que hacen volver al cliente','Recitas los 30 temas del temario','Destacas tus 240 fuentes académicas','Ofreces el precio más bajo del mercado'],c:0,e:'Vendes un resultado de negocio, no un temario. Ese es el marco que abre la venta.'},
+  {q:'¿Qué preguntas para construir confianza antes de proponer?',o:['"¿Qué cambio concreto quieren ver en sus equipos después de la formación?"','"¿Cuándo firman la orden de compra?"','"¿Cuánto presupuesto tienen?"','"¿Por qué no lo han hecho antes?"'],c:0,e:'La pregunta de valor revela el resultado que ellos esperan, y te deja presentar a la medida.'},
+  {q:'Talento quiere desarrollo y clima; Operaciones quiere indicadores medibles. ¿Cómo presentas?',o:['Bailas: crecimiento del equipo para Talento, e indicadores de servicio para Operaciones','Solo desarrollo y clima, que es lo humano','Solo indicadores, que es lo que se mide','Algo neutro para no arriesgar con ninguno'],c:0,e:'El baile cubre al amarillo (desarrollo) y al verde (indicadores) en la misma sala.'},
+  {q:'Operaciones frena: "ya hemos hecho cursos que no dejaron nada". ¿Cómo lo vacunas?',o:['"Por eso proponemos un piloto medible: indicadores antes y después, no un curso suelto"','"Tranquilo, este sí funciona"','Bajar el precio para reducir el riesgo','Evitar el tema del impacto'],c:0,e:'Anticipas su dolor histórico (cursos sin impacto) y lo desactivas con medición concreta.'},
+  {q:'Ambos asienten. ¿Cómo cierras?',o:['"Les dejo el caso con retorno esperado para el comité y arrancamos con el piloto. ¿Lo presentamos el jueves?"','"Cuando lo aprueben me avisan"','"Lo dejo a su consideración"','"Piénsenlo con calma"'],c:0,e:'Cierras con fecha y les das munición para justificar el presupuesto arriba.'}
+ ]},
+{id:'ecom',titulo:'E-commerce que pierde clientes recurrentes',perfil:'Fundador digital · mira metricas (amarillo-azul)',
+ contexto:'Vendes una <b>consultoria de retención</b> a un e-commerce. Vende bien, pero la gente compra una vez y no vuelve. El fundador es digital, entusiasta y mira métricas. Integra dolor, plata, ventaja y cierre.',
+ pasos:[
+  {q:'¿Cómo instalas el dolor que él minimiza?',o:['"Traes tráfico y vendes, pero ¿sabes qué porcentaje vuelve a comprar y cuánto vale el que no?"','"Tu tienda está mal montada, por eso no crece"','"Te ofrezco un paquete con muchas herramientas"','"Esto le pasa a todos, no te preocupes"'],c:0,e:'Nombras el dolor concreto (la recompra) con una pregunta que un perfil de métricas no puede ignorar.'},
+  {q:'¿Cómo lo traduces a plata sin ahogarlo en jerga?',o:['"Cada cliente que no vuelve es un costo de adquisición que pagaste una sola vez para una sola venta"','Le explicas en detalle la fórmula del LTV, CAC y cohortes','Le hablas solo de la emoción de fidelizar','Le pasas un informe técnico de 20 páginas'],c:0,e:'Traduces la retención a dinero en una frase que él siente, sin ahogarlo en siglas.'},
+  {q:'¿Cuál es una VENTAJA (exclusiva, libera el dolor), no un simple beneficio?',o:['"Montamos un sistema que reactiva solo a los que están por irse, antes de que se vayan"','"Mejora la experiencia de tus clientes"','"Tienes una tienda muy moderna"','"Ofreces buenos productos"'],c:0,e:'La ventaja es exclusiva y ataca justo el momento del abandono; el resto son beneficios genéricos.'},
+  {q:'Duda: "mi equipo es chico y no tengo tiempo para un proyecto grande". ¿Cómo lo vacunas?',o:['"Empezamos con un diagnóstico de recompra que hago yo y salimos con 3 acciones automatizables"','"Tranquilo, es rapidísimo"','Bajarle el precio para animarlo','Insistir en todas las funciones del servicio'],c:0,e:'Bajo esfuerzo y automatización: justo lo que un equipo chico necesita oír.'},
+  {q:'Convencido, pregunta "¿arrancamos?". ¿Cómo cierras?',o:['"Te agendo el diagnóstico esta semana; me das acceso a tus métricas y el viernes vemos el número de recompra. ¿El miércoles?"','"Cuando tengas un rato me escribes"','"Piénsalo sin afán"','"Te dejo la propuesta y me dices"'],c:0,e:'Cierras con un paso concreto, con fecha y con lo que necesitas de él.'}
+ ]},
+{id:'clinica',titulo:'Clinica dental que no fideliza',perfil:'Dueña profesional · calida pero preocupada (roja-azul)',
+ contexto:'Vendes una <b>consultoria de fidelización</b> a una clínica dental. Atienden bien, pero los pacientes no vuelven al control y las agendas tienen huecos. La dueña es cálida con sus pacientes (roja) y a la vez preocupada por las ventas (azul).',
+ pasos:[
+  {q:'¿Cómo instalas el dolor que ella no dimensiona?',o:['"Cada paciente que no vuelve a su control es una venta que se va callada, ¿sabes cuántos son al mes?"','"Tu clínica está mal gestionada"','"Te ofrezco un paquete completo de herramientas"','"Es normal, a todas las clínicas les pasa"'],c:0,e:'Pregunta que despierta la urgencia sin acusarla, y aterriza en plata.'},
+  {q:'¿Cuál frase es una VENTAJA, no un simple beneficio?',o:['"Solo nosotros te recordamos el control y agendamos por ti, para que ninguna silla quede vacía"','"Mejoras la salud bucal de tus pacientes"','"Tienes buena atención"','"Cuentas con equipos modernos"'],c:0,e:'La ventaja es exclusiva y libera el dolor del paciente que no regresa y de la agenda vacía.'},
+  {q:'Quieres que actúe hoy. ¿Cuál set de síes usas?',o:['"Atiendes bien, entran pacientes nuevos, y aun así muchos no vuelven al control, ¿verdad?"','"Seguro tus pacientes quedan mal atendidos"','"Nadie en el sector fideliza bien hoy"','"Mi método es el mejor que encontrarás"'],c:0,e:'Encadenas verdades evidentes que aterrizan en el dolor sin ofenderla.'},
+  {q:'Duda: "mi asistente ya está saturada, no tengo tiempo". ¿Cómo lo vacunas?',o:['"Empezamos pequeño: un diagnóstico corto que hago yo y 3 acciones que casi no cargan a tu equipo"','"Tranquila, esto es rapidísimo"','Bajarle el precio','Insistir en todas las funciones'],c:0,e:'Desactivas el miedo al esfuerzo con bajo riesgo y una primera entrega concreta.'},
+  {q:'Es cálida y asintió a todo, pero no se compromete. ¿Cuál es el mejor cierre para su color?',o:['Cálido y concreto: "¿Arrancamos el lunes? Te llamo mañana para coordinar el diagnóstico"','Mandarle más información para que decida sola','Dejarla pensándolo sin fecha','Bajarle el precio para presionar'],c:0,e:'Cierras en su color: cercano, pero con un paso concreto y una fecha.'}
+ ]},
+{id:'retail',titulo:'Cadena de retail con servicio irregular',perfil:'Comité · dueño (amarillo) y gerente de tiendas (verde)',
+ contexto:'Vendes un <b>programa de estandarización de CX</b> a una cadena de retail con varias tiendas. La atención varía mucho de una tienda a otra y pierden clientes por eso. En la mesa: el <b>dueño</b> (amarillo, quiere crecer) y el <b>gerente de tiendas</b> (verde, procesos).',
+ pasos:[
+  {q:'¿Cuál set de síes aterriza mejor en su dolor?',o:['"Tienen buenas tiendas y mucho tráfico, y aun así la atención varía de una a otra y algunos clientes se van, ¿cierto?"','"Ustedes atienden pésimo en varias tiendas"','"Nadie en el retail estandariza bien hoy"','"Mi programa es el mejor del mercado"'],c:0,e:'El set de síes encadena verdades evidentes que aterrizan en el dolor: la atención irregular.'},
+  {q:'¿Qué preguntas para construir confianza?',o:['"¿Qué experiencia quieren que viva un cliente en cualquiera de sus tiendas?"','"¿Cuándo firman?"','"¿Cuánto presupuesto tienen?"','"¿Por qué no lo han resuelto?"'],c:0,e:'La pregunta de valor revela el estándar de experiencia que ellos quieren lograr.'},
+  {q:'El dueño quiere crecer y abrir tiendas; el gerente quiere que la operación no se le desordene. ¿Cómo presentas?',o:['Bailas: escala y marca sólida para el dueño, y un estándar replicable para el gerente','Solo crecimiento y visión','Solo procesos y control','Algo genérico para no arriesgar'],c:0,e:'El baile cubre al amarillo (crecer) y al verde (estandarizar) a la vez.'},
+  {q:'El gerente frena: "estandarizar en tantas tiendas es imposible". ¿Cómo lo vacunas?',o:['"Por eso lo hacemos por fases: un piloto en 2 tiendas, medimos, y replicamos lo que funciona"','"Tranquilo, es fácil"','Bajar el precio','Evitar el tema de la implementación'],c:0,e:'Desactivas el miedo a la escala con un piloto por fases, medible y replicable.'},
+  {q:'Ambos interesados. ¿Cómo cierras?',o:['"Arrancamos con el piloto en 2 tiendas esta quincena; medimos y en un mes definimos el plan de réplica. ¿Les sirve?"','"Cuando lo definan internamente me dicen"','"Lo dejo a su consideración"','"Piénsenlo con calma"'],c:0,e:'Cierras con un paso concreto por fases que tranquiliza al gerente y entusiasma al dueño.'}
+ ]},
+{id:'b2b',titulo:'Empresa de servicios B2B con churn',perfil:'Gerente comercial · azul, pierde cuentas',
+ contexto:'Vendes una <b>consultoria de retención</b> a una empresa de servicios B2B que pierde cuentas cada trimestre (churn). El gerente comercial es analítico (azul) y vive de los números del pipeline. Integra dolor, plata, colores y cierre.',
+ pasos:[
+  {q:'¿Cómo instalas el dolor en su idioma?',o:['"Cierran cuentas nuevas, pero ¿saben cuántas no renuevan al año y cuánto ingreso se va con ellas?"','"Ustedes retienen fatal a sus clientes"','"Les ofrezco un paquete con muchas herramientas"','"El churn es normal, no se preocupen"'],c:0,e:'Le hablas en azul: churn e ingresos. Una pregunta que un comercial no puede dejar sin responder.'},
+  {q:'¿Cómo lo traduces a plata para que lo sienta?',o:['"Retener un punto de churn suele costar mucho menos que salir a reponer esas cuentas vendiendo de cero"','Le explicas la teoría del customer success','Le hablas solo de la emoción de fidelizar','Le pasas un informe académico'],c:0,e:'Comparas el costo de retener contra el de reponer: el argumento que mueve a un perfil de números.'},
+  {q:'Aceptó las cifras pero no cierra: "los números cuadran". ¿Qué haces?',o:['Sumas la emoción: lo que sentirá dejar de ver cuentas fugarse cada trimestre','Le das aún más cifras','Le bajas el precio','Repites las mismas tablas'],c:0,e:'El dato ya abrió; ahora decide la emoción. Navegas de la izquierda a la derecha.'},
+  {q:'Objeta: "ya tenemos encuestas de satisfacción, medimos eso". ¿Cómo lo vacunas?',o:['"La satisfacción no predice quién se va; te muestro cómo detectar las cuentas en riesgo antes de perderlas"','"Esas encuestas no sirven para nada"','Bajarle el precio','Evitar el tema'],c:0,e:'Reencuadras sin atacar su herramienta: la satisfacción mide el pasado; tú anticipas la fuga.'},
+  {q:'Convencido, pregunta "¿qué sigue?". ¿Cómo cierras?',o:['"Arrancamos con un diagnóstico de churn esta semana; me das el histórico de cuentas y te entrego el número en riesgo. ¿El jueves?"','"Cuando lo revisen internamente me dicen"','"Lo dejo a su consideración"','"Piénsenlo con calma"'],c:0,e:'Cierras con un paso concreto, con fecha y con lo que necesitas de él.'}
  ]}
 ];
 var RS=null;
+var _lastSim=null,_lastReto=null;
+function pickRand(arr,last){if(arr.length<=1)return arr[0];var c=arr.filter(function(x){return x.id!==last;});return c[Math.floor(Math.random()*c.length)];}
+function startRandomSim(){var x=pickRand(SIMS,_lastSim);_lastSim=x.id;startSim(x);}
+function startRandomReto(){var x=pickRand(RETOS,_lastReto);_lastReto=x.id;startReto(x);}
 function renderRetoList(){
   app.innerHTML='';
   var c=el('<div class="card simintro" style="background:linear-gradient(135deg,#0E4F4A,#12A594)"></div>');
@@ -1360,7 +1569,7 @@ function renderReto(){
   var nav=el('<div class="nav"></div>');
   sbtn=el('<button class="btn1" disabled>Responder</button>');
   nav.appendChild(sbtn);c.appendChild(nav);app.appendChild(c);
-  c.querySelector('#rqb').onclick=function(){if(confirm('¿Salir del reto? Se pierde el avance.'))renderRetoList();};
+  c.querySelector('#rqb').onclick=function(){if(confirm('¿Salir del reto? Se pierde el avance.'))renderHome();};
   sbtn.onclick=function(){
     if(!sel.locked){
       sel.locked=true;var ok=sel.v===paso.c;if(ok)RS.ok++;RS.ans.push({ok:ok});
@@ -1385,7 +1594,7 @@ function renderRetoEnd(){
   app.appendChild(rc);
   var nav=el('<div class="nav"></div>');
   var b1=el('<button class="btn1"><i data-lucide="repeat"></i> Repetir reto</button>');b1.onclick=function(){startReto(r);};
-  var b2=el('<button class="btn1 btn2"><i data-lucide="gauge"></i> Otro reto</button>');b2.onclick=renderRetoList;
+  var b2=el('<button class="btn1 btn2"><i data-lucide="gauge"></i> Otro reto</button>');b2.onclick=startRandomReto;
   var b3=el('<button class="btn1 btn2"><i data-lucide="home"></i> Inicio</button>');b3.onclick=goHome;
   nav.appendChild(b1);nav.appendChild(b2);nav.appendChild(b3);app.appendChild(nav);done();
 }
@@ -1411,12 +1620,12 @@ renderHome=function(){
   var c=el('<div class="card"></div>');
   c.innerHTML='<div class="ov">O elige un modo</div><h2 class="big" style="font-size:22px">Practica a tu manera</h2>'+
     '<div class="modes">'+
-    '<button class="mode s" id="mSim"><div class="mi"><i data-lucide="message-square"></i></div><h3>Simulador</h3><p>Conversaciones ramificadas: cada decisión cambia la reacción del cliente. Entrena la venta en vivo.</p></button>'+'<button class="mode s" id="mReto" style="background:linear-gradient(135deg,#0E4F4A,#12A594)"><div class="mi"><i data-lucide="gauge"></i></div><h3>Retos</h3><p>Casos integradores de alta exigencia: 5 decisiones encadenadas sobre un mismo cliente.</p></button>'+
+    '<button class="mode s" id="mSim"><div class="mi"><i data-lucide="message-square"></i></div><h3>Simulador</h3><p>Conversaciones ramificadas: cada decisión cambia la reacción del cliente. Entrena la venta en vivo, con un caso aleatorio cada vez.</p></button>'+'<button class="mode s" id="mReto" style="background:linear-gradient(135deg,#0E4F4A,#12A594)"><div class="mi"><i data-lucide="gauge"></i></div><h3>Retos</h3><p>Casos integradores de alta exigencia: 5 decisiones encadenadas sobre un cliente distinto cada vez.</p></button>'+
     '<button class="mode p" onclick="cfg(true)"><div class="mi"><i data-lucide="target"></i></div><h3>Práctica</h3><p>Casos avanzados por módulo, ahora con retos ¿Qué sigue? y Detecta el error.</p></button>'+
     '<button class="mode e" onclick="cfg(false)"><div class="mi"><i data-lucide="medal"></i></div><h3>Examen</h3><p>Evalúate: mezcla aleatoria, calificación al final y desglose por módulo.</p></button>'+
     '</div>'+
     '<button class="ghost-btn" onclick="renderHistory()"><i data-lucide="trending-up"></i> Ver mi progreso</button>';
-  app.appendChild(c);c.querySelector('#mSim').onclick=renderSimList;c.querySelector('#mReto').onclick=renderRetoList;
+  app.appendChild(c);c.querySelector('#mSim').onclick=startRandomSim;c.querySelector('#mReto').onclick=startRandomReto;
 
   var info=el('<div class="card plain"></div>');
   info.innerHTML='<div class="ov">Sobre esta herramienta</div><p class="lead" style="margin-top:8px">Banco de <b>'+BANK.length+' preguntas</b> sobre los 8 módulos, con <b>repaso espaciado</b> que reprograma lo que fallas, <b>confianza calibrada</b> para cazar puntos ciegos, y un <b>simulador</b> de conversaciones reales. Tu progreso se guarda en este navegador.</p>';
