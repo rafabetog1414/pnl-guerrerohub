@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- build:excelencia-evals-verde -->
+<!-- build:cinco-cursos -->
 <html lang="es">
 <head>
 <meta charset="utf-8">
@@ -744,7 +744,7 @@ function renderConfig(isP){
   c.querySelector('#cfgback').onclick=renderHome;
   if(isP){var mods=c.querySelector('#mods');
     var rows=[{v:0,num:'<i data-lucide="layers"></i>',nm:'Todos los módulos',color:'var(--midnight)'}];
-    for(var k=1;k<=8;k++)rows.push({v:k,num:('0'+k),nm:MODULES[k].name,color:MODULES[k].color});
+    Object.keys(MODULES).map(Number).sort(function(a,b){return a-b;}).forEach(function(k){rows.push({v:k,num:(k<10?'0'+k:''+k),nm:MODULES[k].name,color:MODULES[k].color});});
     rows.forEach(function(o){var on=S.module===o.v;var b=el('<button class="modrow'+(on?' on':'')+'"><span class="mnum" style="background:'+o.color+'">'+o.num+'</span><span class="mnm">'+o.nm+'</span><span class="mck">'+(on?'<i data-lucide="check-circle"></i>':'')+'</span></button>');if(on)b.style.borderColor=(o.v?MODULES[o.v].color:'var(--electric)');b.onclick=function(){S.module=o.v;renderConfig(isP);};mods.appendChild(b);});}
   var diffs=c.querySelector('#diffs');
   if(diffs){(function(){var present={};BANK.forEach(function(q){present[q.d]=1;});var all=[["basico","Básico"],["intermedio","Intermedio"],["avanzado","Avanzado"]].filter(function(o){return present[o[0]];});var opts=(all.length>1?[["todas","Todas"]]:[]).concat(all);if(!opts.some(function(o){return o[0]===S.diff;}))S.diff=opts[0][0];opts.forEach(function(o){var b=el('<button class="chip'+(S.diff===o[0]?' on':'')+'">'+o[1]+'</button>');b.onclick=function(){S.diff=o[0];renderConfig(isP);};diffs.appendChild(b);});})();}
@@ -1995,9 +1995,1693 @@ document.head.insertAdjacentHTML('beforeend','<style>'+
 '</style>');
 function ckey(n){return 'gh_'+((typeof COURSE!=='undefined'&&COURSE)?COURSE.id:'pnl')+'_'+n;}
 var COURSE=null;
+
+/* ====== CURSOS 3-5: DATA ====== */
+var HAB_A = [
+  {m:1,t:"unica",d:"avanzado",caso:true,q:"Rafael mejora un 1% cada dia durante un año en su estudio de IA. Segun el interes compuesto, ¿a que factor equivale ese progreso?",o:["Cerca de 37 veces mejor","Aproximadamente el doble","Cerca de 12 veces mejor","Practicamente igual que hoy"],c:0,e:"El interes compuesto del cambio: 1.01^365 ≈ 37.78, resultados exponenciales, no lineales."},
+  {m:1,t:"unica",d:"avanzado",caso:true,q:"La analogia del cubo de hielo (-10°C a 0°C) sirve para explicar que, dentro del Valle de la Decepcion...",o:["El trabajo previo no sirvio de nada","Solo el ultimo grado genero el cambio","El esfuerzo acumulado era necesario","Los resultados suelen ser lineales siempre"],c:2,e:"Los cambios previos eran invisibles pero necesarios: sin ellos no ocurre la fusion final."},
+  {m:1,t:"unica",d:"avanzado",caso:true,q:"El equipo britanico de ciclismo tardo 5 años de mejoras incrementales antes de dominar el Tour y los Olimpicos. ¿Que concepto ilustra?",o:["Que el talento innato decide todo","La meseta del potencial latente","Que las metas superan a los sistemas","El efecto de la gratificacion instantanea"],c:1,e:"La meseta del potencial latente: el trabajo se acumula invisible antes del punto de quiebre."},
+  {m:1,t:"unica",d:"avanzado",caso:true,q:"Si en vez de mejorar, Rafael empeora un 1% diario durante un año, su rendimiento queda...",o:["Cerca de 37 veces peor","Aproximadamente la mitad","Un 63% de lo inicial","Practicamente en cero"],c:3,e:"El deterioro del 1% diario (0.99^365) tiende a cero: la direccion importa mas que la magnitud."},
+  {m:1,t:"unica",d:"avanzado",caso:true,q:"Clear afirma que la direccion importa mas que la magnitud. Para el habito de prospectar 1 contacto al dia, esto implica que...",o:["Un habito diminuto ya marca rumbo","Solo importa prospectar a gran escala","Conviene esperar a tener mas tiempo","El volumen inicial define todo el exito"],c:0,e:"Un cambio pequeño pero consistente orienta la trayectoria; la magnitud inicial es secundaria."},
+  {m:1,t:"unica",d:"avanzado",q:"Tras meses de trabajo invisible, los resultados transformadores llegan de golpe. Clear compara esto con...",o:["Una meta que se cumple de una sola vez","El efecto yo-yo posterior a una dieta","Un terremoto que libera tension","La curva perfectamente lineal del avance"],c:2,e:"Como un terremoto libera de golpe tension acumulada por decadas, el cambio profundo estalla tras la meseta."},
+  {m:1,t:"unica",d:"avanzado",caso:true,q:"Rafael lleva 3 semanas sin ver resultados y quiere abandonar. ¿Por que la mayoria renuncia justo en este punto?",o:["Porque el sistema era erroneo","Porque los cambios aun son invisibles","Porque ya lograron su meta final","Porque la identidad ya cambio del todo"],c:1,e:"En el Valle de la Decepcion los cambios son invisibles por semanas; la mayoria abandona antes del salto."},
+  {m:1,t:"unica",d:"avanzado",q:"'No te elevas al nivel de tus metas; caes al nivel de tus...'. ¿Que palabra completa la frase de Clear?",o:["excusas","recompensas","motivaciones","sistemas"],c:3,e:"Caes al nivel de tus sistemas: el progreso viene de procesos consistentes, no de la meta."},
+  {m:1,t:"unica",d:"avanzado",q:"Clear señala 4 problemas con las metas. ¿Cual de estos es uno de ellos?",o:["Dan direccion pero jamas motivan","Eliminan por completo todo el progreso","Restringen la felicidad al futuro","Impiden definir cualquier tipo de sistema"],c:2,e:"Una meta restringe la felicidad al futuro ('sere feliz cuando...'), uno de los 4 problemas."},
+  {m:1,t:"unica",d:"avanzado",q:"Ganadores y perdedores comparten las mismas metas. Segun Clear, ¿que diferencia el resultado final?",o:["El sistema de procesos aplicado","La ambicion detras de la meta elegida","El talento innato con que se nace","La suerte de todas las circunstancias"],c:0,e:"Si las metas son iguales, lo que separa a ganadores es el sistema de procesos que ejecutan."},
+  {m:1,t:"vf",d:"avanzado",q:"Segun el interes compuesto, mejorar un 1% al dia produce resultados lineales y proporcionales al esfuerzo invertido.",o:["Verdadero","Falso"],c:1,e:"Falso: los resultados del 1% son exponenciales, no lineales (1.01^365 ≈ 37x)."},
+  {m:1,t:"vf",d:"avanzado",q:"Abandonar en la meseta del potencial latente implica no llegar a saber cuan cerca estabas del punto de quiebre.",o:["Verdadero","Falso"],c:0,e:"Verdadero: si abandonas en la meseta, nunca sabras cuanto trabajo invisible faltaba para el salto."},
+  {m:1,t:"multiple",d:"avanzado",q:"¿Cuales de estas ideas pertenecen al concepto de interes compuesto y la meseta del potencial latente? (elige 2)",o:["Los resultados son exponenciales","Las metas siempre superan a los sistemas","El trabajo invisible precede al salto","La identidad se declara sin ninguna evidencia"],c:[0,2],e:"El cambio es exponencial y el trabajo se acumula invisible antes de manifestarse de golpe."},
+  {m:2,t:"unica",d:"avanzado",caso:true,q:"Rafael no logra abrir su curso de IA y quiere diagnosticar el fallo. ¿Que marco usa Clear para analizarlo?",o:["El canal de flujo de Csikszent.","Cual de las 4 Leyes esta fallando","El descuento temporal del cerebro","La regla de nunca fallar dos veces"],c:1,e:"Todo habil se diagnostica viendo cual de las 4 Leyes (obvio, atractivo, facil, satisfactorio) falla."},
+  {m:2,t:"unica",d:"avanzado",q:"El bucle del habito descrito por Clear sigue el orden...",o:["deseo, señal, recompensa, respuesta","respuesta, señal, deseo, recompensa","recompensa, deseo, señal, respuesta","señal, deseo, respuesta, recompensa"],c:3,e:"El bucle es señal, deseo, respuesta y recompensa; cada ley actua sobre una de estas etapas."},
+  {m:2,t:"unica",d:"avanzado",q:"Para crear un buen habito, las 4 Leyes indican hacerlo...",o:["obvio, atractivo, facil, satisfactorio","invisible, atractivo, dificil e incomodo","obvio, dificil, atractivo y rapido","facil, oculto, atractivo y urgente"],c:0,e:"Buen habito: obvio, atractivo, facil y satisfactorio; su inversion sirve para romper malos habitos."},
+  {m:2,t:"unica",d:"avanzado",caso:true,q:"Para dejar de revisar redes, Rafael desinstala la app del telefono. ¿Que ley invertida esta aplicando?",o:["Hacerlo invisible al entorno","Hacerlo poco atractivo mentalmente","Hacerlo dificil de ejecutar","Hacerlo insatisfactorio con castigo"],c:2,e:"Añadir friccion (desinstalar) hace el mal habito dificil, la 3a ley invertida."},
+  {m:2,t:"unica",d:"avanzado",caso:true,q:"Rafael saca los snacks de la vista para no picar. En la inversion de las 4 Leyes, esto es hacerlo...",o:["poco atractivo","invisible","insatisfactorio","dificil de lograr"],c:1,e:"Sacar la señal de la vista lo hace invisible: la 1a ley invertida elimina el disparador."},
+  {m:2,t:"unica",d:"avanzado",caso:true,q:"Rafael se dice 'estoy ganando concentracion, no perdiendome las redes'. ¿Que ley invertida usa?",o:["Hacerlo invisible del todo","Hacerlo dificil con friccion","Hacerlo insatisfactorio","Hacerlo poco atractivo"],c:3,e:"Re-enmarcar la narrativa lo vuelve poco atractivo, la 2a ley invertida."},
+  {m:2,t:"unica",d:"avanzado",caso:true,q:"Rafael pacta que, si no hace spinning, lava los platos. ¿Que tecnica de la 4a ley invertida es?",o:["Un contrato de compromiso","Una implementation intention","El apilamiento de habitos","La regla de los dos minutos"],c:0,e:"Un contrato de compromiso añade un costo, haciendo insatisfactorio el incumplimiento."},
+  {m:2,t:"unica",d:"avanzado",q:"¿Por que Clear sostiene que el rediseño ambiental supera a la fuerza de voluntad al romper habitos?",o:["Porque exige mas disciplina diaria","Porque elimina el deseo de raiz","Porque opera sin costo cognitivo","Porque acelera el descuento temporal"],c:2,e:"El entorno opera de forma permanente sin costo cognitivo, a diferencia de la voluntad, que se agota."},
+  {m:2,t:"unica",d:"avanzado",caso:true,q:"Rafael ejecuta un habito pero no se repite al dia siguiente. En el bucle, ¿que eslabon suele estar fallando?",o:["La señal resultaba inexistente para el","El deseo nunca llegaba a aparecer bien","La respuesta era del todo imposible","La recompensa no fue satisfactoria"],c:3,e:"Sin recompensa satisfactoria (4a ley) el bucle no se cierra y el habito no se refuerza."},
+  {m:2,t:"unica",d:"avanzado",q:"Clear insiste en que el cambio de comportamiento es 'diseño conductual, no...'. ¿Que completa?",o:["disciplina rigida","fuerza de voluntad","motivacion intensa","planificacion previa"],c:1,e:"Es diseño conductual, no fuerza de voluntad: se estructura el entorno y las señales."},
+  {m:2,t:"vf",d:"avanzado",q:"Cada habito puede diagnosticarse observando cual de las Cuatro Leyes esta fallando.",o:["Verdadero","Falso"],c:0,e:"Verdadero: cada habito se analiza segun cual ley (obvio, atractivo, facil, satisfactorio) no se cumple."},
+  {m:2,t:"multiple",d:"avanzado",q:"¿Cuales son formas correctas de invertir las 4 Leyes para romper un mal habito? (elige 2)",o:["Hacerlo mucho mas obvio y bien visible","Hacerlo dificil desinstalando la app","Aumentar todavia mas su recompensa","Hacerlo insatisfactorio con un pacto"],c:[1,3],e:"Romper un habito: hacerlo invisible, poco atractivo, dificil e insatisfactorio."},
+  {m:3,t:"unica",d:"avanzado",q:"En lugar de 'quiero bajar de peso', Clear sugiere enfocar el cambio en...",o:["fijar una meta mucho mas ambiciosa","medir mejor cada resultado obtenido","ser alguien que cuida su salud","seguir un proceso aun mas estricto"],c:2,e:"El cambio duradero empieza por la identidad: 'soy alguien que cuida su salud'."},
+  {m:3,t:"unica",d:"avanzado",q:"Clear describe 3 capas del cambio. ¿Cual es la mas profunda y duradera?",o:["La identidad, lo que crees de ti","Los resultados que vas logrando","Los procesos que ejecutas cada dia","Las metas que te propones cumplir"],c:0,e:"La identidad (lo que crees de ti) es la capa mas profunda; el cambio duradero empieza ahi."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"Cada spinning es un voto por ser saludable. Segun Clear, ¿que tipo de mayoria necesitas para sostener la identidad?",o:["Una unanimidad totalmente absoluta","Solo una mayoria simple","Al menos dos tercios de votos","Un consenso total del habito"],c:1,e:"No necesitas unanimidad, solo mayoria simple: un mal dia es un voto en minoria."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"Rafael declara 'soy emprendedor de vanguardia' pero no estudia ni prospecta. ¿Cual es su error, segun Clear?",o:["Eligio una identidad completamente equivocada","Se fijo una meta demasiado ambiciosa y vaga","Ignoro por completo todos sus resultados","Declaro identidad sin votos que la respalden"],c:3,e:"Declarar una identidad sin acumular los votos conductuales que la respalden la deja vacia."},
+  {m:3,t:"unica",d:"avanzado",q:"Segun Clear, ¿que relacion existe entre identidad y comportamiento?",o:["El comportamiento crea siempre la meta","La meta por si sola define la identidad","La identidad precede al comportamiento","Ambos resultan del todo independientes"],c:2,e:"La identidad precede al comportamiento; a la vez cada accion refuerza esa identidad."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"'Caes al nivel de tus sistemas.' Aplicado a Rafael, esto significa que...",o:["su rutina diaria determina el logro","su meta anual por si sola garantiza todo","su motivacion define el resultado","su talento innato marca el destino"],c:0,e:"El resultado depende del sistema (procesos diarios), no de la meta ni la motivacion puntual."},
+  {m:3,t:"unica",d:"avanzado",q:"¿Cual de estos es uno de los 4 problemas de las metas que señala Clear?",o:["Nunca ofrecen ninguna direccion","Crean un efecto yo-yo","Eliminan el sistema por completo","Impiden todo tipo de progreso real"],c:1,e:"Las metas crean un efecto yo-yo: al alcanzarlas se pierde el impulso del comportamiento."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"Rafael tiene un mal dia y no prospecta. Segun la logica de los votos, ¿como lo interpreta Clear?",o:["Como el fin de su identidad","Como un voto que anula todos","Como prueba de mala identidad","Como un voto en minoria"],c:3,e:"Un mal dia es solo un voto en minoria; la identidad la define la mayoria de los votos."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"El sistema de Rafael es IA 20 min, 1 prospecto/dia y spinning 3x semana. Segun Clear, ¿que aportan las metas frente a esto?",o:["Aportan el progreso real diario","Sustituyen al sistema por completo","Aportan direccion, no el progreso","Garantizan la felicidad presente"],c:2,e:"Las metas dan direccion, pero el progreso proviene del sistema de procesos consistentes."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"Rafael se pregunta '¿la mayoria de mis votos van en la direccion correcta?'. ¿Que principio aplica?",o:["Cada accion es un voto de identidad","Las metas siempre superan a los sistemas","La recompensa cierra todo el bucle","El entorno diseña cada conducta"],c:0,e:"Cada accion es un voto por el tipo de persona que quieres ser; cuenta la mayoria."},
+  {m:3,t:"vf",d:"avanzado",q:"Segun Clear, basta con declarar una nueva identidad para que el cambio sea duradero, aunque no acumules evidencia conductual.",o:["Verdadero","Falso"],c:1,e:"Falso: la identidad necesita votos (acciones) que la respalden; declararla sin evidencia no basta."},
+  {m:3,t:"vf",d:"avanzado",q:"Ganadores y perdedores pueden compartir exactamente las mismas metas; lo que los separa es el sistema.",o:["Verdadero","Falso"],c:0,e:"Verdadero: si las metas coinciden, la diferencia esta en el sistema de procesos que aplican."},
+  {m:3,t:"multiple",d:"avanzado",q:"Segun el insight de identidad y votos, ¿cuales afirmaciones son correctas? (elige 2)",o:["Cada accion es un voto por tu yo futuro","Necesitas la unanimidad total de tus actos","Una meta cumplida cambia la identidad","No requieres unanimidad, sino mayoria"],c:[0,3],e:"Cada accion es un voto por tu identidad futura y basta con mayoria simple, no unanimidad."},
+  {m:4,t:"unica",d:"avanzado",caso:true,q:"Rafael, agotado por las noches del bebe, no logra empezar a estudiar IA. ¿Que version de 2 minutos aplica?",o:["Estudiar un paper completo","Solo abrir el curso","Leer 20 paginas seguidas","Resumir todo el modulo"],c:1,e:"La Regla de los 2 Minutos reduce 'estudiar IA' a 'abrir el curso': domina el presentarte."},
+  {m:4,t:"unica",d:"avanzado",caso:true,q:"La Regla de los 2 Minutos reduce el habito de 'hacer spinning' a...",o:["completar la clase entera de golpe","pedalear treinta minutos seguidos","subir toda la resistencia posible","ponerme la ropa de ejercicio"],c:3,e:"'Hacer spinning' se reduce a 'ponerme la ropa de ejercicio': primero el inicio, no la ejecucion."},
+  {m:4,t:"unica",d:"avanzado",q:"Segun Clear, ¿cual es el mayor obstaculo de un habito nuevo?",o:["El inicio, no la ejecucion","La falta total de talento","La ausencia de una meta clara","El exceso de motivacion diaria"],c:0,e:"El mayor obstaculo no es la ejecucion sino el inicio; por eso se reduce a 2 minutos."},
+  {m:4,t:"unica",d:"avanzado",q:"Clear afirma: 'Domina el arte de presentarte antes de...'. ¿Que completa la frase?",o:["de fijar tu meta","de buscar recompensa","de optimizar","de medir resultados"],c:2,e:"Primero domina el arte de presentarte; recien despues optimizas el rendimiento."},
+  {m:4,t:"unica",d:"avanzado",caso:true,q:"En una noche especialmente dura con el bebe, la version de 2 minutos le sirve a Rafael sobre todo para...",o:["forzar el rendimiento maximo","mantener viva la cadena","recuperar el sueño perdido","duplicar la sesion siguiente"],c:1,e:"En dias duros la version de 2 minutos mantiene viva la cadena y evita romper el habito."},
+  {m:4,t:"unica",d:"avanzado",q:"¿Por que funciona reducir el habito a 2 minutos, segun Clear?",o:["Porque agota mucha menos energia fisica","Porque garantiza siempre la meta final","Porque elimina por completo la friccion","Porque vencer el inicio es lo dificil"],c:3,e:"Vencer el inicio es lo dificil; una vez presentado, continuar resulta mucho mas facil."},
+  {m:4,t:"unica",d:"avanzado",caso:true,q:"Rafael convierte 'estudiar IA' en 'abrir el curso'. ¿Que tecnica esta usando?",o:["La regla de los 2 minutos","El apilamiento de varios habitos","La tentacion bien agrupada","El contrato de compromiso mutuo"],c:0,e:"Reducir el habito a una accion de ≤2 min es la Regla de los 2 Minutos."},
+  {m:4,t:"unica",d:"avanzado",caso:true,q:"Rafael quiere pasar directo a sesiones de spinning de 45 min diarios desde el primer dia. Segun la Regla de 2 Minutos, el riesgo es...",o:["que la recompensa sea muy alta","que la cadena se acorte sola","que nunca llegue a empezar","que la meta se cumpla antes"],c:2,e:"Sin reducir el inicio, la barrera de arranque crece y el riesgo es que nunca llegue a empezar."},
+  {m:4,t:"unica",d:"avanzado",q:"Clear afirma que primero debes dominar el presentarte y solo despues...",o:["cambiar tu meta principal","medir todos los resultados","aumentar tu motivacion","optimizar el rendimiento"],c:3,e:"El orden es presentarte primero y optimizar el rendimiento despues, no al reves."},
+  {m:4,t:"unica",d:"avanzado",caso:true,q:"Tras varios dias saltandose el estudio por el bebe, ¿que le recomienda la Regla de 2 Minutos a Rafael?",o:["Compensar con sesiones dobles","Hacer solo la version minima","Pausar el habito unas semanas","Esperar a dormir mejor primero"],c:1,e:"Hacer la version minima de 2 min mantiene la cadena viva incluso en los dias mas duros."},
+  {m:4,t:"vf",d:"avanzado",q:"Segun la Regla de los 2 Minutos, lo primero que debes optimizar es la intensidad de la sesion, no el habito de presentarte.",o:["Verdadero","Falso"],c:1,e:"Falso: primero se domina el arte de presentarte; la optimizacion de la intensidad viene despues."},
+  {m:4,t:"multiple",d:"avanzado",q:"¿Cuales son ejemplos correctos de la Regla de los 2 Minutos? (elige 2)",o:["'Hacer spinning' pasa a 'ponerme la ropa'","'Estudiar IA' pasa a 'leer un paper entero'","'Estudiar IA' pasa a 'abrir el curso'","'Prospectar' pasa a 'cerrar diez ventas'"],c:[0,2],e:"La regla reduce a ≤2 min: ponerse la ropa o abrir el curso, no leer un paper ni cerrar ventas."}
+];
+if (typeof module !== 'undefined') { module.exports = HAB_A; }
+var HAB_B = [
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"Rafael ancla 'después de preparar el café, estudio IA'. ¿Por qué el apilamiento usa un hábito ya existente como disparador?",o:["Consume bastante menos energía que partir de cero","Obliga a más fuerza de voluntad cada día","Ya tiene vías neuronales que actúan de señal","Elimina la necesidad de toda recompensa"],c:2,e:"El apilamiento (BJ Fogg) usa un hábito consolidado como recordatorio porque su vía neuronal ya existe y no exige motivación extra."},
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"En el estudio de Anne Thorndike (2012, hospital de Boston), ¿qué elevó el consumo de agua un 25%?",o:["Una campaña de educación nutricional intensa","Reorganizar dónde se ubicaban las bebidas","Prohibir por completo las bebidas azucaradas","Premiar con dinero a quien tomara más agua"],c:1,e:"Solo se rediseñó el entorno haciendo el agua más visible, sin educación: el entorno es el arquitecto invisible del hábito."},
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"Rafael quiere asegurar su spinning. Según Gollwitzer (NYU), ¿qué formato multiplica 2-3x la probabilidad?",o:["Prometerse en general entrenar mucho más","Esperar a tener ganas de entrenar duro","Comprar ropa deportiva mucho más costosa","Cuando suene la alarma, iré a spinning"],c:3,e:"La intención de implementación 'cuando (situación), haré (acción)' fija cuándo y dónde, y por eso dispara la conducta."},
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"Según el punto decisivo, ¿cuál es el verdadero momento que define si Rafael entrena?",o:["Terminar la sesión completa de spinning","Sentir mucha motivación al ejercitarse","La decisión de ponerse los tenis","Medir las calorías que quemó al final"],c:2,e:"El momento decisivo no es el ejercicio sino la pequeña decisión previa de ponerse los tenis, que encauza las horas siguientes."},
+  {m:5,t:"unica",d:"avanzado",q:"¿Qué distingue a quienes sostienen buenos hábitos, según el diseño del entorno?",o:["Estructuraron su entorno a su favor","Tienen mucha más disciplina que el resto","Nacieron con más fuerza de voluntad","Se premian con comida tras cada logro"],c:0,e:"No tienen más disciplina: estructuraron el entorno para que la disciplina fuera innecesaria."},
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"Rafael revisa redes en exceso de noche. Bajo diseño del entorno, ¿qué hacer con esa señal?",o:["Repetírsela hasta que vaya perdiendo fuerza","Premiarse cada vez que la resiste bien","Anotarla en su tracker diario habitual","Hacerla invisible sacándola de la vista"],c:3,e:"Para un mal hábito se invierte la 1ª ley: hacer la señal invisible sacándola de la vista."},
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"Rafael arma la cadena 'después del café, abro el curso de IA'. ¿Qué principio aplica?",o:["La meta importa mucho más que el proceso diario","Cada acción dispara la siguiente en cadena","La intensidad supera a la consistencia","El resultado se premia con gratificación"],c:1,e:"El apilamiento crea cadenas donde cada acción sirve de señal para la siguiente."},
+  {m:5,t:"unica",d:"avanzado",q:"En Hábitos Atómicos, ¿cómo se describe el papel del entorno sobre la conducta?",o:["El arquitecto invisible de tus hábitos","Un obstáculo menor a la fuerza de voluntad","Una recompensa diferida de largo plazo","El resultado final de tu identidad real"],c:0,e:"Clear llama al entorno el arquitecto invisible de los hábitos: moldea la conducta más que la voluntad."},
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"Con noches fragmentadas, Rafael quiere anclar 10 min de spinning. ¿Cuál es un buen apilamiento?",o:["Cuando por fin tenga un día entero libre, entreno","Si sobra energía tras el trabajo, entreno","Tras darle la leche al bebé, hago spinning","Apenas sienta motivación, subo a la bici"],c:2,e:"El apilamiento ancla el hábito nuevo a uno existente y concreto (dar la leche), no a la motivación ni al tiempo libre."},
+  {m:5,t:"unica",d:"avanzado",q:"La fórmula del apilamiento de hábitos fue adaptada del trabajo de...",o:["Anne Thorndike, del hospital de Boston","Wendy Wood, investigadora de la USC","Katy Milkman, profesora de Wharton","BJ Fogg, investigador de Stanford"],c:3,e:"El apilamiento ('después de X, haré Y') se adapta del trabajo de BJ Fogg en Stanford."},
+  {m:5,t:"vf",d:"avanzado",q:"El diseño del entorno funciona porque opera de forma permanente y sin costo cognitivo continuo.",o:["Verdadero","Falso"],c:0,e:"Rediseñar el entorno actúa siempre en segundo plano, a diferencia de la fuerza de voluntad que se agota."},
+  {m:5,t:"vf",d:"avanzado",q:"El apilamiento de hábitos exige mucha motivación porque el hábito ancla aún no tiene vías neuronales.",o:["Verdadero","Falso"],c:1,e:"Falso: el hábito ancla ya está consolidado y sirve de recordatorio, por eso el nuevo no depende de motivación."},
+  {m:5,t:"multiple",d:"avanzado",q:"Según el diseño del entorno, ¿qué acciones hacen más OBVIAS las señales de buenos hábitos? (elige todas)",o:["Dejar la ropa de spinning ya lista","Poner el curso de IA abierto y visible","Esconder el celular en otra habitación","Guardar los tenis en un clóset cerrado"],c:[0,1],e:"Hacer obvias las señales buenas significa dejarlas a la vista; esconder tenis o el celular reduce señales, no las hace obvias."},
+  {m:6,t:"unica",d:"avanzado",q:"Wendy Wood (USC) halló que cerca del 43% de nuestras acciones diarias son...",o:["Decisiones plenamente deliberadas","Impulsadas por metas externas","Producto de pura fuerza de voluntad","Habituales, no deliberadas"],c:3,e:"Cerca del 43% de las acciones son habituales y automáticas, por eso conviene diseñar la fricción a favor."},
+  {m:6,t:"unica",d:"avanzado",caso:true,q:"Rafael quiere entrenar en la mañana. ¿Qué acción reduce la fricción de inicio?",o:["Dejar la ropa deportiva lista de noche","Proponerse tener más disciplina diaria","Fijar una meta anual de kilómetros totales","Premiarse con comida rica tras entrenar"],c:0,e:"Reducir un paso de fricción (ropa lista) baja el esfuerzo de inicio; la Ley de la Menor Fricción nos lleva a lo más fácil."},
+  {m:6,t:"unica",d:"avanzado",caso:true,q:"Para reducir el uso nocturno del celular, ¿qué aplica la Ley de la Menor Fricción?",o:["Dejarlo cargando junto a la cama","Revisar solo las apps de trabajo","Guardarlo en otra habitación","Anotar cada vez que lo desbloquea"],c:2,e:"Para un mal hábito se aumenta la fricción: guardar el celular lejos añade pasos y reduce el uso."},
+  {m:6,t:"unica",d:"avanzado",caso:true,q:"El habit tracking con una X diaria (efecto Seinfeld) funciona porque la marca es...",o:["Señal visual y además satisfactoria","Una meta de resultado lejano en meses","Un castigo por cada día que se falla","Una recompensa diferida al futuro lejano"],c:0,e:"La X es señal visual (1ª ley), motiva ver la cadena (2ª ley) y registrar es satisfactorio (4ª ley)."},
+  {m:6,t:"unica",d:"avanzado",caso:true,q:"Rafael trackea calorías quemadas y empieza a manipular la cifra. ¿Qué trampa describe esto?",o:["La Regla de Goldilocks mal calibrada","El Valle de la Decepción prolongado","La ley del menor esfuerzo posible","La Ley de Goodhart sobre la métrica"],c:3,e:"La Ley de Goodhart: al volver la métrica un objetivo, se optimiza la cifra en vez del resultado real."},
+  {m:6,t:"unica",d:"avanzado",caso:true,q:"Para evitar la Ley de Goodhart, ¿qué debería trackear Rafael de su spinning?",o:["Las calorías totales que quemó cada día","El hábito de entrada: entrené sí o no","El peso corporal medido cada semana","El ranking frente a otros ciclistas"],c:1,e:"Conviene trackear el hábito de entrada (entrené o no), no el resultado de salida que invita a manipular la métrica."},
+  {m:6,t:"unica",d:"avanzado",q:"Katy Milkman (Wharton) logró +51% de visitas al gimnasio permitiendo audiolibros adictivos solo al...",o:["terminar toda la rutina semanal","cumplir una meta de peso mensual","hacer ejercicio en el gimnasio","descansar entre serie y serie"],c:2,e:"El bundling vinculó el audiolibro deseado exclusivamente al momento de ejercitarse, subiendo la asistencia 51%."},
+  {m:6,t:"unica",d:"avanzado",q:"El bundling de tentaciones consiste en vincular una acción que necesitas con una que...",o:["deberías evitar por completo","quieres o disfrutas hacer","produce culpa poco después","exige mucho esfuerzo físico"],c:1,e:"El bundling empareja lo que necesitas con lo que quieres, transfiriendo el deseo hacia la conducta útil."},
+  {m:6,t:"unica",d:"avanzado",caso:true,q:"Rafael quiere sostener el spinning. ¿Qué aplicación del bundling encaja mejor?",o:["Oír su podcast favorito solo al pedalear","Ver el podcast en cualquier momento del día","Prohibirse todo tipo de podcast ya","Premiarse con postre tras entrenar"],c:0,e:"El bundling reserva el placer (podcast) exclusivamente para el momento de la acción que necesita sostener."},
+  {m:6,t:"unica",d:"avanzado",q:"En el bundling, ¿por qué termina motivando la acción que necesitas?",o:["El esfuerzo físico baja de manera muy notable","La recompensa aparece varios meses después","La meta final se vuelve mucho más pequeña","La dopamina anticipada se transfiere a ella"],c:3,e:"La dopamina anticipatoria de lo que quieres se transfiere a lo que necesitas, volviéndolo más atractivo."},
+  {m:6,t:"unica",d:"avanzado",q:"Según la Ley de la Menor Fricción, reducir un solo paso puede ser la diferencia entre...",o:["una meta ambiciosa y una meta modesta","el interés compuesto y el lineal simple","un hábito que se sostiene y uno que muere","una identidad fuerte y una identidad débil"],c:2,e:"Reducir un único paso de fricción puede decidir si un hábito se sostiene o muere."},
+  {m:6,t:"vf",d:"avanzado",q:"Marcar una X en el tracker aprovecha la 1ª, la 2ª y la 4ª ley del cambio de comportamiento.",o:["Verdadero","Falso"],c:0,e:"La X es señal visible (1ª), muestra progreso motivador (2ª) y registrar resulta satisfactorio (4ª)."},
+  {m:6,t:"multiple",d:"avanzado",q:"¿Qué medidas AUMENTAN la fricción de un mal hábito? (elige 2)",o:["Desinstalar la app de la pantalla","Poner los snacks en un estante alto","Dejar la ropa de gym ya lista","Abrir el curso de IA en el escritorio"],c:[0,1],e:"Desinstalar la app y subir los snacks añaden pasos a los malos hábitos; dejar la ropa lista reduce fricción a uno bueno."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"Rafael no entrenó ayer por una noche dura con el bebé. Según 'nunca fallar dos veces', hoy...",o:["puede descansar un día más sin culpa","entrenar no es negociable","debe duplicar la intensidad mañana","conviene esperar a estar motivado"],c:1,e:"Un fallo es un accidente; dos seguidos inician el hábito de no hacer, por eso hoy no es negociable."},
+  {m:7,t:"unica",d:"avanzado",q:"¿Cómo distingue el libro un fallo aislado de un patrón peligroso?",o:["Un día es accidente; dos, nuevo hábito","Un día ya arruina todo el progreso previo","Solo importa el promedio anual final","Tres fallos seguidos son aceptables"],c:0,e:"Un día de fallo es un accidente; dos consecutivos son el inicio de un nuevo hábito."},
+  {m:7,t:"unica",d:"avanzado",q:"Según 'nunca fallar dos veces', ¿qué secuencia semanal es la ideal?",o:["Fallar dos días seguidos y luego recuperar","Máxima intensidad tres días sueltos","Perfección absoluta todos los días","Un fallo aislado, nunca dos seguidos"],c:3,e:"El patrón ideal admite un fallo aislado (X-X-X-F-R-X-X) pero nunca dos fallos seguidos."},
+  {m:7,t:"unica",d:"avanzado",q:"El libro sostiene que a largo plazo vence...",o:["la intensidad esporádica y potente","la consistencia imperfecta","la motivación de cada mañana","la perfección sin ningún fallo"],c:1,e:"La consistencia imperfecta supera a la intensidad esporádica; la perfección es imposible y contraproducente."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"Según la Regla de Goldilocks, la motivación de Rafael es máxima cuando la tarea es...",o:["idéntica a tu nivel actual exacto","mucho más difícil que tu nivel base","un 4% más difícil que tu nivel","trivial para no generar estrés"],c:2,e:"La motivación es máxima con tareas cerca de un 4% más difíciles que tu nivel actual, el canal de flujo."},
+  {m:7,t:"unica",d:"avanzado",q:"En la Regla de Goldilocks, una tarea demasiado fácil produce ___ y una demasiado difícil, ___.",o:["ansiedad; aburrimiento","aburrimiento; ansiedad","flujo; motivación plena","energía; cansancio total"],c:1,e:"Demasiado fácil aburre; demasiado difícil genera ansiedad; el punto medio es el canal de flujo."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"Un paper de IA le resulta incomprensible a Rafael. Según Goldilocks, ¿qué debería hacer?",o:["Insistir hasta forzar el entendimiento","Saltar a un proyecto muy ambicioso","Abandonar el estudio de IA del todo","Bajar a un tutorial más accesible"],c:3,e:"Si la tarea genera ansiedad por ser muy difícil, se baja la dificultad (un tutorial) para volver al canal de flujo."},
+  {m:7,t:"unica",d:"avanzado",q:"El canal de flujo, donde la dificultad está bien calibrada, fue descrito por...",o:["Peter Gollwitzer, de la NYU","Mihaly Csikszentmihalyi","Wendy Wood, de la USC","James Clear directamente"],c:1,e:"Csikszentmihalyi describió el flujo, que Clear vincula a la Regla de Goldilocks."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"Un tutorial de IA le resulta trivial a Rafael. Según Goldilocks, ¿qué conviene?",o:["Repetirlo varias veces más","Subir a un proyecto real","Quedarse en ese nivel cómodo","Dejar de estudiar por hoy"],c:1,e:"Si la tarea aburre por ser muy fácil, se sube la dificultad (un proyecto) para recuperar la motivación."},
+  {m:7,t:"vf",d:"avanzado",q:"Un solo día sin ejercicio te vuelve sedentario, según 'nunca fallar dos veces'.",o:["Verdadero","Falso"],c:1,e:"Falso: un día no te vuelve sedentario; el peligro es encadenar fallos, y dos semanas sí lo hacen."},
+  {m:7,t:"vf",d:"avanzado",q:"La perfección diaria es imposible y además contraproducente para sostener un hábito.",o:["Verdadero","Falso"],c:0,e:"Buscar perfección lleva a abandonar al primer fallo; la consistencia imperfecta es más sólida."},
+  {m:7,t:"multiple",d:"avanzado",q:"¿Qué señales indican que una tarea salió del canal de flujo de Goldilocks? (elige 2)",o:["Aburrimiento por ser muy fácil","Ansiedad por ser muy difícil","Motivación bien calibrada","Progreso constante y fluido"],c:[0,1],e:"Fuera del canal aparecen aburrimiento (muy fácil) o ansiedad (muy difícil); la motivación calibrada indica estar dentro."},
+  {m:8,t:"unica",d:"avanzado",caso:true,q:"Rafael lleva semanas puliendo su plan de negocio pero no llama a ningún cliente. Esto es...",o:["acción que genera resultados","un sistema bien diseñado","movimiento, no acción","consistencia imperfecta buena"],c:2,e:"Planear se siente productivo pero es movimiento; llamar al primer prospecto sería la acción que produce resultados."},
+  {m:8,t:"unica",d:"avanzado",q:"¿Por qué el movimiento resulta tan tentador frente a la acción?",o:["Expone al fallo de forma directa","Parece útil y evita el fallo","Produce resultados más rápido","Cierra bien el bucle del hábito"],c:1,e:"El movimiento es procrastinación productiva: te sientes ocupado sin exponerte al riesgo de fallar."},
+  {m:8,t:"unica",d:"avanzado",caso:true,q:"Según movimiento vs acción, ¿cómo debería repartir Rafael su tiempo?",o:["20% preparación, 80% ejecución","80% preparación, 20% ejecución","50% y 50% de forma pareja","100% en planear a fondo primero"],c:0,e:"El libro sugiere limitar la preparación al 20% y dedicar el 80% a ejecutar."},
+  {m:8,t:"unica",d:"avanzado",caso:true,q:"Cuando el spinning deja de ser novedoso, ¿qué diferencia al profesional del amateur?",o:["El profesional tiene mucho más talento","El amateur entrena bastantes más horas","El amateur depende del calendario fijo","El profesional sigue pese al tedio"],c:3,e:"La diferencia no es el talento sino la relación con el aburrimiento: el profesional sigue cuando se aburre."},
+  {m:8,t:"unica",d:"avanzado",q:"Según el papel del aburrimiento, los profesionales ejecutan según...",o:["el ánimo del día concreto","el calendario, no el ánimo","el nivel de talento innato","la meta final de resultados grandes"],c:1,e:"Los profesionales ejecutan según el calendario, no según cómo se sienten ese día."},
+  {m:8,t:"unica",d:"avanzado",q:"Los buenos hábitos dan recompensa diferida. ¿Qué recomienda el libro para sostenerlos?",o:["Esperar con paciencia el resultado","Aumentar mucho la intensidad diaria","Crear recompensas inmediatas","Fijar metas mucho más ambiciosas"],c:2,e:"Como el cerebro prefiere lo inmediato, conviene crear recompensas inmediatas artificiales que cierren el bucle."},
+  {m:8,t:"unica",d:"avanzado",q:"El cerebro prioriza la recompensa inmediata sobre la futura. ¿Cómo se llama ese sesgo?",o:["El descuento temporal","El interés compuesto conductual","La Ley de Goodhart clásica","El efecto Seinfeld diario"],c:0,e:"El descuento temporal hace que valoremos más la recompensa inmediata que la diferida."},
+  {m:8,t:"unica",d:"avanzado",caso:true,q:"Rafael, emprendedor en fase temprana, quiere revisar sus hábitos. ¿Qué propone el libro?",o:["Fijar una meta única e inamovible siempre","No cuestionar nunca su propio sistema","Trackear solo las métricas de salida","Revisión Anual e Informe de Integridad"],c:3,e:"El libro propone una Revisión Anual y un Informe de Integridad semestral para evitar que los hábitos se vuelvan jaulas."},
+  {m:8,t:"unica",d:"avanzado",q:"El libro advierte que los hábitos pueden volverse jaulas si...",o:["los cuestionas con frecuencia","nunca los cuestionas","los apilas en larga cadena","los haces demasiado fáciles"],c:1,e:"Sin revisión, un hábito óptimo hace meses queda obsoleto y se vuelve una jaula."},
+  {m:8,t:"unica",d:"avanzado",caso:true,q:"Para un emprendedor que puede pivotar, ¿qué identidad recomienda anclar el libro?",o:["Basada en un rol o cargo puntual","Basada en la meta de facturación","Basada en valores duraderos","Basada en el sector actual exacto"],c:2,e:"Una identidad basada en valores ('ayudo a organizaciones a mejorar') resiste mejor un pivote que un rol específico."},
+  {m:8,t:"vf",d:"avanzado",q:"Escribir el plan de negocio perfecto es acción, no movimiento, porque exige mucho esfuerzo.",o:["Verdadero","Falso"],c:1,e:"Falso: escribir el plan perfecto es movimiento; la acción es ejecutar, como llamar al primer prospecto."},
+  {m:8,t:"multiple",d:"avanzado",q:"¿Cuáles son ejemplos de recompensa inmediata artificial para cerrar el bucle? (elige todas)",o:["La marca de la X en el tracker","El café solo tras estudiar","El podcast solo al entrenar","Una meta de peso a un año"],c:[0,1,2],e:"La X, el café y el podcast son recompensas inmediatas que refuerzan el hábito; la meta de peso es diferida."}
+];
+var CLUB_A = [
+  {m:1,t:"unica",d:"avanzado",caso:true,q:"Rafael tiene 30 min antes de que despierte el bebé. ¿Qué versión del ritual matutino le conviene según Sharma?",o:["Un 10/10/10 sostenido a diario","Un 20/20/20 aunque lo abandone","Solo el bloque de mover cuerpo","Aplazar hasta tener la hora libre"],c:0,e:"No hace falta empezar perfecto: una versión mínima sostenida vence a una 20/20/20 aspiracional que abandonas al tercer día."},
+  {m:1,t:"unica",d:"avanzado",caso:true,q:"En su bloque MOVER, Rafael hace spinning intenso. ¿Qué cóctel bioquímico busca Sharma que se libere?",o:["Melatonina y adrenalina pura","BDNF, endorfinas y dopamina","Cortisol y noradrenalina alta","Insulina, leptina y grelina"],c:1,e:"MOVER es ejercicio intenso que libera BDNF, endorfinas, dopamina y serotonina, y reduce el cortisol nocturno."},
+  {m:1,t:"unica",d:"avanzado",caso:true,q:"Rafael quiere que su bloque CRECER de 20 min rinda a largo plazo. ¿Qué cifra anual cita Sharma?",o:["Cerca de 60 horas al año","Cerca de 90 horas al año","Más de 120 horas al año","Alrededor de 200 horas año"],c:2,e:"20 min diarios de aprendizaje equivalen a más de 120 horas anuales."},
+  {m:1,t:"unica",d:"avanzado",caso:true,q:"En el bloque REFLEXIONAR, ¿cuál de estas prácticas encaja según Sharma para Rafael?",o:["Responder correos del cliente","Planear la agenda con el equipo","Leer un paper técnico de IA","Journaling o visualización"],c:3,e:"REFLEXIONAR es meditación, journaling o visualización; leer y estudiar corresponde a CRECER."},
+  {m:1,t:"unica",d:"avanzado",caso:true,q:"Según insight 1, ¿cuál es el verdadero poder de la Fórmula 20/20/20 para Rafael?",o:["Integrar cuerpo, mente y espíritu","Sumar más horas de trabajo al día","Levantarse justo a las cinco a.m.","Hacer el ejercicio más intenso posible"],c:0,e:"El poder está en la integración de cuerpo, mente y espíritu antes de que el mundo demande tu atención."},
+  {m:1,t:"unica",d:"avanzado",caso:true,q:"Rafael estudia IA en su bloque CRECER. ¿Qué reduce, según insight 1, el ejercicio matutino previo?",o:["La glucosa en sangre diurna","El cortisol nocturno","La presión arterial basal","El ritmo cardíaco en reposo"],c:1,e:"El ejercicio matutino reduce el cortisol nocturno y crea un cóctel bioquímico de claridad."},
+  {m:1,t:"vf",d:"avanzado",q:"Según Sharma, es mejor sostener un 10/10/10 diario que abandonar un 20/20/20 al tercer día.",o:["Verdadero","Falso"],c:0,e:"La versión mínima sostenida vence a la aspiracional que abandonas pronto."},
+  {m:1,t:"vf",d:"avanzado",q:"El bloque CRECER de la Fórmula 20/20/20 consiste en meditar y hacer journaling.",o:["Verdadero","Falso"],c:1,e:"Eso es REFLEXIONAR; CRECER es lectura, podcasts o estudio deliberado."},
+  {m:1,t:"unica",d:"avanzado",caso:true,q:"Con noches fragmentadas, Rafael duda del orden de los bloques. ¿Cuál es la secuencia de la Fórmula?",o:["Reflexionar, mover, crecer","Crecer, reflexionar, mover","Mover, reflexionar, crecer","Mover, crecer y reflexionar"],c:2,e:"El orden es MOVER, REFLEXIONAR y CRECER, en tres bloques de 20 min."},
+  {m:1,t:"multiple",d:"avanzado",q:"¿Qué actividades pertenecen correctamente al bloque MOVER de Rafael? (elige 2)",o:["Spinning intenso al despertar","Escuchar un podcast de negocios","Trote corto que suba el pulso","Escribir metas en su journal"],c:[0,2],e:"MOVER es ejercicio intenso; el podcast es CRECER y escribir en el journal es REFLEXIONAR."},
+  {m:1,t:"unica",d:"avanzado",caso:true,q:"Rafael pregunta qué debe ocurrir antes de que el mundo le exija atención, según la Fórmula.",o:["Revisar métricas de su consultoría","Responder mensajes de sus clientes","Alinear la agenda de todo el equipo","Integrar cuerpo, mente y espíritu"],c:3,e:"La integración de cuerpo, mente y espíritu precede a las demandas del mundo."},
+  {m:1,t:"unica",d:"avanzado",caso:true,q:"Rafael solo logró 12 min de ejercicio hoy por el bebé. ¿Cómo lo interpreta la Fórmula 20/20/20?",o:["Vale: la versión mínima cuenta","Nulo si no completa los 20 min","Debe reponer el tiempo faltante","Solo sirve si lo hace perfecto"],c:0,e:"Una versión mínima sostenida cuenta y vence a la aspiracional abandonada."},
+  {m:1,t:"unica",d:"avanzado",caso:true,q:"Para Rafael, ¿qué distingue a MOVER de un simple calentamiento, según Sharma?",o:["Debe durar unos veinte minutos","Es ejercicio intenso, no suave","Se realiza después de reflexionar","Requiere ir al gimnasio siempre"],c:1,e:"MOVER es ejercicio intenso que libera el cóctel bioquímico, no un calentamiento suave."},
+
+  {m:2,t:"unica",d:"avanzado",caso:true,q:"Rafael revisa el celular y las noticias al despertar. ¿Qué estructura cerebral activa ese arranque?",o:["El córtex prefrontal","El hipocampo dorsal","La amígdala","El núcleo accumbens"],c:2,e:"Empezar reactivo activa la amígdala: pasas el día apagando incendios."},
+  {m:2,t:"unica",d:"avanzado",caso:true,q:"Según Sharma, ¿cuál es el verdadero mensaje del hábito matutino para Rafael?",o:["Diseñar tu primera hora a propósito","Levantarse siempre a las 5 en punto","Dormir menos para producir más horas","Copiar la rutina de algún CEO famoso"],c:0,e:"No es la hora exacta, sino diseñar la primera hora con intención; se vuelve el blueprint del día."},
+  {m:2,t:"unica",d:"avanzado",caso:true,q:"Rafael cita a Huberman para justificar la luz temprana. ¿Qué aprovecha, según insight 2?",o:["El bajón del cortisol diurno","El pico de dopamina matutina","El descenso de melatonina lento","El repunte de serotonina nocturna"],c:1,e:"Huberman: la luz temprana calibra el reloj circadiano y aprovecha el pico de dopamina matutina."},
+  {m:2,t:"unica",d:"avanzado",caso:true,q:"El bebé despertó 4 veces. Rafael piensa: ‘no tengo tiempo, nadie me apoya’. ¿Qué narrativa es esa?",o:["Narrativa de líder proactivo","Narrativa realista y neutra","Narrativa estoica madura","Narrativa de víctima"],c:3,e:"Es narrativa de víctima; el líder pregunta cómo adapta su sistema y qué acción toma hoy."},
+  {m:2,t:"unica",d:"avanzado",caso:true,q:"¿Qué pregunta reformula la mentalidad de líder que propone Sharma a Rafael?",o:["¿Cómo adapto mi sistema hoy?","¿Por qué siempre me pasa esto?","¿Quién tiene la culpa de esto?","¿Cuándo mejorará mi entorno?"],c:0,e:"El líder pregunta qué controla y qué acción toma; la víctima culpa a las circunstancias."},
+  {m:2,t:"unica",d:"avanzado",caso:true,q:"Según insight 19, ¿en qué reside realmente la diferencia entre víctima y líder?",o:["En las circunstancias externas","En el nivel de recursos propios","En la narrativa que se elige","En la suerte de cada uno de ellos"],c:2,e:"La diferencia no está en las circunstancias, que suelen ser iguales, sino en la relación narrativa."},
+  {m:2,t:"unica",d:"avanzado",caso:true,q:"Rafael cede su atención al celular al despertar. Según Sharma, ¿cómo pasará el día?",o:["Operando desde la intención","Apagando incendios ajenos","Con foco pleno en su meta","Liderando su agenda diaria"],c:1,e:"Empezar reactivo con el celular te hace apagar incendios de otros todo el día."},
+  {m:2,t:"unica",d:"avanzado",caso:true,q:"¿Cuál es, según insight 2, el ‘error fatal’ al arrancar la mañana?",o:["Meditar mucho antes de moverse","Saltarse siempre el desayuno","Madrugar sin acostarse antes","Ceder la atención al celular"],c:3,e:"El error fatal es ceder tu atención al celular y las redes."},
+  {m:2,t:"vf",d:"avanzado",q:"Para Sharma, lo esencial es levantarse exactamente a las 5 a.m., más que diseñar la primera hora.",o:["Verdadero","Falso"],c:1,e:"El mensaje no es la hora exacta, sino diseñar la primera hora con intención absoluta."},
+  {m:2,t:"multiple",d:"avanzado",q:"¿Qué frases reflejan la narrativa de líder que Rafael puede adoptar? (elige 2)",o:["El bebé no me deja avanzar","¿Qué puedo controlar hoy?","Nadie apoya mi proyecto","¿Qué acción tomo ahora?"],c:[1,3],e:"El líder pregunta qué controla y qué acción toma; la víctima describe los obstáculos."},
+  {m:2,t:"unica",d:"avanzado",caso:true,q:"Rafael quiere que su primera hora funcione como plano del resto del día. Sharma la llama:",o:["El ancla circadiana diaria","El ritual de recuperación","El blueprint del día","La burbuja de enfoque total"],c:2,e:"Diseñar la primera hora con intención la vuelve el blueprint del día."},
+  {m:2,t:"unica",d:"avanzado",caso:true,q:"¿Qué caracteriza, según insight 2, un arranque proactivo frente a uno reactivo?",o:["Opera desde la intención","Responde a lo urgente ajeno","Sigue el ritmo de las redes","Reacciona a las noticias del día"],c:0,e:"El arranque proactivo opera desde la intención; el reactivo cede a celular, noticias y emails."},
+
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"Rafael tiene mente afilada pero relaciones descuidadas. ¿Qué imperio interior está débil?",o:["El Mindset brillante","El Heartset","El Healthset fuerte","El Soulset elevado"],c:1,e:"HEARTSET es la salud emocional y las relaciones; con ellas rotas no se sostiene el éxito."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"Rafael descuida sueño y ejercicio por trabajar más. ¿Qué imperio pone en riesgo primero?",o:["El Mindset visionario","El Heartset afectivo","El Healthset físico","El Soulset trascendente"],c:2,e:"HEALTHSET es la salud física; sin ella, las otras tres dimensiones colapsan."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"Rafael logra metas pero siente que nada tiene sentido. ¿Qué imperio le falta nutrir?",o:["El Mindset muy estratégico","El Heartset más relacional","El Healthset del cuerpo sano","El Soulset del propósito"],c:3,e:"SOULSET es propósito y trascendencia; sin él, la motivación se agota."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"Según insight 3, ¿por qué brillar solo en Mindset es riesgoso para Rafael?",o:["Es fragilidad camuflada de éxito","Garantiza un éxito muy duradero ya","Basta para sostener el liderazgo","Elimina la necesidad de descanso"],c:0,e:"Brillar solo en Mindset es fragilidad disfrazada de éxito; se requieren los 4 imperios."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"¿Qué práctica aplicada propone insight 3 para mantener equilibrados los 4 imperios?",o:["Trabajar más el imperio fuerte","Evaluar cada semana cuál falla","Priorizar por regla el Mindset","Alternar imperios cada trimestre"],c:1,e:"La aplicación práctica es evaluar semanalmente cuál imperio estás descuidando."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"Rafael pregunta cuál de los 4 imperios corresponde a su relación con la esposa aliada.",o:["El Mindset muy productivo","El Soulset trascendente","El Heartset relacional","El Healthset del cuerpo"],c:2,e:"HEARTSET abarca la salud emocional y las relaciones, como la alianza con su esposa."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"Según insight 3, ¿qué ocurre con los otros imperios si Rafael abandona el Healthset?",o:["Se fortalecen por compensación","Se mantienen sin cambio alguno","Mejora solo el Mindset agudo","Colapsan sin la salud física"],c:3,e:"Sin salud, las otras tres dimensiones colapsan."},
+  {m:3,t:"vf",d:"avanzado",q:"Según Sharma, un éxito basado solo en Mindset es sólido y sostenible en el tiempo.",o:["Verdadero","Falso"],c:1,e:"Es fragilidad disfrazada de éxito; el éxito sostenible requiere los 4 imperios."},
+  {m:3,t:"vf",d:"avanzado",q:"El Soulset se refiere al propósito y la trascendencia dentro de los 4 imperios.",o:["Verdadero","Falso"],c:0,e:"SOULSET es propósito y trascendencia; sin él la motivación se agota."},
+  {m:3,t:"multiple",d:"avanzado",q:"¿Cuáles son dos de los cuatro Imperios Interiores según Sharma? (elige 2)",o:["Heartset emocional","Moneyset financiero","Soulset y propósito","Skillset de talentos"],c:[0,2],e:"Los 4 imperios son Mindset, Heartset, Healthset y Soulset; Moneyset y Skillset no figuran."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"Rafael descuida el propósito y su motivación cae. ¿Qué predice insight 3 sobre eso?",o:["Sin propósito, la motivación cae","El Mindset compensa esa carencia","La salud física lo resuelve solo","Las relaciones lo suplen del todo"],c:0,e:"Sin propósito, la motivación se agota; por eso el Soulset es indispensable."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"¿Qué imperio agrupa la mentalidad y las creencias de Rafael, según insight 3?",o:["El Soulset del alma","El Mindset mental","El Heartset afectivo","El Healthset corporal"],c:1,e:"MINDSET es la dimensión de la mentalidad y las creencias."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"Rafael quiere un éxito que no se derrumbe. Según insight 3, ¿qué necesita cultivar?",o:["Solo un Mindset muy brillante","Solo salud y descanso pleno","Los cuatro imperios juntos","Dos imperios que él prefiera"],c:2,e:"El éxito sostenible requiere las cuatro dimensiones, no una sola."},
+
+  {m:4,t:"unica",d:"avanzado",caso:true,q:"Rafael cree que en 21 días su hábito de madrugar será automático. ¿Qué corrige Sharma?",o:["Bastan apenas unos 14 días reales","El promedio real es 66 días","Se necesitan justo unos 30 días","Toma cerca de 100 días fijos"],c:1,e:"Lally (UCL) desmonta el mito: la automatización real toma en promedio 66 días."},
+  {m:4,t:"unica",d:"avanzado",caso:true,q:"¿A qué investigadora atribuye Sharma el dato de los 66 días para instalar un hábito?",o:["A Gloria Mark, UC Irvine","A Angela Duckworth, Penn","A Phillippa Lally, UCL","A Carol Dweck, Stanford"],c:2,e:"El dato es de la Dra. Phillippa Lally (UCL)."},
+  {m:4,t:"unica",d:"avanzado",caso:true,q:"Rafael está en el día 10 y el viejo patrón se resiste con fuerza. ¿En qué fase está?",o:["En la fase de Destrucción","En la fase de Instalación","En la fase de Integración","En la fase de Consolidación"],c:0,e:"La fase de DESTRUCCIÓN es la primera: el viejo patrón resiste activamente."},
+  {m:4,t:"unica",d:"avanzado",caso:true,q:"Rafael quiere saber cuánto dura cada una de las tres fases del protocolo de 66 días.",o:["Cerca de 11 días cada una","Unos 22 días cada fase","Alrededor de 33 días fase","Unos 40 días la primera"],c:1,e:"Son tres fases de 22 días: Destrucción, Instalación e Integración."},
+  {m:4,t:"unica",d:"avanzado",caso:true,q:"En el día 45, Rafael nota que madrugar se siente ‘menos forzado’. ¿Qué fase describe eso?",o:["La fase de Destrucción dura","La fase de Consolidación","La fase de Integración total","La fase de Instalación"],c:3,e:"En la fase de INSTALACIÓN el nuevo patrón se siente menos forzado."},
+  {m:4,t:"unica",d:"avanzado",caso:true,q:"Según insight 4, ¿por qué saber que la incomodidad dura ~22 días ayuda a Rafael?",o:["Reduce el riesgo de abandono","Elimina todo esfuerzo inicial","Acelera el hábito a solo 21 días","Garantiza motivación constante"],c:0,e:"Saber que la incomodidad tiene fecha de caducidad reduce el abandono."},
+  {m:4,t:"unica",d:"avanzado",caso:true,q:"Rafael abandona hábitos porque no se sienten naturales en la primera semana. ¿Qué error comete?",o:["Confía demasiado en el sistema","Repite el patrón muy pocas veces","Espera naturalidad inmediata","Cambia varios hábitos a la vez"],c:2,e:"El error es esperar que el hábito se sienta natural desde la primera semana."},
+  {m:4,t:"unica",d:"avanzado",caso:true,q:"Según insight 4, ¿cuál es el rango completo que puede tomar automatizar un hábito?",o:["Entre 21 y 180 días","Entre 30 y 120 días","Entre 40 y 200 días","Entre 18 y 254 días"],c:3,e:"El rango va de 18 a 254 días, con un promedio de 66."},
+  {m:4,t:"unica",d:"avanzado",caso:true,q:"Rafael llega al día 60 y madrugar ya es automático. ¿Qué fase del protocolo alcanzó?",o:["La Integración del hábito","La Instalación intermedia","La Destrucción del patrón","La Consolidación definitiva"],c:0,e:"En la fase de INTEGRACIÓN el hábito se vuelve automático."},
+  {m:4,t:"vf",d:"avanzado",q:"Sharma sostiene que el mito de los 21 días subestima el tiempo real de instalar un hábito.",o:["Verdadero","Falso"],c:0,e:"Desmonta el mito de los 21 días; la automatización real toma en promedio 66 días."},
+  {m:4,t:"multiple",d:"avanzado",q:"¿Qué afirmaciones sobre el protocolo de 66 días son correctas? (elige 2)",o:["Tiene tres fases iguales","Fija el hábito en 21 días","Su promedio ronda 66 días","Depende solo de motivación"],c:[0,2],e:"Son tres fases de 22 días y el promedio es 66; no son 21 días ni depende de la motivación."},
+  {m:4,t:"unica",d:"avanzado",caso:true,q:"Rafael se frustra en el día 5 porque su hábito aún cuesta. ¿Qué le recuerda insight 4?",o:["Que ya falló y debe reiniciar","Que la molestia caduca pronto","Que necesita más motivación ya","Que el patrón nunca se instala"],c:1,e:"La incomodidad tiene fecha de caducidad (~22 días); resistir reduce el abandono."}
+];
+var CLUB_B = [
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"Rafael revisa el celular a media mañana mientras diseña su framework CX. Según Gloria Mark, ¿cuánto tarda en recuperar la concentración tras esa interrupción?",o:["Unos 5 minutos","Cerca de 45 minutos","Casi 23 minutos","Menos de 1 minuto"],c:2,e:"Gloria Mark (UC Irvine) midió 23 min 15 s de reenganche tras cada interrupción; por eso la distracción es tan costosa."},
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"Al auditar su día, Rafael descubre que toca el móvil demasiado. ¿Qué cifra promedio cita Gloria Mark para el trabajador típico?",o:["Unas 40 al día","Unas 150 veces","Unas 300 al día","Unas 500 al día"],c:1,e:"El trabajador promedio revisa el celular unas 150 veces al día, fragmentando su atención sin darse cuenta."},
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"Rafael sufre 10 interrupciones en una jornada de trabajo profundo. ¿Qué costo acumulado de reenganche implica según el dato del curso?",o:["Casi 4 horas","Solo 30 minutos","Más de 8 horas","Cerca de 1 hora"],c:0,e:"Diez interrupciones a 23 min de reenganche cada una suman casi 4 horas perdidas en recuperar el foco."},
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"Rafael quiere entrar en flujo al construir su pitch deck. ¿Cuántos minutos ininterrumpidos exige el estado de flow según Csikszentmihalyi?",o:["De 2 a 5 minutos","De 45 a 60 min","De 15 a 20 min","Más de 90 min"],c:2,e:"Csikszentmihalyi (Flow, 1990) sitúa el umbral del estado de flujo en 15-20 min sin cortes."},
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"Para blindar sus 90 minutos, Rafael arma la burbuja hermética. ¿Cómo debe estar su móvil?",o:["Solo en silencio","Solo vibración","Pantalla en gris","En modo avión"],c:3,e:"La burbuja hermética exige el celular en modo avión, notificaciones off, puerta cerrada y una sola tarea."},
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"Rafael adopta la regla 90/90/1. ¿A qué debe dedicar los primeros 90 minutos de su jornada laboral?",o:["A vaciar el correo","A juntar reuniones","A su oportunidad #1","A lo urgente y fácil"],c:2,e:"El 90/90/1 reserva los primeros 90 min a la única oportunidad de mayor potencial, no a lo urgente ni lo fácil."},
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"En la regla 90/90/1, ¿durante cuántos días sostiene Rafael ese bloque matutino de alto valor?",o:["Durante 30 días","Durante 66 días","Durante 90 días","Durante 21 días"],c:2,e:"La regla es 90/90/1: 90 días seguidos, los primeros 90 min, a la única prioridad número uno."},
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"Aplicando 90/90/1 a su consultoría, ¿cuál es un uso ideal de esos 90 minutos para Rafael?",o:["Contestar propuestas","Facturar a clientes","Crear su framework","Agendar el equipo"],c:2,e:"Para el emprendedor, esos 90 min de máximo potencial se invierten en crear el framework propietario o la oferta y el pitch."},
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"Rafael estudia IA pero el móvil lo distrae. Según Adam Alter, ¿con qué comparten circuito las apps adictivas?",o:["Con los cigarrillos","Con tragamonedas","Con los estimulantes","Con la comida chatarra"],c:1,e:"Adam Alter (NYU): las apps explotan los mismos circuitos dopaminérgicos que las tragamonedas, con recompensas variables y scroll infinito."},
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"Como sabbatical tecnológico en casa, Sharma sugiere una regla nocturna. ¿Cuál aplica Rafael?",o:["Sin pantallas nunca más","Sin móvil tras las 9","Correo cerrado a las 6","Móvil en modo oficina"],c:1,e:"Sharma propone sin celular después de las 9 p.m., no rechazar la tecnología sino recuperar la soberanía atencional."},
+  {m:5,t:"vf",d:"avanzado",q:"La desintoxicación digital que propone Sharma implica rechazar la tecnología por completo.",o:["Verdadero","Falso"],c:1,e:"No es rechazo a la tecnología: son sabbaticals para recuperar la soberanía atencional sobre ella."},
+  {m:5,t:"vf",d:"avanzado",q:"Para Rafael, que estudia IA, su principal herramienta de trabajo es también su mayor fuente de distracción.",o:["Verdadero","Falso"],c:0,e:"Esa es la ironía del insight 12: el mismo dispositivo con el que aprende IA es su distractor más potente."},
+  {m:5,t:"multiple",d:"avanzado",q:"Rafael monta su burbuja hermética de enfoque para diseñar su oferta. ¿Qué elementos la componen? (elige 2)",o:["Celular en modo avión","Puerta abierta al equipo","Una sola tarea activa","Música con letra alta"],c:[0,2],e:"La burbuja exige modo avión, notificaciones off, puerta cerrada y una sola tarea; una puerta abierta o música con letra la rompen."},
+  {m:6,t:"unica",d:"avanzado",caso:true,q:"Rafael hace spinning en la mañana. Según John Ratey, ¿qué libera el ejercicio aeróbico que actúa como fertilizante neuronal?",o:["El cortisol","El BDNF","La insulina","La adrenalina"],c:1,e:"John Ratey (Harvard) llama al BDNF fertilizante para las neuronas, liberado por el ejercicio aeróbico."},
+  {m:6,t:"unica",d:"avanzado",caso:true,q:"Tras su spinning matutino, ¿qué mejora el resto del día según el meta-análisis de 2019?",o:["Tono y masa muscular","Apetito y digestión","Atención y memoria","Flexibilidad total"],c:2,e:"El meta-análisis (British Journal of Sports Medicine) muestra mejor atención, velocidad de procesamiento y memoria de trabajo."},
+  {m:6,t:"unica",d:"avanzado",caso:true,q:"En días difíciles con el bebé, ¿cuál es el mínimo no negociable de movimiento que Rafael sostiene?",o:["Media hora a las 9","Una hora a las 7 am","Cinco min a las 6","10 min a las 8"],c:3,e:"Para un papá con noches fragmentadas, el mínimo no negociable son 10 min de movimiento antes de las 8 a.m."},
+  {m:6,t:"unica",d:"avanzado",caso:true,q:"Además de dar claridad, ¿qué efecto fisiológico logra el movimiento matutino según Huberman?",o:["Sincroniza el ritmo","Baja la glucosa basal","Relaja el nervio vago","Eleva la melatonina"],c:0,e:"El ejercicio matutino eleva la temperatura corporal y sincroniza el ritmo circadiano (Huberman)."},
+  {m:6,t:"unica",d:"avanzado",caso:true,q:"Rafael se siente culpable por descansar. Según los Ciclos Gemelos, ¿dónde ocurre realmente el crecimiento?",o:["En el esfuerzo total","En la competencia dura","En la disciplina","En la recuperación"],c:3,e:"Como el corredor olímpico, el crecimiento ocurre en la recuperación, no en el esfuerzo permanente."},
+  {m:6,t:"unica",d:"avanzado",caso:true,q:"¿Qué analogía usa el curso para explicar los ciclos gemelos de rendimiento?",o:["Un ajedrecista pro","Un cirujano experto","Un atleta olímpico","Un violinista solista"],c:2,e:"El atleta olímpico no entrena 16 h al día: alterna alta intensidad con descanso profundo."},
+  {m:6,t:"unica",d:"avanzado",caso:true,q:"Para Rafael, ¿cómo reencuadran los Ciclos Gemelos las noches fragmentadas con su bebé?",o:["Como tiempo perdido","Como una excusa fácil","Como su recuperación","Como fallo del plan"],c:2,e:"Las noches con el bebé y la esposa no son tiempo perdido: son su ciclo de recuperación profunda."},
+  {m:6,t:"unica",d:"avanzado",caso:true,q:"Rafael duerme poco por el bebé. Según Matthew Walker, dormir menos de 7 h ¿qué provoca?",o:["Mejora los reflejos","Acelera el metabolismo","Aumenta la fuerza","Mata la creatividad"],c:3,e:"Matthew Walker (UC Berkeley): menos de 7 h daña la memoria, destruye la creatividad y debilita el sistema inmune."},
+  {m:6,t:"unica",d:"avanzado",caso:true,q:"Al optimizar lo controlable de su sueño, ¿qué temperatura fresca prescribe Sharma para el cuarto?",o:["Entre 24 y 26 °C","Entre 18 y 20 °C","Entre 10 y 12 °C","Entre 21 y 23 °C"],c:1,e:"El ritual de sueño de clase mundial pide oscuridad total y temperatura fresca de 18-20 °C."},
+  {m:6,t:"unica",d:"avanzado",caso:true,q:"Como papá de bebé, ¿qué compensación estratégica sugiere el curso ante el sueño interrumpido?",o:["Siestas de 20 min","Café doble al alza","Dormir hasta tarde","Saltarse el ejercicio"],c:0,e:"Ante lo no controlable, Sharma sugiere compensar con siestas estratégicas de 20 min."},
+  {m:6,t:"vf",d:"avanzado",q:"Levantarse temprano sin acostarse temprano es, según Sharma, privación de sueño disfrazada de disciplina.",o:["Verdadero","Falso"],c:0,e:"Exacto: madrugar sin dormir 7-8 h no es disciplina sino privación de sueño disfrazada de productividad."},
+  {m:6,t:"multiple",d:"avanzado",q:"Rafael rediseña su ritual de sueño de clase mundial. ¿Qué condiciones prescribe Sharma? (elige 2)",o:["Oscuridad total","Luz tenue de noche","Cuarto fresco 18-20°C","Pantallas hasta dormir"],c:[0,2],e:"El ritual pide oscuridad total, cuarto fresco 18-20 °C y desconexión digital 1 h antes; luz tenue o pantallas lo sabotean."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"Rafael negocia consigo mismo cada mañana si entrena. Según Baumeister, ¿qué le pasa a la fuerza de voluntad con cada decisión?",o:["Se fortalece","Se fatiga","Se multiplica","Se estabiliza"],c:1,e:"El ego depletion (Baumeister, 2011) muestra que la voluntad se fatiga con cada decisión; por eso conviene automatizar."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"Para no depender del ánimo, ¿qué hace Rafael la noche anterior para eliminar una decisión matutina?",o:["Deja la ropa lista","Pone doble alarma","Revisa el calendario","Medita 10 minutos"],c:0,e:"Preparar la ropa la noche anterior elimina una decisión y ahorra energía cognitiva para lo importante."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"En el sistema de automaticidad, ¿qué elimina la negociación interna al despertar?",o:["Una alarma más suave","La alarma sin snooze","Dos alarmas seguidas","La alarma con música"],c:1,e:"La alarma sin snooze elimina la negociación interna: te levantas sin abrir la puerta a la duda."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"El curso compara depender de la motivación para hábitos críticos con algo poco fiable. ¿Con qué?",o:["Con un reloj roto","Con la suerte pura","Con el clima","Con un mapa viejo"],c:2,e:"Depender de la motivación es como depender del clima para ir a trabajar: es volátil e impredecible."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"¿Cuál es el beneficio central de automatizar decisiones según el insight de automaticidad?",o:["Impresiona al equipo","Corrige la postura","Da más horas libres","Guarda foco mental"],c:3,e:"Cuantas más decisiones automatizas, más energía cognitiva te queda para crear valor real."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"En Day Stacking, Rafael cambia la pregunta que se hace cada mañana. ¿Cuál es la nueva pregunta?",o:["¿Cómo alcanzo la meta?","¿Cómo gano hoy?","¿Qué me falta aún?","¿Cuándo llegaré?"],c:1,e:"Day Stacking invierte la lógica: en vez de ¿cómo alcanzo la meta?, pregunta ¿cómo gano hoy?"},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"¿Con qué imagen describe el curso cómo se acumula cada día de excelencia?",o:["Como una escalera","Como una semilla","Como un ladrillo","Como una ola larga"],c:2,e:"Cada día de excelencia se apila sobre el anterior como un ladrillo; la vida se construye día a día."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"Según Day Stacking, ¿qué papel cumplen las metas gigantes como facturar un millón?",o:["Sirven de motor diario","Son un mal necesario","Son puro obstáculo","Sirven de brújula"],c:3,e:"Las metas gigantes son útiles como brújula pero inútiles como motor diario; paralizan si guían el día a día."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"En el sistema de Sharma, ¿cuántas micro-metas alcanzables define Rafael cada mañana?",o:["Tres metas","Cinco metas","Diez metas","Siete metas fijas"],c:1,e:"El concepto de los 5 Diarios pide definir 5 metas pequeñas y alcanzables cada mañana."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"Cuando Rafael tacha una de sus 5 metas diarias, ¿qué ocurre a nivel neuroquímico?",o:["Sube el cortisol","Baja la energía","Libera dopamina","Sube la adrenalina"],c:2,e:"Completar y tachar una tarea libera dopamina, que te impulsa hacia la siguiente micro-victoria."},
+  {m:7,t:"vf",d:"avanzado",q:"Según el curso, la motivación es una base más confiable que los sistemas para sostener hábitos críticos.",o:["Verdadero","Falso"],c:1,e:"Al revés: la automaticidad vence a la motivación; los sistemas están por encima de la voluntad volátil."},
+  {m:7,t:"multiple",d:"avanzado",q:"Rafael arma sus 5 metas diarias. ¿Cuáles encajan como micro-victorias del curso? (elige 2)",o:["Facturar un millón entero","Dominar la IA por completo","Leer 5 páginas","Pasear al bebé"],c:[2,3],e:"Los 5 Diarios son metas pequeñas y alcanzables como leer 5 páginas o pasear al bebé; las metas gigantes paralizan."},
+  {m:8,t:"unica",d:"avanzado",caso:true,q:"Rafael quiere dar valor 10x en su consultoría. El valor 10x, según Sharma, ¿en qué se basa realmente?",o:["En trabajar 10x más horas","En maestría por hora","En bajar tus precios","En tener más clientes"],c:1,e:"No es trabajar 10 veces más horas, sino tal maestría que cada hora produzca resultados desproporcionados."},
+  {m:8,t:"unica",d:"avanzado",caso:true,q:"Un consultor entrega un informe genérico. Según el curso, ¿en qué nivel de valor opera?",o:["En nivel 1x","En nivel 10x","En nivel 5x","En nivel 3x"],c:0,e:"El informe genérico es nivel 1x; el framework propietario con datos personalizados y seguimiento es 10x."},
+  {m:8,t:"unica",d:"avanzado",caso:true,q:"¿Qué convierte la entrega de Rafael en valor 10x según el ejemplo del consultor?",o:["Un informe más largo","Un descuento amplio","Una portada pulida","Un framework propio"],c:3,e:"El 10x llega con un framework propietario, datos personalizados y seguimiento post-entrega, no con más páginas."},
+  {m:8,t:"unica",d:"avanzado",caso:true,q:"El Coeficiente de Capitalización afirma que importa más una cosa que el talento innato. ¿Cuál?",o:["Nacer con más don","Tener mucha suerte hoy","Capitalizarlo bien","Trabajar sin pausa"],c:2,e:"El Coeficiente de Capitalización dice que capitalizar tus talentos pesa más que los talentos con que naciste."},
+  {m:8,t:"unica",d:"avanzado",caso:true,q:"Rafael escribe en su journal en los 20 min de reflexión. Según Pennebaker, ¿qué logra escribir sobre lo emocional?",o:["Sube la tensión","Borra recuerdos","Baja el estrés","Aísla emociones"],c:2,e:"Pennebaker (U. Texas): escribir sobre experiencias emocionales reduce el estrés y mejora la función inmune."},
+  {m:8,t:"unica",d:"avanzado",caso:true,q:"¿Cuánto tiempo de escritura estructurada supera, según el curso, a horas de reflexión sin documentar?",o:["3 a 5 minutos","30 a 40 minutos","15 a 20 minutos","Más de una hora"],c:0,e:"3-5 min diarios de escritura estructurada valen más que horas de reflexión no documentada."},
+  {m:8,t:"unica",d:"avanzado",caso:true,q:"¿Para qué sirve, según Sharma, un journal acumulado durante meses?",o:["Para lucir ordenado","Para copiar a otros","Para llenar tiempo","Para ver patrones"],c:3,e:"Un journal de meses permite ver patrones y mantener perspectiva cuando sientes que no avanzas."},
+  {m:8,t:"unica",d:"avanzado",caso:true,q:"En su primer Dream Team, ¿qué rol cumple la esposa de Rafael?",o:["Mentora de negocios","Aliada logística","Inversora del plan","Coach de ejercicio"],c:1,e:"El primer Dream Team incluye a la esposa como aliada logística, una comunidad de práctica y 2-3 mentores informales."},
+  {m:8,t:"unica",d:"avanzado",caso:true,q:"¿Qué idea considera destructiva la Táctica del Dream Team?",o:["El exceso de mentores","Delegar todo el plan","El genio solitario","Pagar por asesorías"],c:2,e:"El mito del genio solitario es destructivo: nadie construye algo extraordinario solo."},
+  {m:8,t:"unica",d:"avanzado",caso:true,q:"Rafael diseña su semana el domingo. ¿Qué principio justifica ese ritual según Sharma?",o:["Lo urgente manda siempre","Lo flexible rinde más","Lo espontáneo inspira","Lo programado se hace"],c:3,e:"Lo que se programa se hace; lo que no se programa se negocia y desaparece: por eso se bloquea la semana el domingo."},
+  {m:8,t:"vf",d:"avanzado",q:"Para los Creadores de Historia, las adversidades y fracasos son el combustible de la grandeza, no un obstáculo.",o:["Verdadero","Falso"],c:0,e:"Los Creadores de Historia están Rotos: cada rechazo y cada noche sin dormir son el precio de la profundidad que te distingue."},
+  {m:8,t:"vf",d:"avanzado",q:"Sharma sostiene que la planificación semanal es una simple tarea administrativa, no un ritual estratégico.",o:["Verdadero","Falso"],c:1,e:"Al contrario: la planificación semanal es un ritual estratégico que vence la fatiga de decisión, no un trámite."},
+  {m:8,t:"multiple",d:"avanzado",q:"El primer Dream Team de Rafael, según el curso, ¿por quiénes está formado? (elige 2)",o:["Su esposa como aliada","Un socio inversor fijo","2-3 mentores informales","Un asistente de tiempo completo"],c:[0,2],e:"El primer Dream Team se apoya en la esposa como aliada logística, una comunidad de práctica y 2-3 mentores informales."}
+];
+var FMT_HAB = [
+  {m:1,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Llevas 3 semanas estudiando IA 20 min al día y no notas ningún avance visible. ¿Cuál es tu próxima jugada?",o:["Sigues igual; el valle es invisible","Cambias de curso porque este no sirve","Subes a 40 min para forzar resultados","Lo pausas hasta tener más tiempo libre"],c:0,e:"Es el Valle de la Decepción: los resultados son exponenciales y el trabajo se acumula invisible. Abandonar justo antes del punto de quiebre es el error clásico."},
+  {m:4,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"El bebé te dejó sin dormir y no tienes energía para tu bloque de spinning de hoy. ¿Cuál es tu próxima jugada?",o:["Descansas hoy y retomas mañana fuerte","Te obligas a la sesión intensa completa","Solo te pones la ropa de ejercicio hoy","Recuperas mañana haciendo el doble rato"],c:2,e:"La Regla de los 2 Minutos: en días duros la versión mínima (ponerte la ropa) mantiene la cadena. El obstáculo es el inicio, no la ejecución."},
+  {m:5,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Quieres estudiar IA cada día pero siempre lo olvidas entre reuniones. ¿Cuál es tu próxima jugada?",o:["Pones una alarma extra en la tarde","Confías en recordarlo por tu cuenta","Lo dejas para cuando tengas un hueco","Lo apilas tras tu café diario"],c:3,e:"Habit Stacking: 'Después de [hábito actual], haré [nuevo]'. El café ya es una vía neuronal fija y sirve de recordatorio sin depender de la memoria."},
+  {m:6,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Cada noche prometes madrugar, pero el celular en la mesa de noche te roba una hora de scroll. ¿Cuál es tu próxima jugada?",o:["Prometes tener más autocontrol mañana","Cargas el celular en otro cuarto","Instalas una app que limite tu tiempo","Revisas solo cinco minutos y ya paras"],c:1,e:"Ley de la Menor Fricción: sacar el celular del cuarto añade fricción al mal hábito. Rediseñar el entorno pesa más que confiar en la fuerza de voluntad."},
+  {m:7,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Ayer no hiciste spinning por una reunión de último minuto. Hoy vuelves a tener la agenda apretada. ¿Cuál es tu próxima jugada?",o:["Aceptas la semana como perdida y reinicias","Hoy entrenas sí o sí, aunque sea corto","Compensas el sábado con doble sesión","Esperas una semana con más calma real"],c:1,e:"Nunca fallar dos veces seguidas: un día es un accidente, dos son un nuevo hábito. Tras fallar, la siguiente sesión es innegociable aunque sea breve."},
+  {m:8,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Llevas dos semanas puliendo el plan de negocio de tu consultoría pero no has hablado con ningún cliente. ¿Cuál es tu próxima jugada?",o:["Perfeccionas el plan una semana más","Investigas otros tres competidores hoy","Llamas al primer prospecto del CRM","Rediseñas la presentación una vez más"],c:2,e:"Movimiento vs acción: planear se siente productivo pero es procrastinación. Solo la acción (llamar al prospecto) te expone al resultado y lo genera."},
+  {m:2,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"Una rutina para dejar el scroll nocturno: ① dejas el celular fuera del cuarto; ② te repites que las redes te dan concentración; ③ desinstalas la app más adictiva; ④ si caes, lavas los platos. ¿Cuál es el error?",o:["① Dejas el celular fuera del cuarto","② Crees que las redes te enfocan","③ Desinstalas la app más adictiva","④ Si caes, te toca lavar los platos"],c:1,e:"Es la inversión de las 4 Leyes. El paso ② está mal: para romper el hábito debe volverse POCO atractivo ('gano concentración al dejarlas'), no atractivo."},
+  {m:3,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"Tu plan de identidad profesional: ① te declaras experto en IA de entrada; ② estudias 20 min cada día; ③ implementas un prompt real y lo documentas; ④ revisas si la mayoría de tus actos lo respaldan. ¿Cuál es el error?",o:["① Te declaras experto de entrada","② Estudias veinte minutos al día","③ Implementas un prompt y lo anotas","④ Revisas si tus actos lo respaldan"],c:0,e:"La identidad precede al comportamiento pero se gana con evidencia. El paso ① falla: declarar la identidad sin acumular los votos conductuales que la sostengan."},
+  {m:5,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"Diseñas tu entorno de estudio: ① dejas el curso abierto la noche anterior; ② pones el celular en otra habitación; ③ apilas el estudio tras el café; ④ confías en tu disciplina para no distraerte. ¿Cuál es el error?",o:["① Dejas el curso abierto la noche","② Pones el celular en otro cuarto","③ Apilas el estudio tras el café","④ Confías en tu pura disciplina"],c:3,e:"El entorno es el arquitecto invisible del hábito. El paso ④ falla: quienes sostienen hábitos estructuran el entorno para que la disciplina sea innecesaria."},
+  {m:6,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"Montas tu tracker de hábitos: ① marcas una X cuando haces spinning; ② mantienes la cadena visible; ③ trackeas las calorías quemadas como métrica; ④ registras solo si entrenaste, sí o no. ¿Cuál es el error?",o:["① Marcas una X cuando haces spinning","② Mantienes la cadena bien visible","③ Trackeas las calorías quemadas","④ Registras solo si entrenaste o no"],c:2,e:"Ley de Goodhart: al enfocarte en la métrica de salida (calorías) la optimizas en vez del hábito. El paso ③ falla: hay que trackear la entrada, no el resultado."},
+  {m:7,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"Ajustas la dificultad de tu estudio de IA: ① si el paper es incomprensible, bajas a un tutorial; ② si es muy básico, subes a un proyecto; ③ eliges siempre lo más difícil para crecer rápido; ④ buscas retos un poco por encima de tu nivel. ¿Cuál es el error?",o:["① Si es imposible, bajas a tutorial","② Si es muy básico, subes de nivel","③ Eliges siempre lo más difícil","④ Buscas retos apenas por encima"],c:2,e:"Regla de Goldilocks: la motivación máxima está ~4% sobre tu nivel. El paso ③ falla: lo demasiado difícil produce ansiedad y te saca del canal de flujo."},
+  {m:8,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"Tu ritual de revisión del sistema: ① haces una revisión anual de qué funcionó; ② repasas si tus hábitos siguen alineados; ③ nunca cambias un hábito que ya te funciona; ④ ajustas lo que quedó obsoleto este semestre. ¿Cuál es el error?",o:["① Haces tu revisión anual honesta","② Repasas si los hábitos alinean","③ Nunca cambias lo que funciona","④ Ajustas lo que quedó obsoleto"],c:2,e:"Los hábitos se vuelven jaulas si no los cuestionas. El paso ③ falla: lo óptimo hace seis meses puede ser obsoleto hoy; hay que revisar y ajustar."}
+];
+
+var FMT_CLUB = [
+  {m:1,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Quieres implementar la Fórmula 20/20/20 pero con el bebé sabes que no lograrás la hora completa. ¿Cuál es tu próxima jugada?",o:["Esperas a tener la hora entera libre","Arrancas con una versión 10/10/10","Haces solo los 20 min de ejercicio","Pospones el método hasta que crezca"],c:1,e:"No hace falta empezar perfecto: una versión mínima 10/10/10 sostenida vence a una 20/20/20 aspiracional que abandonas al tercer día."},
+  {m:2,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Suena tu alarma y lo primero que ves son emails y noticias en el celular. Notas que llegas reactivo al día. ¿Cuál es tu próxima jugada?",o:["Revisas rápido y luego te enfocas","Te mueves antes de tocar la pantalla","Contestas los correos más urgentes ya","Lees solo un titular para estar al día"],c:1,e:"Ganar la mañana es ganar el día: ceder tu atención al celular activa la amígdala. Empezar proactivo (moverte) hace que operes desde la intención."},
+  {m:4,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Llevas 10 días madrugando y aún se siente forzado y agotador; dudas si funcionará. ¿Cuál es tu próxima jugada?",o:["Sigues; el malestar dura ~22 días","Lo dejas porque no es para tu ritmo","Esperas sentirlo natural esta semana","Cambias de hábito por uno más fácil"],c:0,e:"Protocolo de 66 días: la fase de Destrucción dura ~22 días de resistencia. Saber que la incomodidad tiene fecha de caducidad reduce el abandono."},
+  {m:5,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Estás diseñando tu framework de consultoría y el celular vibra con notificaciones cada pocos minutos. ¿Cuál es tu próxima jugada?",o:["Respondes rápido y sigues trabajando","Revisas el chat solo entre cada tarea","Pones el celular en modo avión ya","Dejas las alertas por si es un cliente"],c:2,e:"La Burbuja de Enfoque Total: cada interrupción cuesta ~23 min de reenganche. Modo avión y notificaciones off protegen el estado de flujo."},
+  {m:8,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Vienes de una semana intensa de trabajo profundo y sientes que rendir más exige seguir sin parar. ¿Cuál es tu próxima jugada?",o:["Metes horas extra el fin de semana","Honras tu ciclo de recuperación","Reduces el sueño para ganar más tiempo","Sumas una tarea más antes de descansar"],c:1,e:"Ciclos Gemelos: el crecimiento ocurre en la recuperación. Alternar alto rendimiento con descanso profundo evita el burnout; operar siempre en esfuerzo lo provoca."},
+  {m:8,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"La meta de facturar tu primer millón con la consultoría te abruma y te paraliza cada mañana. ¿Cuál es tu próxima jugada?",o:["Te enfocas en ganar el día de hoy","Rehaces el plan para llegar al millón","Piensas la meta grande cada mañana","Esperas más claridad sobre el objetivo"],c:0,e:"Day Stacking: las metas gigantes paralizan; sirven de brújula, no de motor. Cambia '¿cómo alcanzo la meta?' por '¿cómo gano hoy?' y apila días ganados."},
+  {m:3,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"Tu plan de equilibrio: ① entrenas tu mentalidad cada mañana; ② cultivas tus relaciones y emociones; ③ cuidas tu salud física; ④ solo te enfocas en el Mindset porque es lo que rinde. ¿Cuál es el error?",o:["① Entrenas tu mentalidad diaria","② Cultivas tus relaciones cercanas","③ Cuidas tu salud física a diario","④ Solo te enfocas en el Mindset"],c:3,e:"Los 4 Imperios Interiores. El paso ④ falla: brillar solo en Mindset es fragilidad disfrazada; sin Heartset, Healthset y Soulset el éxito no se sostiene."},
+  {m:5,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"Diseñas tu bloque 90/90/1: ① reservas los primeros 90 minutos del día; ② los dedicas a tu oportunidad más importante; ③ empiezas despachando emails y reuniones; ④ sostienes el ritual durante 90 días. ¿Cuál es el error?",o:["① Reservas tus primeros 90 minutos","② Los das a lo más importante","③ Empiezas por emails y reuniones","④ Lo sostienes durante 90 días"],c:2,e:"Regla 90/90/1: las mejores horas cognitivas van a tu única oportunidad de mayor impacto. El paso ③ falla: fragmentarlas en tareas de bajo valor las desperdicia."},
+  {m:6,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"Tu ritual de sueño de clase mundial: ① duermes 7 a 8 horas no negociables; ② desconectas pantallas una hora antes; ③ madrugas aunque te acuestes tarde; ④ dejas el cuarto fresco y oscuro. ¿Cuál es el error?",o:["① Duermes de 7 a 8 horas fijas","② Apagas pantallas una hora antes","③ Madrugas aunque duermas tarde","④ Dejas el cuarto fresco y oscuro"],c:2,e:"Ritual de sueño: levantarse temprano sin acostarse temprano es privación disfrazada de disciplina. El paso ③ falla: dormir menos de 7 h destruye memoria y creatividad."},
+  {m:7,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"Tu rutina para automatizar la mañana: ① dejas la ropa lista la noche anterior; ② dejas el material de estudio abierto; ③ pones la alarma sin snooze; ④ decides cada mañana si entrenas según tu ánimo. ¿Cuál es el error?",o:["① Dejas la ropa lista de noche","② Dejas el material ya abierto","③ Pones la alarma sin el snooze","④ Eliges entrenar por tu ánimo"],c:3,e:"La automaticidad vence a la motivación. El paso ④ falla: depender del ánimo es como depender del clima; cada decisión fatiga la voluntad (ego depletion)."},
+  {m:8,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"Tu entrega de valor 10x como consultor: ① creas un framework propietario; ② personalizas los datos del cliente; ③ ofreces seguimiento tras la entrega; ④ mandas un informe genérico para ir rápido. ¿Cuál es el error?",o:["① Creas un framework propietario","② Personalizas los datos del cliente","③ Ofreces seguimiento posterior","④ Mandas un informe genérico"],c:3,e:"Obsesión por el Valor 10x. El paso ④ falla: el informe genérico es nivel 1x. Tu ventaja no es el conocimiento sino cómo lo empaquetas, entregas y capitalizas."},
+  {m:7,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"Armas tus 5 Diarios de la mañana: ① contactas 1 prospecto; ② lees 5 páginas de un libro; ③ haces 15 min de spinning; ④ te propones facturar el millón hoy. ¿Cuál es el error?",o:["① Contactas a un prospecto","② Lees cinco páginas de un libro","③ Haces quince min de spinning","④ Buscas facturar el millón"],c:3,e:"Los 5 Diarios son micro-victorias alcanzables que liberan dopamina. El paso ④ falla: una meta gigante paraliza; las cinco deben ser pequeñas y realizables hoy."}
+];
+var INFLU_BANK = [
+  // ===== MÓDULO 1 · Las armas de influencia (Cap. 1) =====
+  {m:1,t:"unica",d:"avanzado",caso:true,
+   q:"En Clientes Valiosos, un agente recita el mismo saludo apenas suena el teléfono, sin fijarse en quién llama. ¿Qué mecanismo de Cialdini describe mejor esa conducta?",
+   o:["Una concesión mutua nacida del contraste percibido","Una reciprocidad por un favor recibido de antemano","Un patrón de acción fija disparado por una señal","Un portazo en la cara seguido de retirada táctica"],
+   c:2,
+   e:"Es un patrón de acción fija: una secuencia automática que dispara un solo estímulo (el timbre), igual que el cheep-cheep activa a la pava."},
+
+  {m:1,t:"unica",d:"avanzado",caso:true,
+   q:"Diseñando un flujo de atención, dudas si los atajos mentales clic-zzz del cliente son un fallo que debas corregir. ¿Qué postura sostiene Cialdini?",
+   o:["Son un defecto que conviene corregir siempre que puedas","Son atajos casi siempre útiles, aunque explotables","Son fallos que solo asoman bajo mucha presión de tiempo","Son respuestas propias de clientes poco atentos o distraídos"],
+   c:1,
+   e:"En un mundo saturado, los atajos suelen ser eficientes y necesarios; no son un defecto, pero quedan expuestos a ser explotados."},
+
+  {m:1,t:"unica",d:"avanzado",caso:true,
+   q:"Explicas a tu equipo que persuadir con estos principios se parece al jujitsu. ¿Qué idea capta mejor la analogía?",
+   o:["Imponer la fuerza propia sobre el interlocutor","Repetir el argumento hasta vencer la objeción final","Ofrecer más datos para convencer con pura razón","Aprovechar una energía que ya existe en el otro"],
+   c:3,
+   e:"Como en el jujitsu, no se impone fuerza propia: se acciona una palanca (reciprocidad, autoridad, escasez) que ya está en el otro."},
+
+  {m:1,t:"unica",d:"avanzado",caso:true,
+   q:"Un cliente minorista muestra primero un traje de $2.000 y luego accesorios de $150. ¿Por qué esa secuencia eleva la venta de accesorios?",
+   o:["El contraste hace ver barato lo que sigue","La escasez del traje empuja a comprar más cosas","La autoridad del vendedor obliga a decir que sí","La simpatía por el vendedor baja del todo la guardia"],
+   c:0,
+   e:"Por el principio de contraste: tras los $2.000, un suéter de $150 parece barato. Decide la comparación, no el precio en absoluto."},
+
+  {m:1,t:"unica",d:"avanzado",
+   q:"Levantas un objeto ligero y enseguida uno pesado, que se siente aún más pesado que si lo alzaras primero. ¿Qué principio opera aquí?",
+   o:["La reciprocidad entre dos favores seguidos","El patrón de acción fija ante un disparador","El contraste perceptivo entre dos estímulos","La concesión mutua tras un primer rechazo firme"],
+   c:2,
+   e:"Percibimos por comparación, no en absoluto: el segundo objeto parece más pesado por contraste con el primero, más ligero."},
+
+  {m:1,t:"unica",d:"avanzado",caso:true,
+   q:"Auditando una tienda notas que el orden de los precios influye sin que el comprador lo advierta. Según Cialdini, ¿por qué el contraste es tan eficaz?",
+   o:["Porque apela a la autoridad de un precio alto","Porque no se percibe mientras está actuando","Porque activa la escasez del producto elegido","Porque genera una deuda de reciprocidad previa"],
+   c:1,
+   e:"El contraste no se ve y por eso funciona: opera sobre la percepción sin que la persona note que está comparando."},
+
+  {m:1,t:"unica",d:"avanzado",
+   q:"Cialdini agrupa la persuasión en unas pocas armas de influencia. ¿Cuál de estas NO figura en su lista?",
+   o:["La escasez del recurso disponible ahora","La autoridad de quien hace la recomendación","La reciprocidad del favor recibido antes","La novedad reciente del producto ofrecido"],
+   c:3,
+   e:"Las armas son reciprocidad, simpatía, aprobación social, autoridad, escasez, compromiso/coherencia y unidad. La novedad no está."},
+
+  {m:1,t:"unica",d:"avanzado",caso:true,
+   q:"Un cliente cede sin que le den razones de peso, solo por la señal adecuada. ¿Cómo explica Cialdini que las armas persuadan?",
+   o:["Ofrecen datos sólidos que vencen la duda","Activan el atajo mental, sin dar argumentos","Aplazan la decisión hasta un momento mejor","Refutan una por una todas las objeciones planteadas"],
+   c:1,
+   e:"No persuaden con argumentos, sino activando el atajo mental correcto: encienden la cinta grabada de comportamiento."},
+
+  {m:1,t:"unica",d:"avanzado",
+   q:"¿Por qué, según el capítulo 1, vivimos con el piloto automático encendido?",
+   o:["No podemos analizarlo todo conscientemente","Preferimos siempre evitar cualquier esfuerzo mental","Nos falta información básica para poder decidir","Confiamos por defecto en toda figura de autoridad"],
+   c:0,
+   e:"Ese piloto responde a disparadores concretos porque no podemos analizarlo todo; el atajo es una necesidad, no pereza."},
+
+  {m:1,t:"unica",d:"avanzado",caso:true,
+   q:"Como consultor de CX ves que estos disparadores son un doble filo al diseñar experiencias. ¿En qué sentido?",
+   o:["Solo sirven para cerrar ventas muy rápidas","Únicamente protegen al cliente frente al engaño","Hacen decir sí o no casi sin pensarlo","Eliminan del todo la decisión final del cliente"],
+   c:2,
+   e:"Son los resortes que hacen que un cliente diga sí o no casi sin pensar; diseñar es elegir qué disparadores activas y cuáles no."},
+
+  {m:1,t:"unica",d:"avanzado",
+   q:"Cialdini dice que quien identifica el disparador puede provocar la respuesta a distancia. ¿Con qué imagen lo compara?",
+   o:["Con levantar un gran peso a puro pulso","Con negociar un precio frente a frente","Con repetir un mismo mensaje muchas veces","Con accionar una palanca ya montada"],
+   c:3,
+   e:"Compara al persuasor con quien acciona una palanca: la palanca hace el trabajo, él solo la mueve al hallar el disparador."},
+
+  {m:1,t:"unica",d:"avanzado",caso:true,
+   q:"Adoptas el enfoque ético del curso frente a estas armas. ¿Cuál resume mejor esa postura?",
+   o:["Aplicarlas siempre que suban las ventas","Usarlas para servir y no ser manipulado","Evitarlas por completo en toda relación","Ocultarlas para tener ventaja sobre los demás"],
+   c:1,
+   e:"El enfoque ético es doble: usar los principios para servir al cliente y, a la vez, para no caer presa de quien los usa contra ti."},
+
+  {m:1,t:"vf",d:"avanzado",
+   q:"Verdadero o falso: sin el sonido cheep-cheep, la pava ignora o ataca a su propio polluelo.",
+   o:["Verdadero","Falso"],
+   c:0,
+   e:"Verdadero. El disparador no es la cría sino el sonido; sin el cheep-cheep la pava no activa el cuidado, aunque tenga un pollo delante."},
+
+  {m:1,t:"vf",d:"avanzado",
+   q:"Verdadero o falso: Cialdini ve los atajos clic-zzz como un defecto que se debe eliminar.",
+   o:["Verdadero","Falso"],
+   c:1,
+   e:"Falso. Los atajos son casi siempre eficientes y necesarios; el problema no es tenerlos, sino que quedan expuestos a ser explotados."},
+
+  {m:1,t:"multiple",d:"avanzado",
+   q:"¿Cuáles de estas son armas de influencia según Cialdini? (elige todas)",
+   o:["La reciprocidad del favor recibido antes","La autoridad de quien hace la recomendación","La escasez del recurso disponible ahora","La novedad reciente del producto ofrecido"],
+   c:[0,1,2],
+   e:"Reciprocidad, autoridad y escasez son armas del libro (con simpatía, aprobación social, coherencia y unidad). La novedad no lo es."},
+
+  // ===== MÓDULO 2 · Reciprocidad (Cap. 2) =====
+  {m:2,t:"unica",d:"avanzado",caso:true,
+   q:"Explicas a un cliente por qué un detalle inesperado tuyo lo predispone a corresponder. ¿Qué enuncia la regla de reciprocidad?",
+   o:["Debemos devolver en igual medida lo recibido","Solo devolvemos los favores que pedimos antes","Devolvemos únicamente a quien de veras nos agrada","Correspondemos solo si el favor resultó muy costoso"],
+   c:0,
+   e:"La regla obliga a tratar de devolver, en la misma medida, lo que otro nos dio; es una norma casi universal en toda cultura."},
+
+  {m:2,t:"unica",d:"avanzado",
+   q:"Según Richard Leakey, ¿por qué la reciprocidad está en la raíz de lo que nos hizo humanos?",
+   o:["Impuso jerarquías rígidas dentro de los grupos","Eliminó la necesidad de confiar en los extraños","Redujo el trato entre tribus muy distantes","Compartir con deuda permitió dividir el trabajo"],
+   c:3,
+   e:"Leakey la sitúa en la raíz de lo humano: compartir con la deuda implícita de futura devolución permitió dividir trabajo y recursos."},
+
+  {m:2,t:"unica",d:"avanzado",
+   q:"¿Qué hace que la regla de reciprocidad tenga tanta fuerza sobre nosotros?",
+   o:["La ley obliga por escrito a devolver los favores","El favor siempre trae un premio casi inmediato","El incumplidor recibe un castigo social","Nadie recuerda quién dio el primer paso del trato"],
+   c:2,
+   e:"Su fuerza viene del castigo social: gorrón, aprovechado o desagradecido son etiquetas que todos queremos evitar."},
+
+  {m:2,t:"unica",d:"avanzado",caso:true,
+   q:"Un proveedor que te cae mal te hace un favor y sientes urgencia de responder. ¿Qué predice el capítulo 2?",
+   o:["Ignorarás el favor por venir de quien no aprecias","Devolverás incluso de más para saldar la deuda","Esperarás a que él te pida algo antes de mover ficha","Devolverás solo si el favor te resultó de veras útil"],
+   c:1,
+   e:"El malestar de sentirse en deuda es tan incómodo que devolvemos favores aun a quien nos cae mal, y a menudo devolvemos de más."},
+
+  {m:2,t:"unica",d:"avanzado",caso:true,
+   q:"En el estudio de las tarjetas de Navidad de un desconocido, la gente respondía con su propia tarjeta. ¿Qué demuestra?",
+   o:["El favor no pedido igual genera deuda","Solo devolvemos algo a personas ya conocidas","La deuda desaparece si el gesto resulta raro","Respondemos solo por una educación aprendida antes"],
+   c:0,
+   e:"El favor no necesita ser pedido ni querido: puede imponerse. La deuda apareció aunque no supieran quién enviaba la tarjeta."},
+
+  {m:2,t:"unica",d:"avanzado",caso:true,
+   q:"Los Hare Krishna regalaban una flor y luego pedían un donativo; muchos daban aunque tiraran la flor. ¿Qué principio explotaban?",
+   o:["La escasez de las flores que iban ofreciendo","La autoridad del grupo religioso ante el otro","La coherencia con un compromiso ya firmado","La reciprocidad por un regalo no deseado"],
+   c:3,
+   e:"El regalo no deseado seguía generando deuda: aunque tirara la flor, la persona primero se sentía obligada a dar algo a cambio."},
+
+  {m:2,t:"unica",d:"avanzado",caso:true,
+   q:"Quieres que un cliente acepte un plan mediano. Según el portazo en la cara, ¿cómo lo planteas?",
+   o:["Pides el mediano y subes si acepta muy rápido","Ofreces varias opciones todas del mismo tamaño","Pides algo grande y luego bajas al mediano","Pides el mediano tras un argumento muy largo"],
+   c:2,
+   e:"El portazo en la cara pide primero algo grande que rechazarán; al retroceder al plan que querías, tu retroceso se lee como concesión."},
+
+  {m:2,t:"unica",d:"avanzado",caso:true,
+   q:"En el experimento de acompañar delincuentes juveniles al zoológico, la aceptación pasó del 17% al 50%. ¿Qué la disparó?",
+   o:["Un regalo entregado justo al inicio del trato","Una petición enorme pedida justo antes","La escasez de cupos para hacer la salida","La simpatía previa hacia quien lo solicitaba"],
+   c:1,
+   e:"Antes se pidió algo enorme; al retroceder a la salida al zoológico, la concesión obligó a conceder y la aceptación subió al 50%."},
+
+  {m:2,t:"unica",d:"avanzado",
+   q:"¿Por qué funciona retroceder de una petición grande a una pequeña en una negociación?",
+   o:["El retroceso se percibe como una concesión","La petición grande demuestra que tienes autoridad","El otro olvida por completo la primera cifra que oyó","La escasez de tiempo lo empuja a cerrar cuanto antes"],
+   c:0,
+   e:"La regla gobierna las concesiones mutuas: tu retroceso se lee como concesión y obliga al otro a conceder aceptando la petición."},
+
+  {m:2,t:"unica",d:"avanzado",
+   q:"Además de la concesión, ¿qué efecto añade el contraste tras una petición gigante?",
+   o:["La petición grande parece más razonable","El favor inicial se vuelve del todo obligatorio","La deuda de reciprocidad se cancela por sí sola","La petición pequeña parece aún menor"],
+   c:3,
+   e:"El contraste perceptivo se suma: tras la petición gigante, la pequeña parece todavía menor de lo que realmente es."},
+
+  {m:2,t:"unica",d:"avanzado",caso:true,
+   q:"Tras aceptar una petición que siguió a tu concesión, ¿cómo tiende a comportarse la otra parte?",
+   o:["Más recelosa y propensa a incumplir después","Indiferente al acuerdo una vez ya firmado","Más responsable del trato y más satisfecha","Menos dispuesta a aceptar cualquier trato futuro"],
+   c:2,
+   e:"Quien recibe una concesión se siente más responsable del acuerdo y más satisfecho, así que tiende a cumplir y a aceptar tratos futuros."},
+
+  {m:2,t:"unica",d:"avanzado",caso:true,
+   q:"Detectas que un regalo de un proveedor era un anzuelo para obligarte. ¿Qué defensa propone Cialdini?",
+   o:["Rechazar todo favor para no quedar en deuda","Redefinir el favor como táctica, no regalo","Devolver el doble para quedar bien en paz","Aceptar y corresponder para no ser un grosero"],
+   c:1,
+   e:"La defensa no es rechazar favores, sino redefinir el favor deshonesto como táctica: a una táctica no le debes nada."},
+
+  {m:2,t:"vf",d:"avanzado",
+   q:"Verdadero o falso: la defensa de Cialdini es rechazar todos los favores para no endeudarse nunca.",
+   o:["Verdadero","Falso"],
+   c:1,
+   e:"Falso. Rechazar favores empobrece; la defensa es redefinir el favor deshonesto como táctica, no como un regalo genuino."},
+
+  {m:2,t:"vf",d:"avanzado",
+   q:"Verdadero o falso: para Cialdini la reciprocidad es la más potente de las armas de influencia.",
+   o:["Verdadero","Falso"],
+   c:0,
+   e:"Verdadero. Dar primero crea una deuda que el otro sentirá urgencia de saldar, aunque el regalo no lo pidiera ni lo quisiera."},
+
+  {m:2,t:"multiple",d:"avanzado",
+   q:"¿Qué elementos caracterizan la técnica del portazo en la cara? (elige todas)",
+   o:["Empezar con una petición grande y rechazable","Retroceder luego a la petición pequeña buscada","Ese retroceso se percibe como una concesión","Comenzar por la petición pequeña y subir después"],
+   c:[0,1,2],
+   e:"El portazo pide primero algo grande, retrocede al objetivo real y ese retroceso se lee como concesión. Empezar por lo pequeño es lo opuesto."}
+];
+
+var INFLU_FMT = [
+  {m:2,t:"unica",d:"avanzado",caso:true,fmt:"jugada",
+   q:"Jugada: entregas al cliente una auditoría de CX gratuita y de valor real. Buscando la reciprocidad ética, ¿qué sigue?",
+   o:["Dar valor genuino y dejar que corresponda","Cobrar de inmediato un extra por ese informe","Exigir que firme el contrato antes de ver nada","Ocultar que el diagnóstico fue en verdad un obsequio"],
+   c:0,
+   e:"Dar valor genuino por adelantado predispone a corresponder; la clave ética es dar de verdad, no usar el regalo como anzuelo."},
+
+  {m:2,t:"unica",d:"avanzado",caso:true,fmt:"jugada",
+   q:"Jugada: propones al cliente un plan anual enorme y lo rechaza de plano. Aplicando el portazo en la cara, ¿qué sigue?",
+   o:["Repetir el plan anual con más argumentos","Retirarte y no ofrecer ninguna otra alternativa","Retroceder al plan trimestral que querías","Subir todavía más el alcance de la propuesta"],
+   c:2,
+   e:"Tras rechazar lo grande, retrocedes a la petición que de verdad querías; ese retroceso se lee como concesión y obliga a conceder."},
+
+  {m:1,t:"unica",d:"avanzado",caso:true,fmt:"jugada",
+   q:"Jugada: quieres que un paquete de $150 le parezca accesible al cliente. Usando el contraste del capítulo 1, ¿qué sigue?",
+   o:["Presentar primero el paquete más barato","Mostrar antes una opción mucho más cara","Enumerar sus funciones una por una despacio","Insistir en la escasez de cupos del plan actual"],
+   c:1,
+   e:"El contraste hace que, tras una cifra alta, lo siguiente parezca barato; por eso se muestra primero lo más caro."},
+
+  {m:2,t:"unica",d:"avanzado",caso:true,fmt:"detecta",
+   q:"Detecta el error en esta reciprocidad ética: ① Regalas un diagnóstico útil sin pedir nada ② El cliente siente aprecio ③ Le exiges firmar hoy mismo por lo que le diste ④ Debía poder decidir con libertad",
+   o:["①","②","③","④"],
+   c:2,
+   e:"El paso ③ convierte el regalo en anzuelo: cobrar la deuda a la fuerza es manipular. La reciprocidad ética deja al cliente decidir libre."},
+
+  {m:2,t:"unica",d:"avanzado",caso:true,fmt:"detecta",
+   q:"Detecta el error en este portazo en la cara: ① Pides algo pequeño primero ② El cliente acepta enseguida ③ Luego pides algo mucho mayor ④ Esperas que la concesión lo obligue",
+   o:["①","②","③","④"],
+   c:0,
+   e:"El error es ①: el portazo empieza por una petición grande y rechazable, no por la pequeña. Empezar por lo chico invierte la técnica."},
+
+  {m:1,t:"unica",d:"avanzado",caso:true,fmt:"detecta",
+   q:"Detecta el error en este uso del contraste: ① Muestras primero el traje de $2.000 ② Luego el suéter de $150 ③ El suéter parece barato ④ El efecto exige que el cliente note la comparación",
+   o:["①","②","③","④"],
+   c:3,
+   e:"El error es ④: el contraste no se ve y por eso funciona. Si el cliente notara la comparación, el efecto se debilitaría bastante."}
+];
+var SIMS_HAB = [
+{id:'valle',titulo:'El Valle de la Decepción',perfil:'3 meses prospectando sin cerrar',
+ contexto:'Llevas <b>3 meses</b> prospectando un contacto diario en el CRM y no has cerrado nada. La curva se ve plana y la tentación de abandonar es fuerte. Tu misión: sostener el sistema en la <b>meseta del potencial latente</b>.',
+ start:'n1',
+ nodes:{
+  n1:{who:'La situación',cliente:'Revisas el pipeline: 90 contactos, cero cierres. Una voz dice: "esto no funciona, mejor cambia de estrategia".',
+    ops:[
+     {t:'Recuerdas el interés compuesto: el trabajo es invisible, no inexistente, y sigues con tu contacto diario.',fx:'good',fb:'Correcto: los resultados son exponenciales, no lineales. El cubo de hielo no cambia de -10 a -1, pero el trabajo se acumula.',to:'n2'},
+     {t:'Abandonas la prospección y te vuelcas a rediseñarlo todo desde cero.',fx:'bad',fb:'Ese es el error clásico: abandonar en el Valle de la Decepción, justo antes del punto de quiebre.',to:'n2b'},
+     {t:'Sigues, pero solo cuando te queda ánimo al final del día.',fx:'mid',fb:'Insuficiente: el sistema pierde consistencia y la dirección deja de importar si no lo sostienes a diario.',to:'n2'}
+    ]},
+  n2:{who:'Tu mente',cliente:'La mente pide una señal: "¿y si de verdad estás perdiendo el tiempo?".',
+    ops:[
+     {t:'Te enfocas en el sistema (1 contacto/día) y no en el resultado que aún no llega.',fx:'good',fb:'No te elevas al nivel de tus metas; caes al nivel de tus sistemas. La dirección importa más que la magnitud.',to:'n3'},
+     {t:'Mides tu valor por los cierres y te desmotivas al no verlos.',fx:'bad',fb:'Atarte al resultado en la meseta es la receta para abandonar antes del quiebre.',to:'n3'}
+    ]},
+  n2b:{who:'La situación',cliente:'Semanas después, con la nueva estrategia, sigues sin cierres y otra vez piensas en cambiar.',
+    ops:[
+     {t:'Entiendes el patrón: reinicias la curva cada vez y nunca acumulas. Vuelves a un sistema estable.',fx:'good',fb:'Rescate: cambiar de estrategia en cada meseta borra el trabajo acumulado. La consistencia lo capitaliza.',to:'n3'},
+     {t:'Cambias de estrategia una tercera vez buscando el atajo.',fx:'bad',fb:'Si abandonas en la meseta, nunca sabrás cuán cerca estabas del punto de quiebre.',to:'lose'}
+    ]},
+  n3:{who:'El momento',cliente:'Un prospecto viejo responde interesado. ¿Qué te dice esto?',
+    ops:[
+     {t:'Que el trabajo invisible por fin desencadena la fusión, como el hielo a 0°C.',fx:'good',fb:'El terremoto libera de golpe la tensión acumulada por meses: así funcionan los resultados transformadores.',to:'win'},
+     {t:'Que fue suerte y que igual deberías haber cambiado antes.',fx:'bad',fb:'Atribuirlo al azar te hará abandonar el sistema que produjo el resultado.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'Cierras tu primer cliente y detrás vienen dos más del mismo esfuerzo acumulado.',
+    msg:'Sostuviste el sistema en el Valle de la Decepción. El 1% diario es exponencial: el trabajo era invisible, no inexistente, y llegaste al punto de quiebre.'},
+  lose:{end:true,res:'lose',cliente:'Reiniciaste la curva tantas veces que nunca acumulaste; el pipeline volvió a cero.',
+    msg:'Abandonaste en la meseta. Cambiar de estrategia en cada plano borra el interés compuesto y nunca ves el punto de quiebre.'}
+ }},
+{id:'racha',titulo:'La cadena rota',perfil:'Fallaste el spinning por una noche dura',
+ contexto:'El bebé no durmió y hoy no hiciste spinning: <b>rompiste la cadena</b>. El riesgo real no es ese día, sino <b>fallar dos veces seguidas</b>. Tu misión: no convertir un accidente en un hábito nuevo.',
+ start:'n1',
+ nodes:{
+  n1:{who:'La situación',cliente:'Es el segundo día. Estás agotado y piensas: "hoy tampoco, ya mañana retomo con todo".',
+    ops:[
+     {t:'Aplicas la regla de los 2 minutos: solo te pones la ropa de ejercicio y arrancas 5 min.',fx:'good',fb:'Correcto: en días duros la versión de 2 min mantiene la cadena. El obstáculo es el inicio, no la ejecución.',to:'n2'},
+     {t:'Lo dejas para mañana "con todo", a ver si recuperas la energía.',fx:'bad',fb:'Un día es un accidente; dos seguidos es el inicio del hábito de no hacer. Hoy no es negociable.',to:'n2b'},
+     {t:'Cambias el spinning por una caminata larga que igual te da pereza.',fx:'mid',fb:'Tibio: subir la exigencia en un día duro te expone a no hacer nada. Baja la vara, no la subas.',to:'n2'}
+    ]},
+  n2:{who:'Tu mente',cliente:'Una voz dice: "5 minutos no sirven de nada, o lo haces bien o no lo hagas".',
+    ops:[
+     {t:'Rechazas el perfeccionismo: presentarte hoy protege la identidad y la cadena.',fx:'good',fb:'La consistencia imperfecta supera a la intensidad esporádica. Domina el arte de presentarte.',to:'n3'},
+     {t:'Le crees y decides que sin sesión completa no vale la pena.',fx:'bad',fb:'La perfección es contraproducente: te empuja al segundo fallo, que sí instala el mal hábito.',to:'n3'}
+    ]},
+  n2b:{who:'La situación',cliente:'Ya van dos días sin entrenar y el tercero se asoma igual de pesado.',
+    ops:[
+     {t:'Cortas la racha negativa hoy mismo con una versión mínima innegociable.',fx:'good',fb:'Rescate: nunca falles dos veces se vuelve nunca falles tres. Un día sin ejercicio no te vuelve sedentario; dos semanas sí.',to:'n3'},
+     {t:'Asumes que "esta semana ya se perdió" y esperas al lunes.',fx:'bad',fb:'Así se forma el hábito de no hacer: el patrón F-F-F reemplaza al X-X-X.',to:'lose'}
+    ]},
+  n3:{who:'El momento',cliente:'Estás en la bici tras ponerte la ropa. ¿Con qué te quedas?',
+    ops:[
+     {t:'Con haber roto la inercia; el patrón ideal es X-X-F-R, nunca F-F.',fx:'good',fb:'Retomar de inmediato tras un fallo es la jugada maestra. Volviste antes de que el accidente se hiciera hábito.',to:'win'},
+     {t:'Con la culpa, prometiéndote una sesión doble mañana.',fx:'bad',fb:'La compensación heroica rara vez ocurre y suele terminar en otro día perdido.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'Volviste al día siguiente sin drama y la cadena siguió intacta el resto de la semana.',
+    msg:'No fallaste dos veces seguidas. La regla de los 2 minutos mantuvo la cadena en un día duro: bajar la vara te salvó la racha.'},
+  lose:{end:true,res:'lose',cliente:'Un fallo se volvió tres y el spinning desapareció de tu semana.',
+    msg:'El segundo fallo instaló el hábito de no hacer. No era el día perdido lo grave, sino permitir el patrón F-F.'}
+ }},
+{id:'entorno',titulo:'El ladrón de 20 minutos',perfil:'El celular te roba el estudio de IA',
+ contexto:'Te sientas a estudiar IA 20 min y el <b>celular</b> te desvía cada vez. No es falta de disciplina: es <b>diseño del entorno</b>. Tu misión: usar fricción, señales y tentación bundling para blindar el bloque.',
+ start:'n1',
+ nodes:{
+  n1:{who:'La situación',cliente:'Abres el curso, llega una notificación y a los 2 minutos ya estás en otra app.',
+    ops:[
+     {t:'Guardas el celular en otra habitación antes de empezar el bloque.',fx:'good',fb:'Correcto: reducir un solo paso de fricción decide entre un hábito que se sostiene y uno que muere.',to:'n2'},
+     {t:'Dejas el celular al lado prometiéndote no tocarlo por fuerza de voluntad.',fx:'bad',fb:'El entorno es el arquitecto invisible: gravitamos a la menor fricción. La voluntad sola pierde.',to:'n2b'},
+     {t:'Pones el celular boca abajo pero sigue en la mesa, a la mano.',fx:'mid',fb:'Insuficiente: la señal sigue visible y accesible. Hazla invisible, no solo incómoda.',to:'n2'}
+    ]},
+  n2:{who:'Tu mente',cliente:'Piensas: "el estudio es aburrido y las redes son más entretenidas".',
+    ops:[
+     {t:'Usas tentación bundling: solo tomas tu café premium mientras estudias IA.',fx:'good',fb:'La dopamina anticipatoria de lo que quieres se transfiere a lo que necesitas (Milkman, +51% gimnasio).',to:'n3'},
+     {t:'Te obligas a estudiar sin ningún incentivo, a puro aguante.',fx:'bad',fb:'Sin hacerlo atractivo, la 2ª ley falla y el hábito no compite con la gratificación instantánea.',to:'n3'}
+    ]},
+  n2b:{who:'La situación',cliente:'Con el celular al lado, ya perdiste 12 de los 20 minutos entre revisadas.',
+    ops:[
+     {t:'Reconoces que el diseño falló y sacas el celular del cuarto ahora mismo.',fx:'good',fb:'Rescate: quienes sostienen hábitos no tienen más disciplina; estructuran el entorno para no necesitarla.',to:'n3'},
+     {t:'Te culpas por no tener disciplina y sigues con el celular cerca.',fx:'bad',fb:'Culpar tu voluntad ignora la causa real: la señal sigue obvia y la fricción, en cero.',to:'lose'}
+    ]},
+  n3:{who:'El momento',cliente:'Empiezas de nuevo con el cuarto despejado. ¿Qué aseguras?',
+    ops:[
+     {t:'Haces obvia la buena señal (curso abierto) e invisible la mala (celular fuera).',fx:'good',fb:'Diseño del entorno en acción: señal buena visible, señal mala invisible, como la cafetería de Thorndike.',to:'win'},
+     {t:'Confías en que "hoy sí" te vas a resistir con el celular al alcance.',fx:'bad',fb:'~43% de las acciones son habituales: sin cambiar el entorno, repetirás la distracción.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'Completaste los 20 minutos concentrado y el café te dejó ganas de repetir mañana.',
+    msg:'No fue disciplina, fue diseño: fricción alta al distractor, señal obvia al estudio y tentación bundling. Estructuraste el entorno para que la disciplina sea innecesaria.'},
+  lose:{end:true,res:'lose',cliente:'El celular ganó otra vez y el bloque de IA se disolvió en scroll.',
+    msg:'Confiar en la fuerza de voluntad con la señal a la mano falló. El entorno, no tu carácter, gobierna el hábito.'}
+ }},
+{id:'movimiento',titulo:'El plan perfecto',perfil:'Semanas preparando, cero llamadas',
+ contexto:'Llevas semanas <b>puliendo el plan de negocio</b> de tu consultoría y no has llamado a un solo prospecto. Se siente productivo, pero no produce nada. Tu misión: pasar del <b>movimiento a la acción</b>.',
+ start:'n1',
+ nodes:{
+  n1:{who:'La situación',cliente:'Abres otra vez la presentación para "afinar detalles" antes de contactar a nadie.',
+    ops:[
+     {t:'Cierras el archivo y llamas hoy al primer prospecto, aunque el plan esté al 80%.',fx:'good',fb:'Correcto: escribir el plan perfecto es movimiento; llamar al primer prospecto es acción, la única que genera resultados.',to:'n2'},
+     {t:'Dedicas otra semana a dejar el plan impecable antes de arriesgarte.',fx:'bad',fb:'El movimiento es procrastinación productiva: te sientes ocupado sin exponerte al fallo.',to:'n2b'},
+     {t:'Investigas más el mercado "para llamar mejor preparado".',fx:'mid',fb:'Tibio: más investigación es más movimiento. Limita la preparación al 20%.',to:'n2'}
+    ]},
+  n2:{who:'Tu mente',cliente:'Una voz dice: "si llamas ahora sin estar listo, vas a quedar mal".',
+    ops:[
+     {t:'Aceptas la incomodidad: la acción produce aunque sea imperfecta.',fx:'good',fb:'La acción es incómoda porque te expone; ahí está justamente el resultado que el movimiento evita.',to:'n3'},
+     {t:'Prefieres la comodidad de seguir preparándote un poco más.',fx:'bad',fb:'Refugiarte en la preparación es evitar el fallo, no avanzar hacia el cliente.',to:'n3'}
+    ]},
+  n2b:{who:'La situación',cliente:'Pasa la semana, el plan está "perfecto" y sigues con cero conversaciones reales.',
+    ops:[
+     {t:'Te das cuenta del autoengaño y agendas 3 llamadas para hoy.',fx:'good',fb:'Rescate: 80% ejecución, 20% preparación. Solo exponerte al mercado da información y resultados.',to:'n3'},
+     {t:'Decides que aún falta un detalle y lo pospones un día más.',fx:'bad',fb:'Cada aplazamiento confirma el hábito de preparar en vez de ejecutar.',to:'lose'}
+    ]},
+  n3:{who:'El momento',cliente:'Tienes el teléfono en la mano y el número marcado. ¿Qué haces?',
+    ops:[
+     {t:'Llamas y hablas: entregas, aunque sea incómodo y no salga perfecto.',fx:'good',fb:'Entregar es acción. El plan solo cobra valor cuando lo confrontas con un prospecto real.',to:'win'},
+     {t:'Cuelgas para "ensayar el pitch una vez más".',fx:'bad',fb:'Ensayar de nuevo es volver al movimiento en el último metro.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'Hiciste 3 llamadas; una pidió una propuesta y aprendiste más en una hora que en semanas.',
+    msg:'Cruzaste de movimiento a acción. La preparación se limita al 20%: solo ejecutar y entregar te acercó a un cliente real.'},
+  lose:{end:true,res:'lose',cliente:'El plan quedó impecable y guardado; los prospectos, sin enterarse de que existes.',
+    msg:'Te quedaste en el movimiento. Preparar sin ejecutar se siente productivo, pero es procrastinación que no produce resultados.'}
+ }},
+{id:'identidad',titulo:'El mal día',perfil:'Un tropiezo te dice: no soy disciplinado',
+ contexto:'Un mal día sin dormir: te saltaste el spinning, el estudio y la prospección. La mente sentencia: <b>"no soy disciplinado"</b>. Tu misión: entender la identidad como <b>mayoría de votos</b>, no como un veredicto de un día.',
+ start:'n1',
+ nodes:{
+  n1:{who:'La situación',cliente:'Al acostarte piensas: "otra vez fallé en todo, en el fondo no soy una persona disciplinada".',
+    ops:[
+     {t:'Lo lees como un voto en minoría, no como tu identidad definitiva.',fx:'good',fb:'Correcto: no necesitas unanimidad, necesitas mayoría. Un mal día es un voto minoritario.',to:'n2'},
+     {t:'Aceptas la etiqueta "no soy disciplinado" como una verdad sobre ti.',fx:'bad',fb:'Declarar la identidad negativa sin mirar la evidencia acumulada instala una profecía.',to:'n2b'},
+     {t:'Te prometes ser perfecto de ahora en adelante para compensar.',fx:'mid',fb:'Tibio: la identidad no se cambia con una promesa, sino acumulando votos conductuales.',to:'n2'}
+    ]},
+  n2:{who:'Tu mente',cliente:'La mente pide pruebas: "¿de verdad eres disciplinado o solo te engañas?".',
+    ops:[
+     {t:'Revisas la evidencia: la mayoría de tus días sí votan por el hábito.',fx:'good',fb:'La identidad se demuestra con evidencia acumulada. Cada acción es un voto por el tipo de persona que quieres ser.',to:'n3'},
+     {t:'Solo recuerdas los días que fallaste y confirmas la etiqueta.',fx:'bad',fb:'Contar únicamente los fallos sesga el conteo; ignora la mayoría de votos a favor.',to:'n3'}
+    ]},
+  n2b:{who:'La situación',cliente:'Al día siguiente, con la etiqueta puesta, sientes que no vale la pena ni intentarlo.',
+    ops:[
+     {t:'Sueltas la etiqueta y emites un voto hoy: la versión de 2 min de un hábito.',fx:'good',fb:'Rescate: un solo voto conductual empieza a inclinar la mayoría de nuevo hacia tu identidad deseada.',to:'n3'},
+     {t:'Dejas que "no soy disciplinado" decida el día y no haces nada.',fx:'bad',fb:'Si la mayoría de votos van a la inactividad, esa sí se vuelve tu identidad real.',to:'lose'}
+    ]},
+  n3:{who:'El momento',cliente:'Tienes cinco minutos libres. ¿Qué voto emites?',
+    ops:[
+     {t:'Haces una micro-sesión: un voto por "soy alguien constante".',fx:'good',fb:'El cambio duradero empieza por la identidad y se respalda con acciones pequeñas y repetidas.',to:'win'},
+     {t:'Esperas a "estar de ánimo" para retomar en serio.',fx:'bad',fb:'Esperar al ánimo cede el voto; los profesionales ejecutan según el calendario, no el humor.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'Retomaste con una acción mínima y tu conteo de votos volvió a inclinarse a tu favor.',
+    msg:'Un mal día no define tu identidad: es un voto en minoría. La identidad se construye por mayoría de acciones, no por el veredicto de una jornada.'},
+  lose:{end:true,res:'lose',cliente:'Creíste la etiqueta y encadenaste días de inactividad que sí la hicieron cierta.',
+    msg:'Convertiste un mal día en identidad. La mayoría de tus votos empezó a apuntar a la inactividad, y esa se volvió tu realidad.'}
+ }}
+];
+
+var RETOS_HAB = [
+{id:'arranque',titulo:'Instalar un hábito desde cero',perfil:'Aplicar las 4 leyes',
+ contexto:'Quieres instalar un hábito nuevo (estudiar IA 20 min al día) sin depender de la fuerza de voluntad. Aplica las cuatro leyes: obvio, atractivo, fácil y satisfactorio.',
+ pasos:[
+  {q:'1ª ley (obvio): ¿cómo aseguras que la señal para estudiar aparezca sola?',o:['Estudias cuando en la tarde encuentres finalmente un rato libre','Apilas el hábito: después del café, abro el curso de IA','Dejas una nota en el espejo por si acaso la ves','Esperas a sentir motivación suficiente ese día'],c:1,e:'El apilamiento usa un hábito existente como recordatorio: después de [hábito actual], haré [hábito nuevo].'},
+  {q:'2ª ley (atractivo): ¿cómo haces que dé ganas de sentarte a estudiar?',o:['Te obligas a estudiar aunque sea aburrido, a puro aguante','Te premias con algo grande solo al terminar el mes','Solo tomas tu café premium mientras estudias IA','Piensas en lo culpable que te sentirás si no lo haces'],c:2,e:'Tentación bundling: vinculas lo que necesitas con algo que quieres, y la dopamina anticipatoria se transfiere.'},
+  {q:'3ª ley (fácil): ¿cómo reduces la fricción de arrancar?',o:['Dejas el curso abierto y el material listo la noche anterior','Te propones sesiones intensas de una hora desde el arranque','Guardas el material en varias carpetas por si lo necesitas','Estudias en el celular, que siempre tienes muy a la mano'],c:0,e:'Reducir un paso de fricción y aplicar la regla de los 2 minutos hace que empezar sea casi automático.'},
+  {q:'4ª ley (satisfactorio): ¿cómo cierras el bucle para que se repita?',o:['Esperas el resultado final dentro de varios meses de estudio','Comparas tu avance con el de otros en cada sesión','Guardas la sensación de logro solo para ti sin registrar','Marcas una X en el tracker apenas terminas la sesión'],c:3,e:'Una recompensa inmediata (la marca en el tracker) da satisfacción hoy y garantiza que el hábito se repita.'},
+  {q:'Al diagnosticar un hábito que no pega, ¿qué revisas primero?',o:['Cuál de las cuatro leyes está fallando en ese hábito','Si simplemente te falta más fuerza de voluntad','Si el hábito vale la pena o mejor lo abandonas','Si tus metas están bien definidas y son ambiciosas'],c:0,e:'Cada hábito puede diagnosticarse viendo cuál de las 4 leyes falla; es diseño conductual, no voluntad.'}
+ ]},
+{id:'malhabito',titulo:'Romper el celular compulsivo',perfil:'Invertir las 4 leyes',
+ contexto:'Revisas el celular decenas de veces al día y te fragmenta el trabajo. Aplica la inversión de las cuatro leyes: invisible, poco atractivo, difícil e insatisfactorio.',
+ pasos:[
+  {q:'Invertir la 1ª ley (hazlo invisible): ¿cuál es la mejor jugada?',o:['Dejas el celular a la vista pero prometes no tocarlo','Guardas el celular en otra habitación al trabajar','Confías en tu fuerza de voluntad durante el bloque','Pones un fondo de pantalla que te recuerde no usarlo'],c:1,e:'Sacar la señal de la vista corta el bucle en su origen: lo que no ves, no dispara el deseo.'},
+  {q:'Invertir la 2ª ley (hazlo poco atractivo): ¿cómo reencuadras?',o:['Te repites que las redes son un premio que mereces','Piensas que un vistazo rápido no le hace daño a nadie','Estoy ganando concentración, no perdiéndome las redes','Te prohíbes el celular sin darte ninguna razón clara'],c:2,e:'Re-enmarcar la narrativa cambia el deseo: destacas lo que ganas al no hacerlo, no lo que te pierdes.'},
+  {q:'Invertir la 3ª ley (hazlo difícil): ¿qué añade más fricción?',o:['Dejas las apps instaladas pero cierras la sesión a veces','Ocultas los íconos en la última pantalla del celular','Silencias las notificaciones y sigues con las apps ahí','Desinstalas las apps que más te roban la atención'],c:3,e:'La fricción extra reduce el uso: cuanto más cuesta abrir la app, menos veces caes en el bucle.'},
+  {q:'Invertir la 4ª ley (hazlo insatisfactorio): ¿qué instalas?',o:['Un contrato: si revisas de más, lavas los platos','Una promesa mental de portarte mejor mañana','Una app que cuenta cuántas veces lo abriste','Un recordatorio amable pegado junto a la pantalla'],c:0,e:'Un contrato de compromiso pone un costo inmediato al mal hábito y lo vuelve insatisfactorio.'},
+  {q:'¿Por qué el rediseño ambiental vence a la fuerza de voluntad?',o:['Porque exige menos esfuerzo mental los primeros días','Porque opera permanentemente sin costo cognitivo','Porque motiva más y da resultados más llamativos','Porque la voluntad se puede entrenar como un músculo'],c:1,e:'El entorno rediseñado actúa siempre y sin gasto de atención; la voluntad se agota, el diseño no.'}
+ ]},
+{id:'meseta',titulo:'Sostener en la meseta',perfil:'Cruzar el Valle de la Decepción',
+ contexto:'Llevas semanas con tus hábitos y no ves resultados: prospectas a diario y no cierras. Estás en la meseta del potencial latente. Sostén el sistema hasta el punto de quiebre.',
+ pasos:[
+  {q:'La curva se ve plana y quieres rendirte. ¿Cómo lo interpretas?',o:['Como prueba clara de que tu método no está funcionando','Como trabajo invisible que se acumula, como el hielo','Como una señal de que deberías cambiar de estrategia','Como mala suerte que probablemente no va a cambiar'],c:1,e:'El cubo de hielo no cambia de -10 a -1, pero el trabajo previo era necesario; los resultados son exponenciales.'},
+  {q:'¿En qué pones el foco mientras no llegan los cierres?',o:['En el resultado de salida, que es lo único que importa','En comparar tu ritmo con el de otros emprendedores','En el sistema de entrada: tu contacto diario constante','En buscar un atajo que acelere los resultados ya'],c:2,e:'No te elevas al nivel de tus metas; caes al nivel de tus sistemas. Trackea la entrada, no la salida.'},
+  {q:'Aparece la tentación de reiniciar todo desde cero. ¿Qué recuerdas?',o:['Que cambiar en cada meseta borra el trabajo acumulado','Que empezar de nuevo te dará por fin un aire fresco','Que otros métodos seguro funcionan mucho más rápido','Que si aún no hay señales es mejor probar otra cosa'],c:0,e:'Reiniciar la curva en cada plano impide acumular; la consistencia es la que capitaliza el interés compuesto.'},
+  {q:'¿Qué te enseña el ciclismo británico sobre la meseta?',o:['Que el talento puro define quién domina a la larga','Que sin resultados rápidos conviene cambiar de plan','Que la genética marca el techo de lo que lograrás','Que 5 años de mejoras del 1% preceden al dominio'],c:3,e:'El equipo británico acumuló mejoras incrementales durante años antes de dominar el Tour y los Olímpicos 2008.'},
+  {q:'¿Cuál es el mayor riesgo de abandonar justo en la meseta?',o:['Nunca sabrás cuán cerca estabas del punto de quiebre','Que perderás algo del tiempo que ya habías invertido','Que tus rivales te tomarán una ventaja difícil','Que tendrás que empezar de nuevo con otro método'],c:0,e:'El período de trabajo invisible es donde la mayoría abandona, sin saber lo cerca que estaba del quiebre.'}
+ ]},
+{id:'diseno',titulo:'Diseñar el día',perfil:'Apilamiento, entorno, tracking y momentos',
+ contexto:'Quieres que tu día funcione solo, sin depender del ánimo: estudio de IA, prospección y spinning con un bebé en casa. Diseña con apilamiento, entorno, tracking de entrada y momentos decisivos.',
+ pasos:[
+  {q:'¿Cómo encadenas los hábitos nuevos a tu rutina existente?',o:['Los haces en cualquier hueco libre que aparezca en el día','Después de darle la leche al bebé, 10 min de spinning','Te fijas horarios exactos por reloj y los cumples firme','Los dejas para cuando sientas que tienes más energía'],c:1,e:'El apilamiento usa vías neuronales ya existentes: el hábito anterior es el recordatorio del nuevo.'},
+  {q:'¿Cómo preparas el entorno para el bloque de estudio?',o:['Confías en resistir el celular estando este a la mano','Trabajas donde caiga, aunque haya muchas distracciones','Dejas todo listo y el celular fuera de la habitación','Pones música nueva cada día para mantenerte activo'],c:2,e:'Haz obvias las señales del buen hábito e invisibles las del malo; el entorno es el arquitecto invisible.'},
+  {q:'Vas a trackear tus hábitos. ¿Qué registras exactamente?',o:['El hábito de entrada: hice spinning hoy, sí o no','Las calorías quemadas y los kilos que vas perdiendo','Los cierres de venta logrados durante la semana','El total de minutos productivos acumulados al mes'],c:0,e:'Trackea la entrada, no la salida: enfocarte en la métrica de resultado dispara la Ley de Goodhart.'},
+  {q:'Defines un momento decisivo para no fallar el ejercicio. ¿Cómo?',o:['Confiando en decidir bien sobre la marcha ese día','Cuando suene la alarma, pondré los pies en el piso','Esperando a ver cómo amaneces de ánimo esa mañana','Prometiéndote hacerlo en algún momento de la jornada'],c:1,e:'Implementation intention: definir cuándo y dónde da 2-3x más probabilidad (Gollwitzer). Los pies al piso es el punto decisivo.'},
+  {q:'Al revisar tu diseño cada tanto, ¿qué te preguntas?',o:['Si podrías exigirte bastante más de lo que ya haces','Si tus hábitos siguen alineados con quién quieres ser','Si vas por delante o por detrás de los demás','Si conviene sumar más hábitos nuevos cuanto antes'],c:1,e:'El Informe de Integridad revisa si tus hábitos siguen alineados con tu identidad; lo óptimo ayer puede ser obsoleto hoy.'}
+ ]}
+];
+// El Club de las 5 de la Mañana — Robin Sharma
+// Simuladores ramificados y retos para el curso.
+
+var SIMS_CLUB = [
+  {
+    id: "alarma",
+    titulo: "Suena la alarma",
+    perfil: "El primer momento del día",
+    contexto: "Son las 5 a.m. La alarma suena en la oscuridad. El bebé por fin duerme y la cama nunca se ha sentido tan cómoda. Este primer gesto <b>declara con acciones</b> quién manda hoy: tú o las circunstancias.",
+    start: "n1",
+    nodes: {
+      n1: {
+        who: "La situación",
+        cliente: "Tu mano se estira hacia el celular buscando el botón de posponer. Un impulso automático, casi sin pensarlo.",
+        ops: [
+          {
+            t: "Te levantas de una vez, sin negociar con la alarma.",
+            fx: "good",
+            fb: "La automaticidad vence a la motivación: al no dejar espacio para negociar, eliminas la decisión y actúas como líder de tu día.",
+            to: "n2"
+          },
+          {
+            t: "Pospones diez minutos; total, casi no dormiste.",
+            fx: "bad",
+            fb: "El snooze abre la negociación interna y activa la narrativa de víctima: cedes el control del día a la circunstancia.",
+            to: "n2b"
+          },
+          {
+            t: "Te sientas en la cama a decidir si te levantas.",
+            fx: "mid",
+            fb: "Quedarte a deliberar gasta fuerza de voluntad por fatiga de decisión: cada segundo de duda te acerca al snooze.",
+            to: "n2"
+          }
+        ]
+      },
+      n2: {
+        who: "Tu mente",
+        cliente: "Aparece la vocecita: 'con lo mal que dormiste, mereces descansar; empieza mañana en serio'.",
+        ops: [
+          {
+            t: "Reencuadras: '¿qué acción tomo hoy con lo que controlo?'.",
+            fx: "good",
+            fb: "Es la narrativa de líder: cambias la relación con la circunstancia en vez de esperar que cambie la circunstancia.",
+            to: "n3"
+          },
+          {
+            t: "Le das la razón: hoy no cuenta, fue una noche dura.",
+            fx: "bad",
+            fb: "La narrativa de víctima ('el bebé no deja') te justifica hoy y mañana: el sistema se erosiona un día a la vez.",
+            to: "n3"
+          }
+        ]
+      },
+      n2b: {
+        who: "La situación",
+        cliente: "Los diez minutos se hicieron treinta. Despiertas tarde, apurado y con culpa, sin tu primera hora.",
+        ops: [
+          {
+            t: "Rescatas una versión mínima de movimiento y foco.",
+            fx: "good",
+            fb: "Una versión mínima sostenida vence a la aspiracional que abandonas: salvas el día apilando una pequeña victoria.",
+            to: "n3"
+          },
+          {
+            t: "Tiras la toalla del día y corres directo al correo.",
+            fx: "bad",
+            fb: "Empezar reactivo activa la amígdala: pasarás la jornada apagando incendios ajenos.",
+            to: "lose"
+          }
+        ]
+      },
+      n3: {
+        who: "El momento",
+        cliente: "Estás de pie. Toca definir cómo arranca de verdad esta primera hora.",
+        ops: [
+          {
+            t: "Ropa lista de anoche: vas directo a mover el cuerpo.",
+            fx: "good",
+            fb: "Preparar la noche anterior elimina decisiones y protege tu energía cognitiva para lo que importa.",
+            to: "win"
+          },
+          {
+            t: "Prendes la tele para 'despertarte' un rato.",
+            fx: "bad",
+            fb: "Ceder tu atención a una pantalla desde el minuto uno es el error fatal: entregas el blueprint del día.",
+            to: "lose"
+          }
+        ]
+      },
+      win: {
+        end: true,
+        res: "win",
+        cliente: "A las 5:10 ya te mueves. La casa duerme y tú operas desde la intención. El día es tuyo antes de que el mundo despierte.",
+        msg: "Ganaste la mañana como líder: la automaticidad y una versión mínima sostenida vencieron a la negociación interna."
+      },
+      lose: {
+        end: true,
+        res: "lose",
+        cliente: "Arrancaste tarde y reactivo, apagando incendios con culpa. La primera hora, que era tuya, se la quedó el mundo.",
+        msg: "La narrativa de víctima y el reflejo hacia la pantalla te robaron el día: sin sistema, la voluntad sola no alcanza."
+      }
+    }
+  },
+  {
+    id: "reactivo",
+    titulo: "La tentación del celular",
+    perfil: "Ganar la mañana o cederla",
+    contexto: "Abres los ojos y el celular descansa a un brazo de distancia. Notificaciones, correos de clientes, noticias. La primera hora puede diseñarse <b>con intención absoluta</b> o entregarse en el primer swipe.",
+    start: "n1",
+    nodes: {
+      n1: {
+        who: "La situación",
+        cliente: "El impulso es tomar el teléfono 'solo para ver la hora' y de paso revisar si algo urgente llegó de noche.",
+        ops: [
+          {
+            t: "Dejas el celular boca abajo y buscas la luz natural.",
+            fx: "good",
+            fb: "Empezar proactivo evita activar la amígdala; la luz temprana calibra el reloj circadiano y aprovecha la dopamina matutina.",
+            to: "n2"
+          },
+          {
+            t: "Lo tomas 'un segundo' para ver si hay algo urgente.",
+            fx: "bad",
+            fb: "Ceder tu atención al celular es el error fatal: un correo ajeno secuestra tu foco y arrancas apagando incendios.",
+            to: "n2b"
+          },
+          {
+            t: "Solo miras la hora, prometiéndote no abrir nada.",
+            fx: "mid",
+            fb: "Las apps usan recompensas variables como tragamonedas: una mirada 'inocente' basta para engancharte al scroll.",
+            to: "n2"
+          }
+        ]
+      },
+      n2: {
+        who: "Tu mente",
+        cliente: "Piensas: 'si no reviso ya, quedaré atrás con los clientes; responder rápido es ser profesional'.",
+        ops: [
+          {
+            t: "Decides operar desde la intención, no desde la reacción.",
+            fx: "good",
+            fb: "Ganar la mañana es ganar el día: tu primera hora es el blueprint, no la bandeja de entrada de otros.",
+            to: "n3"
+          },
+          {
+            t: "Abres el correo para 'adelantar' antes de arrancar.",
+            fx: "bad",
+            fb: "Empezar con emails ajenos te pone a servir las prioridades de otros; regalas tu pico cognitivo matutino.",
+            to: "n3"
+          }
+        ]
+      },
+      n2b: {
+        who: "La situación",
+        cliente: "Un mensaje de cliente te tensó y ya llevas quince minutos en el chat, aún acostado y con el pulso acelerado.",
+        ops: [
+          {
+            t: "Sueltas el teléfono y recuperas la soberanía atencional.",
+            fx: "good",
+            fb: "Recuperar la soberanía atencional te devuelve al asiento del conductor: el mensaje puede esperar a tu primera hora.",
+            to: "n3"
+          },
+          {
+            t: "Sigues respondiendo desde la cama, ya encarrilado.",
+            fx: "bad",
+            fb: "La amígdala manda: pasarás el día en modo reactivo, apagando incendios que ni siquiera eran tuyos.",
+            to: "lose"
+          }
+        ]
+      },
+      n3: {
+        who: "El momento",
+        cliente: "Te levantas. Tienes una hora antes de que la casa y los clientes reclamen tu atención.",
+        ops: [
+          {
+            t: "Arrancas tu ritual: mover, reflexionar y crecer.",
+            fx: "good",
+            fb: "Diseñar la primera hora con intención (20/20/20) convierte tu mañana en el plano del día entero.",
+            to: "win"
+          },
+          {
+            t: "Dejas el celular al lado 'por si acaso' mientras arrancas.",
+            fx: "bad",
+            fb: "La sola presencia del teléfono fragmenta el foco: cada vibración cuesta minutos de reenganche.",
+            to: "lose"
+          }
+        ]
+      },
+      win: {
+        end: true,
+        res: "win",
+        cliente: "Tu primera hora fue tuya. Llegas al primer mensaje del día con calma y desde la intención, no desde el susto.",
+        msg: "Ganaste la mañana operando proactivo: la intención venció al reflejo reactivo del celular."
+      },
+      lose: {
+        end: true,
+        res: "lose",
+        cliente: "El día se te fue reaccionando a lo urgente de otros. Nunca hubo primera hora: hubo una larga bandeja de entrada.",
+        msg: "Cediste tu atención al celular: la amígdala tomó el volante y el blueprint del día lo escribió el mundo."
+      }
+    }
+  },
+  {
+    id: "burbuja",
+    titulo: "Noventa minutos de foco",
+    perfil: "Proteger el trabajo profundo",
+    contexto: "Son tus primeros 90 minutos de jornada: 90/90/1 dedicado a diseñar tu framework de consultoría. La puerta está entreabierta y el celular boca arriba. La <b>Burbuja Hermética</b> aún no está sellada.",
+    start: "n1",
+    nodes: {
+      n1: {
+        who: "La situación",
+        cliente: "Justo cuando entras en calor, el celular vibra: un grupo de trabajo con veinte mensajes sin leer.",
+        ops: [
+          {
+            t: "Modo avión, puerta cerrada, una sola tarea a la vista.",
+            fx: "good",
+            fb: "Es sellar la Burbuja Hermética: sin notificaciones ni interrupciones proteges los 15-20 min que exige el flujo.",
+            to: "n2"
+          },
+          {
+            t: "Echas un vistazo rápido; podría ser algo importante.",
+            fx: "bad",
+            fb: "Cada interrupción cuesta ~23 min de reenganche: ese 'vistazo' vale mucho más de lo que parece.",
+            to: "n2b"
+          },
+          {
+            t: "Silencias el grupo pero dejas el celular a la vista.",
+            fx: "mid",
+            fb: "La sola presencia del teléfono ancla parte de tu atención: la burbuja a medias no genera flujo.",
+            to: "n2"
+          }
+        ]
+      },
+      n2: {
+        who: "Tu mente",
+        cliente: "A los 20 minutos surge la duda: 'esto está difícil; quizá primero despacho unos correos fáciles'.",
+        ops: [
+          {
+            t: "Sostienes la tarea de mayor potencial pese al roce.",
+            fx: "good",
+            fb: "El 90/90/1 exige dar tus mejores horas a tu única oportunidad más importante, no a lo urgente ni a lo fácil.",
+            to: "n3"
+          },
+          {
+            t: "Cambias a correos para 'entrar en ritmo' primero.",
+            fx: "bad",
+            fb: "Fragmentar tu pico cognitivo en tareas de bajo valor deja lo importante para la tarde, sin energía.",
+            to: "n3"
+          }
+        ]
+      },
+      n2b: {
+        who: "La situación",
+        cliente: "El vistazo se volvió una respuesta, y esa una conversación. Veinte minutos después no recuerdas dónde ibas.",
+        ops: [
+          {
+            t: "Cierras todo y vuelves a sellar la burbuja de foco.",
+            fx: "good",
+            fb: "Reconocer el costo de reenganche y volver a cerrar la burbuja recupera lo poco que queda de tu ventana profunda.",
+            to: "n3"
+          },
+          {
+            t: "Sigues en el chat; ya perdiste el hilo de todos modos.",
+            fx: "bad",
+            fb: "La distracción es el enemigo silencioso de la excelencia: encadenar interrupciones evapora tus 90 minutos.",
+            to: "lose"
+          }
+        ]
+      },
+      n3: {
+        who: "El momento",
+        cliente: "Quedan 40 minutos y el framework empieza a tomar forma. Alguien golpea suave la puerta con una consulta menor.",
+        ops: [
+          {
+            t: "Pides cinco minutos y cierras tu bloque sin romperlo.",
+            fx: "good",
+            fb: "Proteger la ventana como una reunión con un cliente importante es lo que permite terminar en flujo.",
+            to: "win"
+          },
+          {
+            t: "Atiendes de inmediato; total, es solo un momento.",
+            fx: "bad",
+            fb: "Otra interrupción reinicia el reloj de los 23 min: el trabajo profundo queda inconcluso justo al final.",
+            to: "lose"
+          }
+        ]
+      },
+      win: {
+        end: true,
+        res: "win",
+        cliente: "Cerraste los 90 minutos con el framework avanzado. Una sola sesión sellada rindió más que una mañana entera fragmentada.",
+        msg: "Sellaste la Burbuja Hermética y honraste el 90/90/1: el foco protegido produjo trabajo de alto valor."
+      },
+      lose: {
+        end: true,
+        res: "lose",
+        cliente: "Entre vistazos, chats y consultas, los 90 minutos se disolvieron. El framework sigue en el mismo punto que al inicio.",
+        msg: "El costo de reenganche te venció: sin burbuja, la distracción se comió tu mejor ventana cognitiva."
+      }
+    }
+  },
+  {
+    id: "burnout",
+    titulo: "Semanas sin recuperación",
+    perfil: "Honrar los ciclos gemelos",
+    contexto: "Llevas semanas en esfuerzo constante: consultoría, estudio de IA, madrugadas y noches con el bebé. Duermes menos de seis horas y lo llevas como medalla. El cuerpo empieza a pasar factura: los <b>ciclos gemelos</b> están rotos.",
+    start: "n1",
+    nodes: {
+      n1: {
+        who: "La situación",
+        cliente: "Hoy amaneces vacío: la concentración no llega, te irritas con facilidad y el café ya no rinde como antes.",
+        ops: [
+          {
+            t: "Lo lees como señal de recuperación pendiente, no debilidad.",
+            fx: "good",
+            fb: "El crecimiento ocurre en la recuperación: el agotamiento avisa que falta honrar el ciclo de descanso profundo.",
+            to: "n2"
+          },
+          {
+            t: "Te exiges más: doblas la carga para 'compensar'.",
+            fx: "bad",
+            fb: "Operar siempre en esfuerzo sin honrar la recuperación conduce directo al burnout.",
+            to: "n2b"
+          },
+          {
+            t: "Sumas otro café y sigues empujando el día.",
+            fx: "mid",
+            fb: "Estimularte tapa el síntoma pero no repone nada: la deuda de recuperación sigue creciendo bajo la superficie.",
+            to: "n2"
+          }
+        ]
+      },
+      n2: {
+        who: "Tu mente",
+        cliente: "Piensas: 'dormir más es de flojos; los que triunfan aguantan con cuatro horas'.",
+        ops: [
+          {
+            t: "Aceptas 7-8 horas como no negociables de rendimiento.",
+            fx: "good",
+            fb: "Dormir menos de 7 h daña memoria, creatividad y ánimo: el sueño es rendimiento, no pereza.",
+            to: "n3"
+          },
+          {
+            t: "Recortas aún más el sueño para 'ganar' horas.",
+            fx: "bad",
+            fb: "Levantarse temprano sin acostarse temprano es privación de sueño disfrazada de productividad.",
+            to: "n3"
+          }
+        ]
+      },
+      n2b: {
+        who: "La situación",
+        cliente: "A media tarde te equivocas en una cifra frente a un cliente. La fatiga ya cuesta dinero y credibilidad.",
+        ops: [
+          {
+            t: "Frenas y bloqueas una noche de desconexión total.",
+            fx: "good",
+            fb: "Alternar alto rendimiento con recuperación profunda es lo que sostiene el desempeño de élite en el tiempo.",
+            to: "n3"
+          },
+          {
+            t: "Te castigas trabajando hasta tarde para 'recuperar'.",
+            fx: "bad",
+            fb: "Más esfuerzo sobre un sistema agotado acelera el colapso: sin salud, los demás imperios caen.",
+            to: "lose"
+          }
+        ]
+      },
+      n3: {
+        who: "El momento",
+        cliente: "Es de noche. El bebé y tu esposa están en la sala. También tienes un módulo de IA a medias esperándote.",
+        ops: [
+          {
+            t: "Eliges la sala: esa presencia es tu recuperación.",
+            fx: "good",
+            fb: "Para un papá emprendedor, las noches con la familia no son tiempo perdido: son el ciclo de recuperación.",
+            to: "win"
+          },
+          {
+            t: "Te encierras a estudiar aunque ya no rinde tu cabeza.",
+            fx: "bad",
+            fb: "Estudiar sin recuperación no fija nada y roba lo único que repara: descanso y vínculo.",
+            to: "lose"
+          }
+        ]
+      },
+      win: {
+        end: true,
+        res: "win",
+        cliente: "Dormiste ocho horas y compensaste con una siesta de 20 min. En días amaneces con la mente afilada y el ánimo estable de vuelta.",
+        msg: "Honraste los ciclos gemelos: recuperación y sueño de clase mundial son la base del alto rendimiento sostenido."
+      },
+      lose: {
+        end: true,
+        res: "lose",
+        cliente: "Seguiste empujando sobre la deuda de sueño hasta que el cuerpo dijo basta: errores, irritación y cero foco. El burnout llegó.",
+        msg: "Operar siempre en esfuerzo sin recuperación quiebra el sistema: sin salud, los otros imperios se derrumban."
+      }
+    }
+  },
+  {
+    id: "imperios",
+    titulo: "Éxito de un solo imperio",
+    perfil: "Los 4 imperios interiores",
+    contexto: "Tu consultoría vuela y dominas cada vez más la IA. Pero hace semanas no hablas de verdad con tu esposa, dejaste el spinning y el propósito se difumina. Brillas solo en Mindset: <b>fragilidad disfrazada de éxito</b>.",
+    start: "n1",
+    nodes: {
+      n1: {
+        who: "La situación",
+        cliente: "Cierras otro contrato importante, pero al llegar a casa notas distancia: tu esposa ya no te cuenta cómo fue su día.",
+        ops: [
+          {
+            t: "Reconoces que descuidaste Heartset y decides atenderlo.",
+            fx: "good",
+            fb: "El éxito sostenible requiere los 4 imperios: con relaciones rotas, el logro profesional no se sostiene.",
+            to: "n2"
+          },
+          {
+            t: "Lo minimizas: cuando cierre este proyecto, lo arreglo.",
+            fx: "bad",
+            fb: "Aplazar Heartset es apostar todo a Mindset: éxito unidimensional que es fragilidad, no fortaleza.",
+            to: "n2b"
+          },
+          {
+            t: "Le prometes 'un fin de semana juntos' más adelante.",
+            fx: "mid",
+            fb: "La promesa difusa no repara el vínculo hoy: sin acción semanal concreta, el imperio sigue descuidándose.",
+            to: "n2"
+          }
+        ]
+      },
+      n2: {
+        who: "Tu mente",
+        cliente: "Aparece la duda: '¿no será que la salud y las relaciones son un lujo hasta que despegue el negocio?'.",
+        ops: [
+          {
+            t: "Rechazas el falso dilema: los 4 imperios se sostienen juntos.",
+            fx: "good",
+            fb: "Sin salud las otras dimensiones colapsan y sin propósito la motivación se agota: no son un lujo, son la base.",
+            to: "n3"
+          },
+          {
+            t: "Sacrificas salud y familia 'temporalmente' por el negocio.",
+            fx: "bad",
+            fb: "Sacrificar Healthset y Heartset socava el propio Mindset que crees estar potenciando.",
+            to: "n3"
+          }
+        ]
+      },
+      n2b: {
+        who: "La situación",
+        cliente: "Semanas después estás más rico y más solo: sin energía, sin spinning y con una sensación de vacío pese a los logros.",
+        ops: [
+          {
+            t: "Haces una evaluación semanal de qué imperio descuidas.",
+            fx: "good",
+            fb: "Evaluar cada semana qué imperio está flojo es la aplicación práctica que reequilibra las cuatro dimensiones.",
+            to: "n3"
+          },
+          {
+            t: "Buscas más logros externos para llenar ese vacío.",
+            fx: "bad",
+            fb: "Sin Soulset la motivación se agota: más logros no reparan la falta de propósito y vínculo.",
+            to: "lose"
+          }
+        ]
+      },
+      n3: {
+        who: "El momento",
+        cliente: "Tienes la tarde libre. Puedes cerrar un pendiente más de consultoría o dedicarla a reconectar y moverte.",
+        ops: [
+          {
+            t: "Spinning y luego tiempo real con tu esposa y el bebé.",
+            fx: "good",
+            fb: "Atender Healthset y Heartset a la par de Mindset es lo que vuelve el éxito estable y sostenible.",
+            to: "win"
+          },
+          {
+            t: "Un pendiente más de trabajo; lo demás puede esperar.",
+            fx: "bad",
+            fb: "Volver siempre al único imperio fuerte perpetúa la fragilidad disfrazada de éxito.",
+            to: "lose"
+          }
+        ]
+      },
+      win: {
+        end: true,
+        res: "win",
+        cliente: "Recuperaste el movimiento, la conversación con tu esposa y un sentido claro de para qué haces todo. El éxito por fin se siente firme.",
+        msg: "Equilibraste los 4 imperios: Mindset, Heartset, Healthset y Soulset sostienen juntos un éxito que no se derrumba."
+      },
+      lose: {
+        end: true,
+        res: "lose",
+        cliente: "El negocio brilla, pero tu salud, tus relaciones y tu propósito están en ruinas. El éxito unidimensional se sintió hueco.",
+        msg: "Brillar solo en Mindset es fragilidad disfrazada de éxito: sin los otros imperios, todo termina cediendo."
+      }
+    }
+  }
+];
+
+var RETOS_CLUB = [
+  {
+    id: "primerahora",
+    titulo: "La primera hora en un día difícil",
+    perfil: "Ejecutar la 20/20/20",
+    contexto: "Dormiste a intervalos por el bebé y despiertas agotado. Aun así quieres proteger tu primera hora. Hoy toca una versión <b>mínima 10/10/10</b> antes de que el mundo demande tu atención.",
+    pasos: [
+      {
+        q: "Ante el cansancio extremo, ¿cómo diseñas la primera hora?",
+        o: [
+          "Cancelas todo y empiezas 'en serio' mañana",
+          "Haces un 10/10/10 mínimo pero sostenido",
+          "Fuerzas el 20/20/20 completo pase lo que pase",
+          "Solo lees un rato para no esforzarte tanto"
+        ],
+        c: 1,
+        e: "Una versión mínima 10/10/10 sostenida vence a una 20/20/20 aspiracional que abandonas al tercer día."
+      },
+      {
+        q: "Arranca el bloque MOVER. ¿Qué haces con tan poca energía?",
+        o: [
+          "Lo saltas hoy porque casi no dormiste",
+          "Esperas a tener ganas de moverte",
+          "Diez minutos de movimiento antes de las 8",
+          "Reemplazas el ejercicio por otro café"
+        ],
+        c: 2,
+        e: "El mínimo no negociable de 10 min de movimiento antes de las 8 a.m. se sostiene incluso los días difíciles y libera el cóctel de claridad."
+      },
+      {
+        q: "Llega el bloque REFLEXIONAR. ¿Cómo lo aprovechas mejor?",
+        o: [
+          "Repasas mentalmente la lista de pendientes",
+          "3-5 min de journaling estructurado",
+          "Revisas el celular 'para despertarte'",
+          "Lo dejas pasar; no hay tiempo hoy"
+        ],
+        c: 1,
+        e: "3-5 min diarios de escritura estructurada dentro de la reflexión superan horas de reflexión no documentada: externaliza y clarifica."
+      },
+      {
+        q: "En el bloque CRECER, ¿qué opción te hace avanzar de verdad?",
+        o: [
+          "Escribes un prompt, verificas y corriges su output",
+          "Miras un video sobre IA de fondo",
+          "Guardas artículos para leerlos algún día",
+          "Lees en redes noticias del sector"
+        ],
+        c: 0,
+        e: "20 min de práctica deliberada superan 2 h de consumo pasivo: implementar y corregir supera con creces leer o mirar sin actuar."
+      },
+      {
+        q: "Terminas la hora aún cansado. ¿Cómo cierras el arranque?",
+        o: [
+          "Lo consideras un fracaso por no rendir al 100",
+          "Registras la victoria y planeas una siesta de 20 min",
+          "Te obligas a duplicar mañana lo perdido",
+          "Sigues sin descanso hasta que el cuerpo aguante"
+        ],
+        c: 1,
+        e: "Registras un día ganado por Day Stacking y compensas el sueño con una siesta estratégica de 20 min: apilas la pequeña victoria."
+      }
+    ]
+  },
+  {
+    id: "semana",
+    titulo: "El plan de máximo rendimiento semanal",
+    perfil: "Diseñar la semana con intención",
+    contexto: "Es domingo por la tarde. Tienes consultoría, estudio de IA, spinning y tiempo familiar compitiendo por los mismos días. Diseñar la semana ahora es un <b>ritual estratégico</b>, no una tarea administrativa.",
+    pasos: [
+      {
+        q: "¿Cuándo y cómo defines la estructura de tu semana?",
+        o: [
+          "Cada mañana decides sobre la marcha del día",
+          "Solo cuando surge una urgencia que resolver",
+          "El domingo bloqueas todo en el calendario",
+          "Lo dejas flexible para adaptarte al momento"
+        ],
+        c: 2,
+        e: "Lo que se programa se hace; lo que no se programa se negocia y desaparece: diseña la semana el domingo como ritual estratégico."
+      },
+      {
+        q: "¿Cómo tratas los bloques de ejercicio, IA y familia?",
+        o: [
+          "Los mueves si aparece cualquier pendiente",
+          "Los respetas como una reunión con un cliente clave",
+          "Los dejas al final por si sobra algo de tiempo",
+          "Los agendas pero sin horario fijo definido"
+        ],
+        c: 1,
+        e: "Se bloquean en el calendario y se respetan como reuniones con un cliente importante: lo protegido es lo que realmente ocurre."
+      },
+      {
+        q: "Para no gastar energía mental decidiendo a diario, ¿qué haces?",
+        o: [
+          "Improvisas cada día según cómo amanezcas",
+          "Consultas tu ánimo antes de cada actividad",
+          "Preautomatizas las decisiones repetitivas",
+          "Decides todo la misma mañana para tener margen"
+        ],
+        c: 2,
+        e: "La fatiga de decisión es real: preautomatizar las decisiones repetitivas libera energía mental para crear valor."
+      },
+      {
+        q: "¿Dónde ubicas tu proyecto profesional más importante?",
+        o: [
+          "En los primeros 90 min, bajo la regla 90/90/1",
+          "En la tarde, cuando bajan las reuniones",
+          "En los huecos que queden entre tareas",
+          "Al final del día, si aún queda energía"
+        ],
+        c: 0,
+        e: "La regla 90/90/1 dedica los primeros 90 min a tu única oportunidad más importante, no a lo urgente ni a lo fácil."
+      },
+      {
+        q: "¿Cómo aseguras rendimiento sostenido durante la semana?",
+        o: [
+          "Llenas cada bloque libre con más trabajo",
+          "Recortas el sueño para ganar más horas",
+          "Trabajas parejo sin pausas de por medio",
+          "Alternas bloques de esfuerzo con recuperación"
+        ],
+        c: 3,
+        e: "Los ciclos gemelos exigen alternar alto rendimiento con recuperación profunda: el crecimiento ocurre en el descanso."
+      }
+    ]
+  },
+  {
+    id: "habito66",
+    titulo: "Instalar un hábito con el protocolo de 66 días",
+    perfil: "Atravesar las tres fases",
+    contexto: "Quieres instalar el hábito de tu primera hora sin fallar. Sabes que el mito de los 21 días engaña. El <b>protocolo de 66 días</b> te da un mapa realista de lo que sentirás en cada tramo.",
+    pasos: [
+      {
+        q: "¿Cuánto tiempo asumes que tomará automatizar el hábito?",
+        o: [
+          "Veintiún días, como dice el mito popular",
+          "Una semana si pones bastante fuerza de voluntad",
+          "Unos 66 días en promedio de práctica",
+          "El tiempo que aguante tu motivación inicial"
+        ],
+        c: 2,
+        e: "La automatización real toma en promedio 66 días (rango 18-254): el mito de los 21 días subestima el proceso."
+      },
+      {
+        q: "Entras en la fase de DESTRUCCIÓN. ¿Qué esperas sentir?",
+        o: [
+          "Que el viejo patrón resiste activamente",
+          "Que el hábito ya se siente natural y fácil",
+          "Que la incomodidad significa que fallaste",
+          "Que no hará falta ningún esfuerzo real"
+        ],
+        c: 0,
+        e: "En la fase de Destrucción (primeros 22 días) el viejo patrón resiste activamente: la incomodidad es esperada, no una señal de fracaso."
+      },
+      {
+        q: "Alrededor del día 22 la resistencia cede. ¿Qué implica esto?",
+        o: [
+          "Que ya puedes abandonar sin consecuencias",
+          "Que entras en la fase de Instalación",
+          "Que el hábito ya quedó totalmente automático",
+          "Que conviene subirle mucho la exigencia"
+        ],
+        c: 1,
+        e: "En la Instalación (días 23-44) el nuevo patrón se siente menos forzado: saber que la incomodidad caduca reduce el abandono."
+      },
+      {
+        q: "En la fase de INTEGRACIÓN, ¿qué caracteriza al hábito?",
+        o: [
+          "Que aún exige toda tu concentración diaria",
+          "Que depende por completo de tu motivación",
+          "Que vuelve a sentirse tan duro como al inicio",
+          "Que se ejecuta de forma casi automática"
+        ],
+        c: 3,
+        e: "En la Integración (días 45-66) el hábito se vuelve automático: deja de depender de la fuerza de voluntad."
+      },
+      {
+        q: "Un día de la fase dura te sientes incómodo. ¿Cómo lo lees?",
+        o: [
+          "Como prueba de que el hábito no es para ti",
+          "Como excusa válida para abandonar hoy",
+          "Como una molestia con fecha de caducidad",
+          "Como señal de que deberías esperar más ganas"
+        ],
+        c: 2,
+        e: "Saber que la incomodidad tiene fecha de caducidad (~22 días) reduce el abandono: el error es esperar que se sienta natural desde la primera semana."
+      }
+    ]
+  },
+  {
+    id: "valor10x",
+    titulo: "De un entregable 1x a uno 10x",
+    perfil: "Capitalizar y apalancar",
+    contexto: "Debes entregar un informe a un cliente de CX. Puedes despacharlo genérico o convertirlo en algo que te distinga. La diferencia entre <b>1x y 10x</b> no está en las horas, sino en cómo empaquetas y capitalizas tu talento.",
+    pasos: [
+      {
+        q: "¿Qué separa realmente un entregable 10x de uno 1x?",
+        o: [
+          "Trabajar diez veces más horas en él",
+          "Añadir muchas más páginas al informe",
+          "Maestría y foco que rinden desproporcionado",
+          "Bajar el precio para que parezca mejor"
+        ],
+        c: 2,
+        e: "El valor 10x no es trabajar 10 veces más horas, sino operar con tal maestría y concentración que cada hora rinda de forma desproporcionada."
+      },
+      {
+        q: "¿Cómo transformas el informe genérico en uno de nivel 10x?",
+        o: [
+          "Reutilizas una plantilla estándar de siempre",
+          "Le añades gráficos vistosos sin más fondo",
+          "Copias el formato de otro consultor conocido",
+          "Creas un framework propietario con datos suyos"
+        ],
+        c: 3,
+        e: "Un framework propietario con datos personalizados y seguimiento post-entrega eleva el trabajo de 1x a 10x."
+      },
+      {
+        q: "¿En qué decides que se juega de verdad tu ventaja?",
+        o: [
+          "En cuánto sabes de tu materia",
+          "En cómo empaquetas y capitalizas lo que sabes",
+          "En los títulos y talentos con los que naciste",
+          "En qué tan largo y denso sea el documento"
+        ],
+        c: 1,
+        e: "El Coeficiente de Capitalización manda: tu ventaja no es tu conocimiento, sino cómo lo empaquetas, entregas y capitalizas."
+      },
+      {
+        q: "El proyecto te supera en tus áreas débiles. ¿Qué haces?",
+        o: [
+          "Convocas un Dream Team que compense tus vacíos",
+          "Intentas dominarlo todo tú solo a como dé lugar",
+          "Entregas incompleto lo que no dominas bien",
+          "Aplazas la entrega hasta aprenderlo por tu cuenta"
+        ],
+        c: 0,
+        e: "La táctica del Dream Team: nadie construye algo extraordinario solo; te rodeas de quien compensa debilidades y amplifica fortalezas."
+      },
+      {
+        q: "¿Cómo proteges tu capacidad de producir valor 10x?",
+        o: [
+          "Aceptas cada tarea de bajo valor que llega",
+          "Delegas lo de bajo valor y blindas tu foco",
+          "Repartes tu tiempo por igual entre todo",
+          "Llenas la agenda de reuniones para verte activo"
+        ],
+        c: 1,
+        e: "Delegar las tareas de bajo valor y proteger tu tiempo para las de valor 10x es lo que sostiene resultados desproporcionados."
+      }
+    ]
+  }
+];
+var SIMS_INFLU = [
+  {
+    id: 'reciprocidad',
+    titulo: 'El valor por adelantado',
+    perfil: 'Un prospecto frío',
+    contexto: 'Un gerente de servicio nunca ha oído de ti y desconfía de los consultores. En Clientes Valiosos aprendiste que <b>dar primero</b> crea predisposición a corresponder, pero solo si el regalo es genuino y no un anzuelo.',
+    start: 'n1',
+    nodes: {
+      n1: {
+        who: 'La situación',
+        cliente: 'El prospecto contesta el correo con una línea: "No tengo presupuesto ni tiempo para reuniones de venta. ¿Qué quieres?".',
+        ops: [
+          { t: 'Enviarle un mini diagnóstico útil de su servicio, sin pedir nada a cambio', fx: 'good', fb: 'Dar valor genuino por adelantado activa la reciprocidad de forma limpia: el otro siente la deuda porque recibió algo real, no un truco.', to: 'n2' },
+          { t: 'Regalarle una "auditoría" vacía y recordarle que ya te debe una reunión', fx: 'bad', fb: 'Usar el favor como anzuelo con deuda explícita cruza a la manipulación: el regalo condicionado deja de ser regalo y se lee como táctica.', to: 'n2b' },
+          { t: 'Mandarle un folleto genérico de tus servicios y quedar atento', fx: 'mid', fb: 'No entregas valor real, así que no hay nada que corresponder: el atajo de reciprocidad no se dispara sin un dar auténtico.', to: 'n2' }
+        ]
+      },
+      n2: {
+        who: 'El cliente',
+        cliente: 'Responde sorprendido: "Esto me sirvió de verdad. ¿Por qué me lo das gratis? ¿Cuál es la trampa?".',
+        ops: [
+          { t: 'Explicar que das primero para demostrar cómo trabajas, sin obligarlo a nada', fx: 'good', fb: 'Nombrar tu intención honesta desactiva la sospecha: el valor sigue siendo un regalo, no una deuda cobrada, y eso fortalece la relación.', to: 'n3' },
+          { t: 'Decirle que ahora "lo justo" sería que firme el contrato completo', fx: 'bad', fb: 'Cobrar la deuda de inmediato revela que el regalo era carnada; la reciprocidad honesta no exige, predispone.', to: 'n3' }
+        ]
+      },
+      n2b: {
+        who: 'La situación',
+        cliente: 'El prospecto se enfría más: "O sea que el regalo venía con factura. Justo lo que esperaba de un consultor".',
+        ops: [
+          { t: 'Reconocer el error y ofrecer el diagnóstico sin condición alguna', fx: 'good', fb: 'Redefinir tu propio movimiento y soltar la deuda recupera la confianza: solo el favor sin condiciones genera reciprocidad sana.', to: 'n3' },
+          { t: 'Insistir en que un favor obliga y presionar por la reunión', fx: 'bad', fb: 'Insistir confirma que operas por táctica; a una táctica el otro no le debe nada y se marcha con razón.', to: 'lose' }
+        ]
+      },
+      n3: {
+        who: 'El momento',
+        cliente: 'El prospecto baja la guardia: "Me destapaste dos fugas de valor. Cuéntame cómo seguirías".',
+        ops: [
+          { t: 'Proponer un alcance claro que resuelve lo que ya le mostraste', fx: 'good', fb: 'Tras dar valor real, la propuesta llega sobre confianza ganada: el cliente corresponde porque quiere, no porque se sienta atrapado.', to: 'win' },
+          { t: 'Aprovechar la apertura para forzar un cierre inmediato con urgencia falsa', fx: 'bad', fb: 'Forzar el cierre convierte el vínculo en presión y quema la reciprocidad que habías construido con honestidad.', to: 'lose' }
+        ]
+      },
+      win: {
+        end: true,
+        res: 'win',
+        cliente: 'El prospecto acepta un piloto y te presenta a su jefe como "alguien que da antes de pedir".',
+        msg: 'Dar valor genuino por adelantado predispone a corresponder. La clave ética: da de verdad, sin cobrar la deuda; la confianza hace el resto.'
+      },
+      lose: {
+        end: true,
+        res: 'lose',
+        cliente: 'El prospecto corta el contacto y te etiqueta como otro consultor que "regala para atrapar".',
+        msg: 'Usaste el favor como anzuelo y la reciprocidad se leyó como táctica. A una táctica nadie le debe nada, y el vínculo se rompió.'
+      }
+    }
+  },
+  {
+    id: 'contraste',
+    titulo: 'El ancla que aclara',
+    perfil: 'Un comité que compara todo',
+    contexto: 'Un comité evaluará tu propuesta de mejora de experiencia. Sabes que el <b>contraste</b> hace que un precio parezca alto o bajo según con qué se compare, y que el "portazo en la cara" solo es ético si la opción grande es real.',
+    start: 'n1',
+    nodes: {
+      n1: {
+        who: 'La situación',
+        cliente: 'El comité dice: "Danos tu propuesta. Cualquier cosa cara la vamos a rechazar de entrada".',
+        ops: [
+          { t: 'Presentar primero un programa integral real y luego el alcance ajustado que recomiendas', fx: 'good', fb: 'Anclar con una opción grande legítima y ceder a la real usa contraste y concesión de forma honesta: ambas opciones existen de verdad.', to: 'n2' },
+          { t: 'Inventar un plan carísimo imposible solo para que el mediano parezca ganga', fx: 'bad', fb: 'Un ancla falsa es engaño: el portazo en la cara solo es ético si la primera petición es genuina, no un señuelo fabricado.', to: 'n2b' },
+          { t: 'Mostrar únicamente el alcance ajustado sin ningún punto de comparación', fx: 'mid', fb: 'Sin contraste el comité no tiene con qué medir el valor y el precio se percibe en absoluto: pierdes claridad, no ganas honestidad.', to: 'n2' }
+        ]
+      },
+      n2: {
+        who: 'El cliente',
+        cliente: 'Un miembro observa: "El programa integral se ve completo, pero es mucho. El ajustado nos cuadra mejor".',
+        ops: [
+          { t: 'Confirmar que el ajustado cubre lo esencial y explicar qué queda fuera y por qué', fx: 'good', fb: 'La concesión visible genera más compromiso y satisfacción con el acuerdo, y la transparencia sobre lo excluido mantiene la ética.', to: 'n3' },
+          { t: 'Ocultar lo que el ajustado deja fuera para que parezca equivalente al grande', fx: 'bad', fb: 'Callar los límites del alcance convierte el contraste en engaño; el cliente se sentirá traicionado al descubrir lo omitido.', to: 'n3' }
+        ]
+      },
+      n2b: {
+        who: 'La situación',
+        cliente: 'Un integrante técnico pregunta: "¿El plan grande es viable? Porque los números no nos cuadran".',
+        ops: [
+          { t: 'Reconocer que el ancla no era realista y presentar solo opciones viables', fx: 'good', fb: 'Corregir a tiempo y ofrecer alternativas reales salva tu credibilidad: el contraste ético se apoya en opciones que podrías cumplir.', to: 'n3' },
+          { t: 'Defender el plan inflado como si fuera serio para sostener el ancla', fx: 'bad', fb: 'Sostener un ancla falsa cuando ya se detectó destruye tu autoridad; el comité descubre la táctica y rechaza todo.', to: 'lose' }
+        ]
+      },
+      n3: {
+        who: 'El momento',
+        cliente: 'El comité delibera: "Nos gusta el ajustado. Convéncenos de que es la decisión correcta".',
+        ops: [
+          { t: 'Cerrar mostrando cómo el alcance ajustado resuelve su prioridad real de experiencia', fx: 'good', fb: 'El contraste sirvió para aclarar, no para presionar: la decisión se toma sobre valor real y el comité queda satisfecho.', to: 'win' },
+          { t: 'Meter presión de escasez inventada para que firmen antes de pensarlo', fx: 'bad', fb: 'Añadir un disparador falso rompe la honestidad del proceso y despierta la desconfianza que habías disuelto.', to: 'lose' }
+        ]
+      },
+      win: {
+        end: true,
+        res: 'win',
+        cliente: 'El comité aprueba el alcance ajustado y agradece la claridad para comparar opciones.',
+        msg: 'El contraste y la concesión aclaran el valor cuando ambas opciones son reales. Anclar con lo grande legítimo hace ver lo justo, sin engañar.'
+      },
+      lose: {
+        end: true,
+        res: 'lose',
+        cliente: 'El comité detecta el ancla inflada, pierde la confianza y archiva la propuesta.',
+        msg: 'Fabricar un ancla falsa convirtió el contraste en engaño. El portazo en la cara solo es ético si la primera opción existe de verdad.'
+      }
+    }
+  }
+];
+
+var RETOS_INFLU = [
+  {
+    id: 'estrategia',
+    titulo: 'Estrategia de reciprocidad ética',
+    perfil: 'Ganar un cliente valioso',
+    contexto: 'En Clientes Valiosos quieres ganar una cuenta importante sin caer en la venta a presión. Diseñarás una estrategia de reciprocidad que <b>da primero</b>, con valor real y sin anzuelos.',
+    pasos: [
+      {
+        q: '¿Con qué gesto abres la relación con el cliente valioso?',
+        o: [
+          'Le regalas un bono de descuento válido solo si firma hoy',
+          'Le entregas un diagnóstico útil y aplicable, sin pedir nada',
+          'Le mandas un catálogo con todos tus precios y servicios',
+          'Esperas a que él pida ayuda antes de mover cualquier ficha'
+        ],
+        c: 1,
+        e: 'Dar valor genuino por adelantado dispara la reciprocidad sana: el otro corresponde porque recibió algo real, no por una condición.'
+      },
+      {
+        q: '¿Cómo entregas ese valor inicial para que no parezca un truco?',
+        o: [
+          'Recordando cuánto costaría normalmente para que sienta la deuda',
+          'Con letras pequeñas que atan el favor a una compra posterior',
+          'De forma clara y sin condiciones, explicando por qué lo das',
+          'Dejando la factura pendiente por si luego quieres cobrarla'
+        ],
+        c: 2,
+        e: 'El regalo sin condiciones es el único que genera reciprocidad honesta; atarlo a una compra lo convierte en anzuelo y despierta sospecha.'
+      },
+      {
+        q: 'El cliente pregunta por qué le das todo esto gratis. ¿Qué respondes?',
+        o: [
+          'Que así demuestras cómo trabajas, sin obligarlo a comprar nada',
+          'Que ahora lo justo sería que te devuelva el favor firmando ya',
+          'Que en realidad no es gratis y luego lo verá en la factura',
+          'Que todos tus competidores cobran y tú no, punto y aparte'
+        ],
+        c: 0,
+        e: 'Nombrar tu intención honesta mantiene el gesto como regalo, no como deuda cobrada, y refuerza la confianza en vez de la sospecha.'
+      },
+      {
+        q: '¿Cuándo presentas tu propuesta comercial formal?',
+        o: [
+          'Antes de dar nada, para asegurar que la deuda ya lo obligue',
+          'Nunca, para no arriesgar la relación que estás construyendo',
+          'En cuanto entregas el favor, exigiendo que corresponda ya',
+          'Cuando el valor entregado abrió una conversación de confianza'
+        ],
+        c: 3,
+        e: 'Tras dar valor real, la propuesta llega sobre confianza ganada: el cliente corresponde porque quiere, no porque se sienta atrapado.'
+      },
+      {
+        q: '¿Cómo sabes que tu estrategia se mantuvo ética y no manipuladora?',
+        o: [
+          'El cliente decide con libertad y sin sentirse presionado por ti',
+          'El cliente firma rápido porque le hiciste sentir que te debía',
+          'El cliente acepta aunque no entienda bien qué está comprando',
+          'El cliente cede por la urgencia de escasez que le fabricaste'
+        ],
+        c: 0,
+        e: 'La reciprocidad ética predispone pero no obliga: si la decisión es libre y comprendida, diste de verdad y no cobraste una deuda.'
+      }
+    ]
+  },
+  {
+    id: 'defensa',
+    titulo: 'Defensa ante la táctica',
+    perfil: 'No dejar que te usen la regla',
+    contexto: 'Un proveedor te llena de regalos y concesiones antes de pedirte una decisión grande. Debes detectar cuándo la reciprocidad o el contraste son <b>táctica</b> y responder sin sentir culpa.',
+    pasos: [
+      {
+        q: '¿Cuál es la primera señal de que un favor podría ser una táctica?',
+        o: [
+          'Que el regalo sea modesto y sin ninguna intención de cobro',
+          'Que el favor aparezca justo antes de una petición importante',
+          'Que la persona te caiga bien y quieras corresponderle igual',
+          'Que el detalle venga acompañado de una nota de agradecimiento'
+        ],
+        c: 1,
+        e: 'El favor no pedido que precede a una gran petición suele estar puesto para activar la deuda; ese orden es la señal de alerta.'
+      },
+      {
+        q: 'Te piden algo enorme y, al negarte, retroceden a una petición menor. ¿Qué reconoces?',
+        o: [
+          'Una oferta espontánea que casualmente resultó más barata',
+          'Una muestra de flexibilidad que merece tu agradecimiento total',
+          'Un portazo en la cara: la concesión busca obligarte a ceder',
+          'Un simple cambio de idea sin ninguna intención detrás de él'
+        ],
+        c: 2,
+        e: 'El rechazo-luego-retirada usa la concesión aparente para que te sientas obligado a conceder; verlo te libera de la presión.'
+      },
+      {
+        q: 'Según Cialdini, ¿cuál es la defensa correcta ante un favor deshonesto?',
+        o: [
+          'Rechazar de entrada todo favor para no deberle nunca nada a nadie',
+          'Devolver siempre el doble para quitarte de encima la incomodidad',
+          'Aceptar la deuda y pagarla aunque intuyas que hubo manipulación',
+          'Redefinir ese favor como la táctica que es: no le debes nada'
+        ],
+        c: 3,
+        e: 'Cialdini no propone rechazar los favores, sino nombrar el regalo deshonesto como táctica; a una táctica no se le debe reciprocidad.'
+      },
+      {
+        q: '¿Cómo respondes al proveedor una vez que nombras la táctica?',
+        o: [
+          'Decides según el valor real de la oferta, no según la deuda',
+          'Aceptas su propuesta grande para no quedar como un desagradecido',
+          'Cortas toda relación de golpe y con reproches por el intento',
+          'Le devuelves un regalo mayor para equilibrar la balanza social'
+        ],
+        c: 0,
+        e: 'Liberado de la deuda ficticia, decides por el mérito de la oferta; el favor táctico ya no pesa sobre tu criterio.'
+      },
+      {
+        q: '¿Qué distingue un favor legítimo de uno usado como táctica?',
+        o: [
+          'El favor legítimo llega siempre acompañado de un precio visible',
+          'El favor legítimo no condiciona ni cobra: se da y ahí termina',
+          'El favor legítimo exige devolución inmediata para ser válido',
+          'El favor legítimo aparece solo antes de una gran petición'
+        ],
+        c: 1,
+        e: 'El regalo honesto se agota en sí mismo y no exige contrapartida; cuando condiciona o cobra, ya es una táctica y no le debes nada.'
+      }
+    ]
+  }
+];
+
+var MODULES3={
+ 1:{name:"Interés compuesto y la meseta",short:"Interés 1%",color:"#B45309"},
+ 2:{name:"Las 4 Leyes del cambio",short:"4 Leyes",color:"#C2660C"},
+ 3:{name:"Identidad, votos y sistemas",short:"Identidad",color:"#A16207"},
+ 4:{name:"La Regla de los 2 minutos",short:"2 minutos",color:"#CA8A04"},
+ 5:{name:"Señales, apilamiento y entorno",short:"Entorno",color:"#92400E"},
+ 6:{name:"Fricción, tracking y tentación",short:"Fricción",color:"#D97706"},
+ 7:{name:"Nunca fallar dos veces y Goldilocks",short:"Consistencia",color:"#9A3412"},
+ 8:{name:"Acción, aburrimiento y revisión",short:"Maestría",color:"#78350F"}
+};
+var MODULES4={
+ 1:{name:"La Fórmula 20/20/20",short:"20/20/20",color:"#6D28D9"},
+ 2:{name:"Ganar la mañana: víctima vs líder",short:"Ganar el día",color:"#7C3AED"},
+ 3:{name:"Los 4 Imperios Interiores",short:"4 Imperios",color:"#5B21B6"},
+ 4:{name:"El Protocolo de 66 días",short:"66 días",color:"#8B5CF6"},
+ 5:{name:"Burbuja de enfoque y 90/90/1",short:"Enfoque",color:"#6366F1"},
+ 6:{name:"Ejercicio, ciclos y sueño",short:"Energía",color:"#7C3AED"},
+ 7:{name:"Automaticidad y Day Stacking",short:"Sistemas",color:"#5B21B6"},
+ 8:{name:"Valor 10x, Dream Team y legado",short:"Valor 10x",color:"#4C1D95"}
+};
+var MODULES5={
+ 1:{name:"Las armas de influencia",short:"Armas",color:"#BE123C"},
+ 2:{name:"Reciprocidad",short:"Reciprocidad",color:"#9F1239"}
+};
+var BANK3=HAB_A.concat(HAB_B,FMT_HAB);
+var BANK4=CLUB_A.concat(CLUB_B,FMT_CLUB);
+var BANK5=INFLU_BANK.concat(INFLU_FMT);
+var SIMS3=SIMS_HAB,RETOS3=RETOS_HAB;
+var SIMS4=SIMS_CLUB,RETOS4=RETOS_CLUB;
+var SIMS5=SIMS_INFLU,RETOS5=RETOS_INFLU;
+
 var COURSES=[
  {id:'pnl',name:'Programación Neurolingüística',short:'Curso · PNL',tag:'Ventas y comunicación de alto impacto · teoría, práctica avanzada, simulador y retos.',color1:'#00041C',color2:'#0045D5',ready:true,MODULES:MODULES,BANK:BANK,SIMS:SIMS,RETOS:RETOS,hasSim:true,count:BANK.length},
- {id:'excelencia',name:'Excelencia Interior',short:'Excelencia Interior',tag:'Desarrollo personal · basado en el libro Inner Excellence de Jim Murphy.',color1:'#062B1C',color2:'#1E8449',ready:true,MODULES:MODULES2,BANK:BANK2,hasSim:true,SIMS:SIMS2,RETOS:RETOS2,count:BANK2.length,grad:'linear-gradient(135deg,#052a1c 0%,#0b5c39 55%,#1e8449 100%)',accent:'#0b6b3a',card:'linear-gradient(135deg,#0b5c39,#1e8449)',carde:'linear-gradient(135deg,#03251c 0%,#0a4a30 100%)',simName:'Momentos de presión',simDesc:'Situaciones internas reales: eliges cómo responder bajo presión. Cada decisión te muestra la reacción.',retoName:'Casos de maestría',retoDesc:'Casos integradores: 5 decisiones encadenadas aplicando varios principios a la vez.',simWin:'Respondiste con maestría',simLose:'Te ganó la reacción',retoWin:'Maestría sostenida',retoMid:'Casi la sostienes',retoLose:'Te ganó la reacción',simBadge:'#1E8449',simCard:'linear-gradient(135deg,#116149,#2aa06a)',retoCard:'linear-gradient(135deg,#1f7a3a,#4bad5a)'}
+ {id:'excelencia',name:'Excelencia Interior',short:'Excelencia Interior',tag:'Desarrollo personal · basado en el libro Inner Excellence de Jim Murphy.',color1:'#062B1C',color2:'#1E8449',ready:true,MODULES:MODULES2,BANK:BANK2,hasSim:true,SIMS:SIMS2,RETOS:RETOS2,count:BANK2.length,grad:'linear-gradient(135deg,#052a1c 0%,#0b5c39 55%,#1e8449 100%)',accent:'#0b6b3a',card:'linear-gradient(135deg,#0b5c39,#1e8449)',carde:'linear-gradient(135deg,#03251c 0%,#0a4a30 100%)',simName:'Momentos de presión',simDesc:'Situaciones internas reales: eliges cómo responder bajo presión. Cada decisión te muestra la reacción.',retoName:'Casos de maestría',retoDesc:'Casos integradores: 5 decisiones encadenadas aplicando varios principios a la vez.',simWin:'Respondiste con maestría',simLose:'Te ganó la reacción',retoWin:'Maestría sostenida',retoMid:'Casi la sostienes',retoLose:'Te ganó la reacción',simBadge:'#1E8449',simCard:'linear-gradient(135deg,#116149,#2aa06a)',retoCard:'linear-gradient(135deg,#1f7a3a,#4bad5a)'},
+ {id:'habitos',name:'Hábitos Atómicos',short:'Hábitos Atómicos',tag:'Comportamiento y sistemas · basado en el libro Atomic Habits de James Clear.',color1:'#2A1503',color2:'#D97706',ready:true,MODULES:MODULES3,BANK:BANK3,hasSim:true,SIMS:SIMS3,RETOS:RETOS3,count:BANK3.length,grad:'linear-gradient(135deg,#2a1503 0%,#8a4b0a 55%,#d97706 100%)',accent:'#b45309',card:'linear-gradient(135deg,#8a4b0a,#d97706)',carde:'linear-gradient(135deg,#241202 0%,#5c3208 100%)',simName:'Momentos decisivos',simDesc:'Situaciones reales donde una micro-decisión define las próximas horas. Eliges y ves la consecuencia.',retoName:'Retos de sistema',retoDesc:'Casos integradores: 5 decisiones encadenadas aplicando las leyes del hábito.',simWin:'Ganaste el momento',simLose:'Te ganó el piloto automático',retoWin:'Sistema sostenido',retoMid:'Casi lo sostienes',retoLose:'Se quebró el sistema',simBadge:'#D97706',simCard:'linear-gradient(135deg,#9a5410,#e0821e)',retoCard:'linear-gradient(135deg,#7c3f08,#c2740f)'},
+ {id:'club5am',name:'El Club de las 5 AM',short:'Club de las 5 AM',tag:'Productividad y bienestar · basado en el libro The 5 AM Club de Robin Sharma.',color1:'#1A0B3A',color2:'#7C3AED',ready:true,MODULES:MODULES4,BANK:BANK4,hasSim:true,SIMS:SIMS4,RETOS:RETOS4,count:BANK4.length,grad:'linear-gradient(135deg,#160a33 0%,#4c1d95 55%,#7c3aed 100%)',accent:'#6d28d9',card:'linear-gradient(135deg,#4c1d95,#7c3aed)',carde:'linear-gradient(135deg,#120827 0%,#2e1065 100%)',simName:'Momentos de disciplina',simDesc:'Situaciones reales de madrugada y jornada: eliges entre la reacción y el sistema.',retoName:'Casos de alto rendimiento',retoDesc:'Casos integradores: 5 decisiones encadenadas aplicando el método 20/20/20 y los 4 imperios.',simWin:'Ganaste la mañana',simLose:'Te ganó la reacción',retoWin:'Día ganado',retoMid:'Casi lo ganas',retoLose:'Se te fue el día',simBadge:'#7C3AED',simCard:'linear-gradient(135deg,#5b21b6,#8b5cf6)',retoCard:'linear-gradient(135deg,#4c1d95,#7c3aed)'},
+ {id:'influencia',name:'Influencia',short:'Influencia',tag:'Persuasión y psicología · basado en Influence de Cialdini (caps. 1-2 · en progreso).',color1:'#3A0510',color2:'#DC2647',ready:true,wip:true,MODULES:MODULES5,BANK:BANK5,hasSim:true,SIMS:SIMS5,RETOS:RETOS5,count:BANK5.length,grad:'linear-gradient(135deg,#3a0510 0%,#9f1239 55%,#dc2647 100%)',accent:'#be123c',card:'linear-gradient(135deg,#9f1239,#dc2647)',carde:'linear-gradient(135deg,#2c0510 0%,#7a0f2e 100%)',simName:'Momentos de persuasión',simDesc:'Situaciones reales con un cliente: eliges la jugada ética que activa (o evita) la palanca correcta.',retoName:'Casos de persuasión ética',retoDesc:'Casos integradores: decisiones encadenadas aplicando reciprocidad y contraste con ética.',simWin:'Persuadiste con ética',simLose:'Cruzaste a la manipulación',retoWin:'Influencia ética sostenida',retoMid:'Casi la sostienes',retoLose:'Caíste en la manipulación',simBadge:'#DC2647',simCard:'linear-gradient(135deg,#b01234,#e0344f)',retoCard:'linear-gradient(135deg,#8f1030,#c41f43)'}
 ];
 function enterCourse(c){COURSE=c;MODULES=c.MODULES;BANK=c.BANK;SIMS=c.SIMS||[];RETOS=c.RETOS||[];var tt=document.querySelector('.tt');if(tt)tt.textContent=c.short||c.name;renderHome();}
 goHome=function(){ if(COURSE) renderHome(); else renderCenter(); };
@@ -2010,7 +3694,7 @@ function renderCenter(){
   COURSES.forEach(function(c){
     var card=el('<button class="coursecard'+(c.ready?'':' locked')+'"></button>');
     card.style.background='linear-gradient(135deg,'+c.color1+' 0%,'+c.color2+' 100%)';
-    card.innerHTML='<div class="cc-top"><div class="cc-name">'+c.name+'</div>'+(c.ready?'<span class="cc-badge">'+c.count+' preguntas</span>':'<span class="cc-badge soon">En construcción</span>')+'</div><div class="cc-tag">'+c.tag+'</div><div class="cc-go">'+(c.ready?'Entrar al curso':'Muy pronto')+' <i data-lucide="arrow-right"></i></div>';
+    card.innerHTML='<div class="cc-top"><div class="cc-name">'+c.name+'</div>'+(c.ready?'<span class="cc-badge">'+c.count+' preguntas'+(c.wip?' · en progreso':'')+'</span>':'<span class="cc-badge soon">En construcción</span>')+'</div><div class="cc-tag">'+c.tag+'</div><div class="cc-go">'+(c.ready?'Entrar al curso':'Muy pronto')+' <i data-lucide="arrow-right"></i></div>';
     if(c.ready)card.onclick=(function(cc){return function(){enterCourse(cc);};})(c);
     else card.onclick=function(){alert('El curso "Excelencia Interior" está en construcción. Ya tengo tu libro (Inner Excellence) y lo estoy armando con teoría y práctica avanzada.');};
     app.appendChild(card);
