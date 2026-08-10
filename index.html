@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- build:entrenador-srs-sim -->
+<!-- build:sim-consultoria-cx -->
 <html lang="es">
 <head>
 <meta charset="utf-8">
@@ -1128,6 +1128,58 @@ var SIMS=[
     msg:'Cierre y hasta referido. No te rendiste al precio, descubriste que el freno real era el miedo a la tecnología, lo vacunaste con una prueba y cerraste con un paso concreto.'},
   no:{end:true,res:'lose',cliente:'Lo pienso y le aviso… (sigue con su cuaderno).',
     msg:'Hiciste el trabajo difícil —descubrir la objeción real y vacunarla— y lo perdiste en el cierre por no dar instrucciones concretas.'}
+ }},
+{id:'consul',titulo:'Vender una consultoria de CX a una pyme esceptica',perfil:'Gerente-dueño de pyme · practico y orgulloso de su servicio',
+ contexto:'Ofreces una <b>consultoria de Experiencia del Cliente</b> (diagnostico + plan a la medida). Tu prospecto es el dueño de una pyme con varias sedes: practico, orientado a resultados y convencido de que "ya atiende bien". Pierde clientes en silencio, pero no lo ve. Tu mision: instalar ese dolor invisible, traducir el CX a plata, vacunar el "eso es para grandes" y cerrar con un paso concreto.',
+ start:'c1',
+ nodes:{
+  c1:{who:'Prospecto',cliente:'Te seré honesto: nosotros ya damos buen servicio, nuestros clientes nos quieren y llevamos años así. ¿Qué me va a aportar a mí una consultoría de "experiencia del cliente"?',
+    ops:[
+     {t:'Reconozco su orgullo y abro el dolor invisible: "Se nota que cuidas a tus clientes, es tu sello. Dime una cosa: de los que te compraron el año pasado, ¿sabes cuántos NO volvieron… y por qué?"',fx:'good',fb:'Entraste por su orgullo (no lo contradijiste) y de ahí abriste un hueco que él no puede responder. Ahí nace la curiosidad y el dolor.',to:'c2'},
+     {t:'Voy de frente: "Seguro tienes muchos problemas de servicio que no estás viendo."',fx:'bad',fb:'Le dijiste, en la cara, que lo hace mal. Un dueño orgulloso se cierra. El dolor se instala con preguntas, no con acusaciones.',to:'c2b'},
+     {t:'Presento mi metodología: "Manejo 30 temas de CX, 21 formatos y más de 240 fuentes académicas."',fx:'mid',fb:'Hablaste de ti, no de su dolor. Las características impresionan después; primero tiene que sentir que le falta algo.',to:'c2'}
+    ]},
+  c2b:{who:'Prospecto',cliente:'¿Perdón? Llevamos 15 años y nos va bien. No vengas a decirme que atiendo mal.',
+    ops:[
+     {t:'Reparo y reencuadro: "Tienes toda la razón, me expresé mal. Justamente porque te va bien vale la pena mirar qué clientes se están yendo sin que lo notes; eso no se ve desde adentro."',fx:'good',fb:'Buen rescate: bajaste la defensa devolviéndole el mérito y convertiste su antigüedad en la razón para mirar el punto ciego.',to:'c3'},
+     {t:'Insisto: "Créeme, todos creen que atienden bien hasta que ven los números."',fx:'bad',fb:'Doblaste la acusación. Lo perdiste emocionalmente aunque tengas razón. En ventas, tener la razón no cierra.',to:'c3'}
+    ]},
+  c2:{who:'Prospecto',cliente:'Pues… la verdad no llevo esa cuenta. Asumo que si no se quejan, están bien.',
+    ops:[
+     {t:'Instalo el dolor con dato + plata: "Ahí está lo clave: casi ningún cliente molesto se queja, simplemente no vuelve… y se lleva a quienes te habría recomendado. ¿Cuánto vale para ti un cliente al año?"',fx:'good',fb:'Convertiste "no se quejan" en un dolor concreto (se van callados y se llevan los referidos) y lo empezaste a traducir a dinero. Eso despierta a un perfil de resultados.',to:'c3'},
+     {t:'Le explico la teoría: arranco con la definición de NPS, CSAT y el customer journey en detalle.',fx:'bad',fb:'Te fuiste a la academia. El dueño no compra conceptos, compra dejar de perder plata. Guarda la teoría para después.',to:'c3'},
+     {t:'Salto a la oferta: "Por eso necesitas mi consultoría; te la puedo dejar en tal precio."',fx:'mid',fb:'Fuiste al precio antes de dimensionar el dolor. Sin dolor instalado, cualquier precio parece un gasto.',to:'c3'}
+    ]},
+  c3:{who:'Prospecto',cliente:'Uf, eso no lo había pensado así. Pero mira, esas cosas de "experiencia del cliente" son para las grandes, que tienen presupuesto y equipos. Yo soy una pyme.',
+    ops:[
+     {t:'Vacuno y reencuadro la pyme como ventaja: "Al contrario. En una pyme cada cliente pesa más y tú decides rápido, sin comités. Por eso el retorno llega más rápido que en una grande. Y lo diseño a tu medida y a tu bolsillo."',fx:'good',fb:'Desactivaste la objeción y le diste vuelta: ser pyme deja de ser la excusa y pasa a ser la razón para hacerlo. Justo tu mensaje.',to:'c4'},
+     {t:'Bajo el precio para convencerlo: "Mira, por ser pyme te hago un descuento especial."',fx:'bad',fb:'Cediste al primer roce y devaluaste la consultoría. Además, su freno no era el precio, era creer que "no es para él".',to:'c4b'},
+     {t:'Le resto importancia: "No es tan caro como crees, tranquilo."',fx:'mid',fb:'Te pusiste a la defensiva con el precio cuando él te habló de identidad ("soy pyme"). No respondiste su verdadera objeción.',to:'c4'}
+    ]},
+  c4b:{who:'Prospecto',cliente:'Si me lo bajas tan fácil, es que estaba inflado… y sigo sin saber si esto de verdad sirve o es humo.',
+    ops:[
+     {t:'Recupero llevándolo a resultados: "Justo por eso no se trata de precio sino de retorno: te propongo empezar con un diagnóstico que te muestre en números cuánto estás perdiendo. Si no hay caso, no seguimos."',fx:'good',fb:'Saliste del pozo del precio y lo llevaste al terreno donde este perfil decide: números y bajo riesgo.',to:'c5'},
+     {t:'Bajo el precio otra vez para no perderlo.',fx:'bad',fb:'Segunda rebaja: confirmaste que el precio era el tema y perdiste autoridad. Ya casi no hay venta.',to:'c5'}
+    ]},
+  c4:{who:'Prospecto',cliente:'Ok, me interesa. Pero seré claro: ¿cómo sé que esto mueve la aguja de verdad y no es solo algo bonito? Yo necesito ver plata, no diplomas.',
+    ops:[
+     {t:'Presento en su color con dato + emoción: "Perfecto, porque así trabajo. Arrancamos con un diagnóstico que te muestra en números cuántos clientes pierdes y cuánto vale recuperarlos; y cada acción la medimos contra ventas y referidos. Ves el retorno, no promesas."',fx:'good',fb:'Le hablaste en azul (medible, retorno) sin perder la emoción de "recuperar lo que se te va". Le diste exactamente la prueba que pide su perfil.',to:'c5'},
+     {t:'Le respondo con inspiración: "Vas a transformar tu cultura y a enamorar a tus clientes."',fx:'bad',fb:'Bonito, pero le hablaste en rojo/amarillo a alguien que te pidió plata. Sin el dato, para él sigue siendo humo.',to:'c5'}
+    ]},
+  c5:{who:'Prospecto',cliente:'Suena bien… pero mi equipo ya está saturado y yo no tengo tiempo para un proyecto eterno de esos que nunca terminan.',
+    ops:[
+     {t:'Vacuno el miedo al esfuerzo: "Por eso empezamos pequeño: un diagnóstico corto que hago yo con tu información, sin cargar a tu equipo, y salimos con 3 acciones concretas de alto impacto. Nada de proyectos eternos."',fx:'good',fb:'Anticipaste su miedo real (tiempo y carga) y lo desarmaste con bajo esfuerzo y una primera entrega concreta. Camino despejado al cierre.',to:'c6'},
+     {t:'Minimizo: "Tranquilo, esto es rapidísimo, no te preocupes."',fx:'bad',fb:'A un perfil práctico, "no te preocupes" no le basta: necesita el cómo (quién hace qué y en cuánto), no una promesa.',to:'c6'}
+    ]},
+  c6:{who:'Prospecto',cliente:'Está bien, me convenciste de probar. ¿Y ahora qué sigue?',
+    ops:[
+     {t:'Cierro con instrucciones concretas: "Te agendo el diagnóstico esta semana. Me pasas los datos de ventas y clientes, y el viernes nos sentamos a ver los números y las 3 primeras acciones. ¿Te va el miércoles a las 3?"',fx:'good',fb:'Cerraste con un paso concreto, con fecha y con lo que necesitas de él. Le quitaste el trabajo de decidir "cómo empezar".',to:'gana'},
+     {t:'Lo dejo abierto: "Genial, cuando tengas un rato me escribes y arrancamos."',fx:'bad',fb:'Después de todo el trabajo, soltaste el cierre. "Me escribes" con un dueño ocupado casi siempre es silencio.',to:'pierde'}
+    ]},
+  gana:{end:true,res:'win',cliente:'Hecho, el miércoles a las 3. Y si esto me muestra lo que dices, te presento a dos colegas que tienen el mismo negocio.',
+    msg:'Cierre y puerta a referidos. Entraste por su orgullo, instalaste el dolor invisible, lo tradujiste a plata, convertiste el "soy pyme" en la razón para hacerlo, probaste el retorno y cerraste con un paso concreto.'},
+  pierde:{end:true,res:'lose',cliente:'Listo, cualquier cosa te escribo… (y la semana se lo traga).',
+    msg:'Hiciste el trabajo difícil —instalar el dolor y vacunar objeciones— y lo perdiste en el cierre. Sin un siguiente paso con fecha, hasta un prospecto convencido se enfría.'}
  }}
 ];
 var SS=null;
