@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- build:excelencia-verde2 -->
+<!-- build:excelencia-evals-verde -->
 <html lang="es">
 <head>
 <meta charset="utf-8">
@@ -1382,7 +1382,7 @@ function renderSimNode(){
   app.innerHTML='';
   var c=el('<div class="card"></div>');
   var h='<button class="backlink" id="sqb"><i data-lucide="arrow-left"></i> Salir</button>';
-  h+='<div class="qhead"><span class="badge" style="background:#7A3FF2"><i data-lucide="message-square"></i> Simulador</span><span class="ttype">'+sim.titulo+'</span></div>';
+  h+='<div class="qhead"><span class="badge" style="background:'+((COURSE&&COURSE.simBadge)||'#7A3FF2')+'"><i data-lucide="message-square"></i> '+((COURSE&&COURSE.simName)||'Simulador')+'</span><span class="ttype">'+sim.titulo+'</span></div>';
   c.innerHTML=h;
   if(SS.intro)c.appendChild(el('<div class="simscene">'+sim.contexto+'</div>'));
   var meter=el('<div class="simmeter"></div>');
@@ -1427,7 +1427,7 @@ function renderSimEnd(node){
   var c=el('<div class="card simend"></div>');
   var grad=win?'var(--grad-band)':'linear-gradient(135deg,#9B2333,#D5334A)';
   c.innerHTML='<div class="ring2" style="background:'+grad+'"><i data-lucide="'+(win?'award':'repeat')+'" style="width:34px;height:34px"></i></div>'+
-    '<h2>'+(win?'Venta cerrada':'Se enfrió')+'</h2><div class="sub">'+SS.sim.titulo+'</div>';
+    '<h2>'+(win?((COURSE&&COURSE.simWin)||'Venta cerrada'):((COURSE&&COURSE.simLose)||'Se enfrió'))+'</h2><div class="sub">'+SS.sim.titulo+'</div>';
   c.innerHTML+='<div class="stats"><div class="stat"><div class="v" style="color:var(--ok)">'+SS.good+'</div><div class="k">Buenas jugadas</div></div><div class="stat"><div class="v" style="color:var(--bad)">'+SS.bad+'</div><div class="k">Errores</div></div><div class="stat"><div class="v">'+SS.picks+'</div><div class="k">Decisiones</div></div></div>';
   c.innerHTML+='<div class="simfb '+(win?'good':'bad')+'" style="margin-top:4px"><i data-lucide="'+(win?'thumbs-up':'alert-triangle')+'"></i><div><b>'+node.cliente+'</b>'+node.msg+'</div></div>';
   app.appendChild(c);
@@ -1586,7 +1586,7 @@ function renderRetoEnd(){
   var c=el('<div class="card simend"></div>');
   var grad=pct>=80?'linear-gradient(135deg,#0E4F4A,#12A594)':pct>=60?'var(--grad-band)':'linear-gradient(135deg,#9B2333,#D5334A)';
   c.innerHTML='<div class="ring2" style="background:'+grad+'"><div style="font:600 27px var(--fsans);color:#fff">'+pct+'%</div></div>'+
-    '<h2>'+(pct>=80?'Venta sostenida':pct>=60?'Casi la sostienes':'Se te quebró')+'</h2><div class="sub">'+r.titulo+' · '+RS.ok+' / '+r.pasos.length+' decisiones</div>';
+    '<h2>'+(pct>=80?((COURSE&&COURSE.retoWin)||'Venta sostenida'):pct>=60?((COURSE&&COURSE.retoMid)||'Casi la sostienes'):((COURSE&&COURSE.retoLose)||'Se te quebró'))+'</h2><div class="sub">'+r.titulo+' · '+RS.ok+' / '+r.pasos.length+' decisiones</div>';
   app.appendChild(c);
   var rc=el('<div class="card plain"></div>');rc.innerHTML='<div class="ov">Tus decisiones</div><div class="tips" style="margin-top:8px"></div>';
   var tips=rc.querySelector('.tips');
@@ -1626,7 +1626,7 @@ renderHome=function(){
     '<button class="mode e" onclick="cfg(false)"><div class="mi"><i data-lucide="medal"></i></div><h3>Examen</h3><p>Evalúate: mezcla aleatoria, calificación al final y desglose por módulo.</p></button>'+
     '</div>'+
     '<button class="ghost-btn" onclick="renderHistory()"><i data-lucide="trending-up"></i> Ver mi progreso</button>';
-  app.appendChild(c);if(COURSE&&COURSE.hasSim){c.querySelector('#mSim').onclick=startRandomSim;c.querySelector('#mReto').onclick=startRandomReto;}else{var _a=c.querySelector('#mSim');if(_a)_a.remove();var _b=c.querySelector('#mReto');if(_b)_b.remove();}if(COURSE&&COURSE.card){var _mp=c.querySelector('.mode.p');if(_mp)_mp.style.background=COURSE.card;}if(COURSE&&COURSE.carde){var _me=c.querySelector('.mode.e');if(_me)_me.style.background=COURSE.carde;}
+  app.appendChild(c);if(COURSE&&COURSE.hasSim){c.querySelector('#mSim').onclick=startRandomSim;c.querySelector('#mReto').onclick=startRandomReto;}else{var _a=c.querySelector('#mSim');if(_a)_a.remove();var _b=c.querySelector('#mReto');if(_b)_b.remove();}if(COURSE&&COURSE.card){var _mp=c.querySelector('.mode.p');if(_mp)_mp.style.background=COURSE.card;}if(COURSE&&COURSE.carde){var _me=c.querySelector('.mode.e');if(_me)_me.style.background=COURSE.carde;}if(COURSE&&COURSE.simName){var _ms=c.querySelector('#mSim');if(_ms){var _h=_ms.querySelector('h3');if(_h)_h.textContent=COURSE.simName;var _pp=_ms.querySelector('p');if(_pp)_pp.textContent=COURSE.simDesc;}}if(COURSE&&COURSE.retoName){var _mr=c.querySelector('#mReto');if(_mr){var _h2=_mr.querySelector('h3');if(_h2)_h2.textContent=COURSE.retoName;var _p2=_mr.querySelector('p');if(_p2)_p2.textContent=COURSE.retoDesc;}}if(COURSE&&COURSE.simCard){var _msc=c.querySelector('#mSim');if(_msc)_msc.style.background=COURSE.simCard;}if(COURSE&&COURSE.retoCard){var _mrc=c.querySelector('#mReto');if(_mrc)_mrc.style.background=COURSE.retoCard;}
 
   var info=el('<div class="card plain"></div>');
   info.innerHTML='<div class="ov">Sobre esta herramienta</div><p class="lead" style="margin-top:8px">Banco de <b>'+BANK.length+' preguntas</b> sobre los '+Object.keys(MODULES).length+' módulos, con <b>repaso espaciado</b> que reprograma lo que fallas, <b>confianza calibrada</b> para cazar puntos ciegos. Tu progreso se guarda en este navegador.</p>';
@@ -1770,7 +1770,213 @@ var BANK2 = [
 {m:7,t:"unica",d:"avanzado",caso:true,q:"Vives con prisa crónica aunque muchas veces no hace falta. ¿Qué revela y de dónde surge?",o:["Revela falta de confianza y surge de no priorizar lo fundamental de tu misión","Revela un gran compromiso con todas tus tareas","Surge de tener demasiado talento y energía para dedicarte a una sola cosa","Es simplemente tu ritmo natural, no cambia nada"],c:0,e:"La prisa es mental, no física; nace de creer que te perderás algo y de no tener clara la misión que ordena tus prioridades."},
 /* M8 */
 {m:8,t:"unica",d:"avanzado",caso:true,q:"Antes de un desempeño clave visualizas la perfección y terminas más tenso. ¿Qué corriges según la resonancia?",o:["Visualiza la presencia, no la perfección","Visualiza con más detalle cada posible error","Deja de visualizar y solo improvisa","Visualiza ganarle a un rival concreto"],c:0,e:"Una de las cuatro claves de la resonancia: visualizas estar plenamente presente, no un resultado perfecto."},
-{m:8,t:"unica",d:"avanzado",caso:true,q:"Diriges un equipo pero no puedes acompañar a cada persona a diario. ¿Qué construyes según el cap. 11?",o:["Una cultura donde las personas conecten y se apoyen: la cultura es el líder ausente","Un sistema de control muy estricto para vigilar de cerca a cada integrante","Reuniones más largas para llegar a todos","Reglas estrictas que reemplacen tu presencia"],c:0,e:"El líder diseña una cultura que opera cuando él no está; esa cultura es, en la práctica, el líder ausente."}
+{m:8,t:"unica",d:"avanzado",caso:true,q:"Diriges un equipo pero no puedes acompañar a cada persona a diario. ¿Qué construyes según el cap. 11?",o:["Una cultura donde las personas conecten y se apoyen: la cultura es el líder ausente","Un sistema de control muy estricto para vigilar de cerca a cada integrante","Reuniones más largas para llegar a todos","Reglas estrictas que reemplacen tu presencia"],c:0,e:"El líder diseña una cultura que opera cuando él no está; esa cultura es, en la práctica, el líder ausente."},
+/* ¿Qué sigue? (jugada) */
+{m:2,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Tras una crítica, sientes que el orgullo te empuja a defenderte de inmediato. ¿Cuál es tu próxima jugada interior?",o:["Recibirla como enseñanza y sacar el foco de tu ego","Defenderte al instante para dejar clara tu postura","Compararte con quien te criticó para responderle","Callar y guardar el resentimiento para después"],c:0,e:"El orgullo es inseguridad disfrazada; recibir la crítica como enseñanza desactiva al Crítico."},
+{m:4,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Aceptaste una incomodidad necesaria y aparece el impulso de escapar de ella. ¿Qué sigue?",o:["Quedarte en el malestar: sin dolor no hay crecimiento","Escapar hacia algo cómodo para sentirte mejor","Posponerlo hasta encontrar un momento perfecto","Buscar a alguien que lo haga por ti"],c:0,e:"Cuanta más comodidad acumulas, más difícil el malestar; el autodominio lo acepta en vez de huir."},
+{m:5,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Reconociste que tu estado está bajo. Además de intentar pensar distinto, ¿qué sigue?",o:["Rediseñar tu entorno físico y entrenar la respiración","Repetir muchas más afirmaciones positivas","Esperar a que las circunstancias mejoren solas","Distraerte hasta que el bajón se pase"],c:0,e:"El estado es pensamientos, entorno y fisiología; solo 'pensar positivo' ignora dos palancas clave."},
+{m:7,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Estabas sumergido en la tarea y aparece el impulso de evaluar si va a salir bien. ¿Qué sigue?",o:["Volver a la ejecución presente: pasión, no deseo","Seguir evaluando el resultado para no descuidarlo","Acelerar para asegurar que salga a tiempo","Compararte con cómo lo haría otro"],c:0,e:"El deseo evalúa el futuro y te saca del presente; la pasión te devuelve a la ejecución."},
+{m:8,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Lograste estar presente bajo presión y la energía adversa del momento sube. ¿Qué sigue?",o:["Dejar que esa energía te impulse, sin perseguir la perfección","Frenar esa energía para no descontrolarte","Buscar la ejecución perfecta en cada detalle","Enfocarte en la puntuación para no perder ventaja"],c:0,e:"Ahí surge la resonancia: la energía adversa se vuelve combustible desde la presencia plena."},
+{m:3,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Amaneces al 40% y ya cumpliste 'esforzarte al máximo' con lo que tienes hoy. ¿Qué sigue de las cuatro metas?",o:["Estar presente, agradecido y centrarte solo en lo que controlas","Exigirte rendir exactamente igual que en tu mejor día del año","Compararte con lo que hiciste ayer","Cancelar todo hasta sentirte pleno"],c:0,e:"Las cuatro metas diarias: esforzarte al máximo, presencia, gratitud y foco en lo controlable."},
+/* Detecta el error (detecta) */
+{m:1,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"La rutina de un profesional: ① ancla su valor en sus logros y su estatus; ② madruga; ③ entrena; ④ sirve a otros. ¿Cuál es el error de excelencia interior?",o:["① Anclar su valor en logros y estatus","② Madrugar muy temprano cada día","③ Entrenar el cuerpo con disciplina","④ Servir a otros"],c:0,e:"Anclar la identidad en PALMS (logros, estatus) garantiza ansiedad; el valor va adentro, en las virtudes."},
+{m:5,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"La mañana de alguien: ① revisa el celular apenas despierta; ② desayuna; ③ planea el día; ④ respira un momento en silencio. ¿Cuál es el error?",o:["① Revisar el celular apenas despierta","② Desayunar con calma","③ Planear el día","④ Respirar un momento en silencio"],c:0,e:"Lo primero que ves predice tu estado; el celular al despertar activa orgullo y miedo por defecto."},
+{m:7,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"La forma de trabajar de alguien: ① hace muchas cosas a la vez; ② prioriza lo esencial; ③ descansa; ④ está presente. ¿Cuál falla?",o:["① Hacer muchas cosas a la vez","② Priorizar lo esencial","③ Descansar de verdad","④ Estar presente en la tarea"],c:0,e:"La prisa y la multitarea dispersan la energía; la presencia es una cosa a la vez, plenamente."},
+{m:2,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"Ante un error, alguien: ① se apega al fallo y le da vueltas; ② lo analiza; ③ aprende; ④ sigue adelante. ¿Cuál es el error?",o:["① Apegarse al fallo y darle vueltas","② Analizar lo que pasó","③ Aprender la lección","④ Seguir adelante"],c:0,e:"El apego a los errores te cohíbe y te lleva a compararte; desapegarte del resultado te libera."},
+{m:8,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"Antes de competir, alguien: ① desea que su rival falle; ② se prepara; ③ visualiza; ④ acepta el miedo. ¿Cuál es el error?",o:["① Desear que su rival falle","② Prepararse a fondo","③ Visualizar la presencia","④ Aceptar el miedo sin obedecerlo"],c:0,e:"Desear que el rival falle genera energía negativa; amar al adversario te empuja a crecer."},
+{m:4,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"La mentalidad de alguien: ① busca siempre la comodidad; ② agradece; ③ sirve; ④ acepta el malestar necesario. ¿Cuál es el error?",o:["① Buscar siempre la comodidad","② Agradecer los momentos pequeños","③ Servir a los demás","④ Aceptar el malestar necesario"],c:0,e:"Buscar siempre la comodidad debilita tu capacidad de afrontar el malestar; sin dolor no hay crecimiento."}
+];
+
+var SIMS2=[
+{id:'ego',titulo:'El golpe al ego',perfil:'Una crítica pública y dura',
+ contexto:'En una reunión, un colega critica tu trabajo con dureza y delante de todos. Sientes que te hierve la sangre. Tu misión: responder desde el <b>autodominio</b>, no desde el ego.',
+ start:'n1',
+ nodes:{
+  n1:{who:'La situación',cliente:'Un colega, delante de todos: "Este trabajo está mal hecho, se nota que no le pusiste cuidado."',
+    ops:[
+     {t:'Respiras, no te defiendes y preguntas: "¿Qué parte exactamente? Quiero aprender de esto."',fx:'good',fb:'No obedeciste al orgullo. Recibiste el golpe como enseñanza y sacaste el foco de tu ego.',to:'n2'},
+     {t:'Te defiendes al instante y explicas por qué él está equivocado.',fx:'bad',fb:'El orgullo es inseguridad disfrazada: al defenderte, lo hiciste todo sobre ti, no sobre mejorar.',to:'n2b'},
+     {t:'Te encoges, sientes vergüenza y te quedas callado el resto de la reunión.',fx:'mid',fb:'La vergüenza fácil también es ego (concepto bajo de ti). Ni aprendes ni aportas.',to:'n2'}
+    ]},
+  n2:{who:'Tu mente',cliente:'Una voz insiste: "Te humilló delante de todos, no puedes dejarlo pasar."',
+    ops:[
+     {t:'Reconoces la voz como el Crítico y no la obedeces; te enfocas en qué puedes mejorar.',fx:'good',fb:'Autoconciencia sin juicio: observas el pensamiento sin actuar desde él.',to:'n3'},
+     {t:'Le das vueltas toda la reunión, planeando cómo quedar por encima de él.',fx:'bad',fb:'La Mente Mono y la comparación: el ego llena su vacío comparando y presumiendo.',to:'n3'}
+    ]},
+  n2b:{who:'La situación',cliente:'El ambiente se tensa; el colega se pone a la defensiva y la reunión se traba.',
+    ops:[
+     {t:'Bajas la guardia: "Puede que tengas razón en algo, ayúdame a verlo."',fx:'good',fb:'Rescate: soltar la defensa y volver a la misión (mejorar), no al ego.',to:'n3'},
+     {t:'Sigues discutiendo para tener la última palabra.',fx:'bad',fb:'Ganar la discusión alimenta al ego y pierdes la lección.',to:'lose'}
+    ]},
+  n3:{who:'El momento',cliente:'La reunión termina. ¿Con qué te quedas?',
+    ops:[
+     {t:'Con la lección concreta y con haber servido a la mejora, no a tu imagen.',fx:'good',fb:'El respeto y los éxitos llegan como efecto colateral del autodominio, no de defender el ego.',to:'win'},
+     {t:'Con la rabia y las ganas de demostrarle que se equivocó.',fx:'bad',fb:'Quedaste esclavo del resultado y de la validación externa.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'Días después aplicaste la crítica, tu trabajo mejoró y hasta el colega lo notó.',
+    msg:'Dominaste el ego a través del servicio: recibiste la crítica como enseñanza, no obedeciste al Crítico y te centraste en la misión. Los mejores gestionan la crítica sin que su identidad se tambalee.'},
+  lose:{end:true,res:'lose',cliente:'Te quedaste rumiando la ofensa; el trabajo siguió igual.',
+    msg:'Te ganó el ego: hacerlo todo sobre ti (defender tu imagen) te robó la lección. El orgullo es inseguridad disfrazada.'}
+ }},
+{id:'miedo',titulo:'El miedo antes del gran momento',perfil:'Minutos antes de algo decisivo',
+ contexto:'Faltan minutos para algo importante y sientes un miedo que te paraliza. Tu misión: <b>no obedecer al miedo</b> y entrar en presencia.',
+ start:'n1',
+ nodes:{
+  n1:{who:'Tu cuerpo',cliente:'El corazón se acelera y una voz dice: "¿Y si sale mal? ¿Y si te bloqueas?"',
+    ops:[
+     {t:'Aceptas el miedo sin obedecerlo y respiras con el mantra "No espero… nada".',fx:'good',fb:'El objetivo no es no sentir miedo, sino no obedecerlo. El mantra baja la ansiedad.',to:'n2'},
+     {t:'Intentas forzarte a "pensar en positivo" y a que todo salga perfecto.',fx:'bad',fb:'Forzar positividad no funciona, y apuntar a la perfección tensa todavía más.',to:'n2'},
+     {t:'Buscas una excusa para posponer o escapar del momento.',fx:'mid',fb:'La evasión limita tu vida; la grandeza está en afrontar el miedo, no en evitarlo.',to:'n2b'}
+    ]},
+  n2:{who:'Tu mente',cliente:'La atención se va al resultado: "¿lo lograré? ¿qué van a pensar?"',
+    ops:[
+     {t:'Visualizas la presencia (no la perfección) y te centras solo en lo que controlas.',fx:'good',fb:'Visualizar la presencia y enfocarte en lo controlable devuelve el aplomo.',to:'n3'},
+     {t:'Sigues evaluando el resultado una y otra vez.',fx:'bad',fb:'Eso es deseo (futuro), no pasión (presente): te saca del momento.',to:'n3'}
+    ]},
+  n2b:{who:'El momento',cliente:'No puedes escapar: te toca entrar igual, ahora más nervioso.',
+    ops:[
+     {t:'Aceptas: "Está a punto de ocurrir algo; no espero nada, puedo con todo", y entras.',fx:'good',fb:'La paradoja: esperar abundancia y a la vez soltar el apego libera la energía.',to:'n3'},
+     {t:'Entras en piloto de pánico, deseando que acabe pronto.',fx:'bad',fb:'El pánico es obedecer al miedo; la prisa demuestra falta de confianza.',to:'lose'}
+    ]},
+  n3:{who:'El desempeño',cliente:'Estás en medio del momento decisivo.',
+    ops:[
+     {t:'Te sumerges en la ejecución, una cosa a la vez, plenamente presente.',fx:'good',fb:'En presencia plena los pensamientos bajan y el resultado deja de preocupar: ahí rindes al máximo.',to:'win'},
+     {t:'Te desconectas pensando en cómo te está saliendo.',fx:'bad',fb:'Evaluar mientras ejecutas rompe la presencia y el rendimiento cae.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'Fluiste; al terminar sentiste que diste lo mejor, pasara lo que pasara con el resultado.',
+    msg:'No eliminaste el miedo: dejaste de obedecerlo. Presencia, mantra, visualizar la presencia y soltar el resultado: así se rinde bajo presión.'},
+  lose:{end:true,res:'lose',cliente:'El miedo llevó el volante; saliste del momento pensando en el qué dirán.',
+    msg:'Obedecer al miedo y perseguir el resultado te sacó del presente. La salida no es no temer, sino no obedecer.'}
+ }},
+{id:'palms',titulo:'La tentación de PALMS',perfil:'Una oferta con brillo pero sin sentido',
+ contexto:'Te ofrecen un proyecto con mucho dinero, estatus y reconocimiento, pero que no te alinea ni te exige crecer. Tu misión: decidir desde tu interior, no desde <b>PALMS</b>.',
+ start:'n1',
+ nodes:{
+  n1:{who:'La oferta',cliente:'Un cliente potencial: "Es muy visible, buen dinero y te dará mucho nombre en el medio."',
+    ops:[
+     {t:'Te preguntas: "¿Qué vida pago por esto y me exige lo mejor o solo lo suficiente?"',fx:'good',fb:'Filtras por lo que controlas y por tu crecimiento, no por PALMS.',to:'n2'},
+     {t:'Dices que sí de inmediato por el estatus y el reconocimiento.',fx:'bad',fb:'Anclaste la decisión a PALMS; eso ata tu identidad afuera y garantiza ansiedad.',to:'n2b'},
+     {t:'Lo aceptas pensando que "con esto por fin me sentiré pleno".',fx:'mid',fb:'La búsqueda de más nunca satisface; la cima externa está vacía.',to:'n2'}
+    ]},
+  n2:{who:'Tu interior',cliente:'Notas que el proyecto no te reta ni te hace crecer: solo te da brillo externo.',
+    ops:[
+     {t:'Reconoces que el brillo es transitorio y pesas si aporta a quien quieres ser.',fx:'good',fb:'El gozo (profundo) vale más que el subidón transitorio de la felicidad externa.',to:'n3'},
+     {t:'Te convences de que el reconocimiento te hará feliz de verdad.',fx:'bad',fb:'Confundiste felicidad transitoria con gozo; el ego se queda en lo pasajero.',to:'n3'}
+    ]},
+  n2b:{who:'El tiempo',cliente:'Meses después, con dinero y nombre, sientes un vacío raro.',
+    ops:[
+     {t:'Entiendes que perseguías PALMS y reorientas tu foco a lo que te hace crecer.',fx:'good',fb:'Recolocaste el ancla adentro: virtudes internas por encima del oropel.',to:'n3'},
+     {t:'Buscas el siguiente proyecto aún más grande para llenar el vacío.',fx:'bad',fb:'El ciclo infinito de "más" que nunca satisface.',to:'lose'}
+    ]},
+  n3:{who:'La decisión',cliente:'¿Con qué criterio final decides?',
+    ops:[
+     {t:'Con si me exige lo mejor y aporta a quien quiero ser, no con el estatus.',fx:'good',fb:'Anclar la identidad en el crecimiento y el servicio da serenidad pase lo que pase.',to:'win'},
+     {t:'Con cuánto brillo y comparación me da frente a los demás.',fx:'bad',fb:'Depender de lo externo te vuelve dependiente y te quita libertad.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'Elegiste con criterio interno; ganes o no el brillo, te sientes íntegro.',
+    msg:'Soltaste PALMS: filtraste por la vida que pagas y por tu crecimiento. Sin soltar PALMS, nada de la excelencia interior funciona.'},
+  lose:{end:true,res:'lose',cliente:'El brillo llegó, el vacío también, y ya persigues el siguiente.',
+    msg:'Anclar la identidad afuera garantiza ansiedad y un ciclo de "más" que nunca llena.'}
+ }},
+{id:'prisa',titulo:'La prisa y el estrés',perfil:'Una semana caótica y desbordante',
+ contexto:'Semana caótica, mil cosas a la vez; te sientes desbordado y estresado. Tu misión: recuperar tu <b>estado</b> y tu <b>presencia</b>.',
+ start:'n1',
+ nodes:{
+  n1:{who:'La semana',cliente:'Todo se acumula; sientes que "no llegas a nada" y el pecho apretado.',
+    ops:[
+     {t:'Reconoces que el estrés es elección: no es la situación, es lo que piensas de ella.',fx:'good',fb:'El estrés no viene de la situación, sino de lo que piensas de ella.',to:'n2'},
+     {t:'Aceleras y haces varias cosas a la vez para "avanzar más".',fx:'bad',fb:'La prisa es mental y demuestra falta de confianza; dispersa la energía.',to:'n2b'},
+     {t:'Te quejas y esperas a que la semana pase sola.',fx:'mid',fb:'No cambias tu estado; sigues reaccionando a las circunstancias.',to:'n2'}
+    ]},
+  n2:{who:'Tu foco',cliente:'Todo parece igual de urgente.',
+    ops:[
+     {t:'Priorizas lo fundamental de tu misión y sueltas lo incontrolable.',fx:'good',fb:'La prisa surge de no priorizar lo esencial; soltar lo incontrolable libera energía.',to:'n3'},
+     {t:'Intentas controlar cada detalle de todo a la vez.',fx:'bad',fb:'Controlarlo todo te frena: más preocupaciones, menos foco.',to:'n3'}
+    ]},
+  n2b:{who:'El cuerpo',cliente:'El ritmo acelerado te tiene tenso y disperso.',
+    ops:[
+     {t:'Paras, respiras con "Estoy aquí… ahora" y eliges una sola cosa.',fx:'good',fb:'El mantra devuelve el presente; eliminar la prisa te hace ver más.',to:'n3'},
+     {t:'Sigues corriendo, convencido de que parar es perder tiempo.',fx:'bad',fb:'Sin afilar la sierra, la productividad cae.',to:'lose'}
+    ]},
+  n3:{who:'La tarea',cliente:'Tienes enfrente la primera tarea real.',
+    ops:[
+     {t:'La haces bien, una a la vez: un plato bien, luego el siguiente.',fx:'good',fb:'Presencia plena, una cosa a la vez: así se disuelve la prisa y sube la calidad.',to:'win'},
+     {t:'La haces a medias mientras piensas en las otras diez.',fx:'bad',fb:'Dividir la atención rompe la presencia y todo sale peor.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'La semana seguía llena, pero la viviste con calma y foco, y rendiste mejor.',
+    msg:'Cambiaste tu estado: el estrés es elección, la prisa es mental. Prioriza lo esencial, suelta lo incontrolable y vive una cosa a la vez.'},
+  lose:{end:true,res:'lose',cliente:'Corriste toda la semana y llegaste agotado, con trabajo a medias.',
+    msg:'La prisa demostró falta de confianza y te dispersó. No era la situación: era lo que pensabas de ella.'}
+ }},
+{id:'resonancia',titulo:'Bajo máxima presión: la resonancia',perfil:'El momento decisivo frente a los mejores',
+ contexto:'Llega el instante clave, frente a otros muy capaces, con la presión al máximo. Tu misión: entrar en <b>resonancia</b>.',
+ start:'n1',
+ nodes:{
+  n1:{who:'El momento',cliente:'Llega el instante decisivo; sientes la presión y la mirada de todos.',
+    ops:[
+     {t:'Compartes el corazón, no el ego: te vuelcas en dar lo mejor, no en quedar bien.',fx:'good',fb:'Compartir el corazón (no el ego) es la primera clave de la resonancia.',to:'n2'},
+     {t:'Te enfocas en no hacer el ridículo y en el qué dirán.',fx:'bad',fb:'Proteger el ego y perseguir la puntuación activa el miedo y la tensión.',to:'n2'},
+     {t:'Deseas que los otros, muy capaces, fallen para poder destacar.',fx:'mid',fb:'Desear que el rival falle genera energía negativa y limita tu crecimiento.',to:'n2b'}
+    ]},
+  n2:{who:'Los demás',cliente:'Compites con gente realmente talentosa y en forma.',
+    ops:[
+     {t:'Los agradeces: te empujan a un nivel que solo no alcanzarías.',fx:'good',fb:'Amar al adversario te da más oportunidades de crecer y rendir alto.',to:'n3'},
+     {t:'Te intimidas y te encoges ante su nivel.',fx:'bad',fb:'El miedo separa y aísla; te saca de tu mejor versión.',to:'n3'}
+    ]},
+  n2b:{who:'Tu energía',cliente:'Querer que fallen te deja tenso y resentido.',
+    ops:[
+     {t:'Cambias el foco: buscas la maestría, no ganarles; que su nivel te eleve.',fx:'good',fb:'Persigue la maestría, no la puntuación: los logros son consecuencia.',to:'n3'},
+     {t:'Sigues midiéndote solo contra ellos.',fx:'bad',fb:'Medirte por la puntuación te ata a lo externo y bloquea la resonancia.',to:'lose'}
+    ]},
+  n3:{who:'El desempeño',cliente:'Estás dentro del momento, la presión al máximo.',
+    ops:[
+     {t:'Visualizas la presencia (no la perfección) y dejas que la energía adversa te impulse.',fx:'good',fb:'Ahí surge la resonancia: la presión se vuelve combustible desde la presencia plena.',to:'win'},
+     {t:'Buscas la ejecución perfecta y te tensas con cada detalle.',fx:'bad',fb:'Perseguir la perfección tensa y rompe la resonancia.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'Sentiste que el tiempo se ralentizaba y la presión te impulsaba; diste tu mejor versión.',
+    msg:'Entraste en resonancia: corazón no ego, maestría no puntuación, amar al adversario y visualizar la presencia. La presión se volvió combustible.'},
+  lose:{end:true,res:'lose',cliente:'La presión te tensó y te encogió; saliste midiéndote contra los demás.',
+    msg:'Proteger el ego y perseguir la puntuación o la perfección activó el miedo. La resonancia nace de la presencia, no del control.'}
+ }}
+];
+
+var RETOS2=[
+{id:'dia',titulo:'Un día de máxima exigencia',perfil:'De la mañana al momento decisivo',
+ contexto:'Hoy enfrentas un día decisivo: desde que te levantas hasta un momento de máxima presión al final. Aplica la excelencia interior de principio a fin.',
+ pasos:[
+  {q:'Te despiertas y lo primero que quieres es revisar el celular. ¿Qué haces según el capítulo del estado?',o:['Un minuto de silencio antes del celular: lo primero que ves predice tu estado','Revisas de una las noticias y los mensajes para "activarte"','Te quedas en la cama repasando todo lo que puede salir mal','Empiezas a correr de inmediato para ganar tiempo'],c:0,e:'El entorno es un determinante silencioso del estado; lo primero que ves en la mañana lo predice.'},
+  {q:'A media mañana te ofrecen algo muy rentable pero vacío de sentido. ¿Con qué criterio decides?',o:['Qué vida pago por esto y si me exige lo mejor o solo lo suficiente','Cuánto estatus y reconocimiento me da frente a otros','Si es más fácil y cómodo que lo que ya tengo','Cuánto brillo inmediato me dará en el medio'],c:0,e:'Soltar PALMS: filtras por la vida que pagas y por tu crecimiento, no por el brillo externo.'},
+  {q:'Una voz te dice "no eres suficiente para lo de hoy". ¿Qué haces?',o:['Reconoces al Crítico, no lo obedeces y te centras en lo que controlas','Le das vueltas y te comparas con quienes crees mejores','Repasas tus fallos pasados para "estar alerta"','Le crees y bajas tus expectativas del día'],c:0,e:'Autoconciencia sin juicio: observas el pensamiento sin obedecerlo. El Crítico pierde combustible.'},
+  {q:'Minutos antes del momento clave sientes miedo. ¿Cuál es la mejor jugada interior?',o:['Aceptar el miedo sin obedecerlo, respirar el mantra y visualizar la presencia','Forzarte a pensar que todo saldrá perfecto','Buscar una excusa para posponerlo','Acelerar para que pase cuanto antes'],c:0,e:'No se trata de no sentir miedo, sino de no obedecerlo; visualiza la presencia, no la perfección.'},
+  {q:'En pleno momento decisivo, ¿en qué te centras?',o:['En la ejecución presente, una cosa a la vez, sin perseguir el resultado','En evaluar todo el tiempo si lo estás logrando','En quedar mejor que los demás','En que salga absolutamente perfecto'],c:0,e:'La pasión vive en el presente ejecutando; el rendimiento máximo llega cuando sueltas el resultado.'}
+ ]},
+{id:'fracaso',titulo:'El fracaso que duele',perfil:'Procesar un fracaso público',
+ contexto:'Fallaste en algo importante y público. Cómo lo procesas define en quién te conviertes.',
+ pasos:[
+  {q:'El fracaso acaba de ocurrir y duele. ¿Cómo lo enmarcas?',o:['Como enseñanza y experiencia: sin fallar no me convierto en quien vine a ser','Como una prueba de que no sirvo para esto','Como algo que debo esconder y olvidar rápido','Como mala suerte que no depende de mí'],c:0,e:'El fracaso duele, pero el aprendizaje que da es tan valioso que sin él no crecemos.'},
+  {q:'El Crítico te dice "siempre fallas". ¿Cómo lo formulas para no instalarlo como identidad?',o:['"Antes me costaba esto, y estoy mejorando cada día"','"Siempre termino fallando en lo importante"','"Soy de los que no sirven para esto"','"Nunca voy a lograrlo"'],c:0,e:'Formular el fallo en pasado evita que el subconsciente lo traiga al futuro buscando pruebas.'},
+  {q:'El Embaucador trae tus fallos pasados como prueba de que volverás a fallar. ¿Qué haces?',o:['Lo reconoces y vuelves al presente: los fallos son enseñanzas, no profecías','Le crees y bajas la guardia para no ilusionarte','Repasas cada fallo anterior con lujo de detalle','Evitas cualquier situación parecida para siempre'],c:0,e:'El Embaucador miente trayendo el pasado al futuro sin evidencia; la autoconciencia lo desactiva.'},
+  {q:'Le temes a volver a intentarlo. ¿Cómo abordas ese bloqueo?',o:['Con exposición gradual por etapas, no de un solo golpe heroico','Enfrentándolo de golpe para "demostrarte" que puedes','Evitándolo hasta que el miedo desaparezca solo','Con más fuerza de voluntad sobre el nervio'],c:0,e:'De golpe suele reforzar el bloqueo; por etapas se recablea el sistema nervioso sin sobrecarga.'},
+  {q:'¿Qué mide tu progreso de aquí en adelante?',o:['La maestría: autoconciencia, disciplina y crecimiento; los logros son consecuencia','La próxima victoria que borre este fracaso','Cuánto te comparas con los que sí lo lograron','El reconocimiento que recuperes'],c:0,e:'La vara no es la puntuación sino la maestría; las victorias son solo consecuencias.'}
+ ]},
+{id:'competencia',titulo:'La competencia importante',perfil:'Antes, durante y después del reto',
+ contexto:'Te enfrentas a un reto exigente con rivales muy capaces. Sostén la excelencia interior antes, durante y después.',
+ pasos:[
+  {q:'Antes, sientes miedo y quieres evitar el reto. ¿Dónde está la grandeza?',o:['En afrontar el miedo y estar dispuesto a sentir la emoción que lo acompaña','En evitar con inteligencia aquello que temes','En superar el miedo hasta no sentir nada','En esperar a que el miedo se pase solo'],c:0,e:'La grandeza no está en evitar ni superar el miedo, sino en afrontarlo y sentir la emoción.'},
+  {q:'Deseas que tus rivales fallen para ganar. ¿Qué visión conviene?',o:['Amar al adversario: su nivel te empuja a crecer más de lo que solo lograrías','Desear que fallen es la mejor forma de ganar','Ignorarlos por completo y solo mirarte','Ganarles a toda costa es lo único que cuenta'],c:0,e:'Un adversario en forma te da más oportunidades de crecer; desear que falle genera energía negativa.'},
+  {q:'Durante, la presión sube. ¿Cómo entras en resonancia?',o:['Corazón no ego, maestría no puntuación y presencia, no perfección','Concentrándote en la puntuación en cada instante','Repasando todo lo que podría salir mal','Intentando controlar cada mínimo detalle'],c:0,e:'Las claves de la resonancia reemplazan los reflejos de miedo con actos de presencia.'},
+  {q:'Te descubres persiguiendo la perfección y te tensas. ¿Qué corriges?',o:['Visualizar la presencia, no la perfección','Exigirte una ejecución todavía más perfecta','Dejar de visualizar y solo improvisar','Concentrarte en ganarle a un rival concreto'],c:0,e:'Una de las cuatro claves: visualizas estar presente, no un resultado perfecto.'},
+  {q:'Al terminar, ¿cómo defines tu éxito?',o:['Por el esfuerzo y el crecimiento: la tranquilidad de saber que diste lo mejor','Por haber vencido a los demás','Por el reconocimiento y los aplausos recibidos','Por cómo quedaste en la comparación'],c:0,e:'Wooden: el éxito es la tranquilidad de espíritu de saber que te esforzaste por ser lo mejor que puedes. Solo compites contigo.'}
+ ]},
+{id:'liderar',titulo:'Liderar bajo presión',perfil:'Dirigir a un equipo en un momento exigente',
+ contexto:'Diriges a un equipo en un momento exigente. Aplica las tres características del líder extraordinario.',
+ pasos:[
+  {q:'¿Cómo defines el éxito del proyecto ante tu equipo?',o:['Por el esfuerzo, el crecimiento y un propósito que sirva a un bien común','Solo por superar a la competencia','Solo por el número final de resultados','Por cuánto reconocimiento nos dará afuera'],c:0,e:'Las organizaciones extraordinarias definen el éxito por una contribución significativa; los resultados son consecuencia.'},
+  {q:'No puedes acompañar a cada persona a diario. ¿Qué construyes?',o:['Una cultura donde las personas conecten y se apoyen entre sí','Un sistema de control estricto para vigilar a cada uno','Reuniones más largas para intentar llegar a todos','Reglas rígidas que reemplacen tu presencia'],c:0,e:'La cultura es el líder ausente: opera cuando el líder no está.'},
+  {q:'Vas a comunicar algo decisivo. ¿Qué cuidas para no sabotear tu influencia?',o:['El tono de voz y la postura, no solo las palabras','Únicamente el contenido exacto de las palabras','El lugar y la hora de la reunión, sobre todo','La duración total de la intervención'],c:0,e:'UCLA: 7% palabras, 38% tono, 55% cuerpo. Descuidar lo no verbal sabotea el 93% de tu influencia.'},
+  {q:'Sientes la tentación de imponerte para demostrar autoridad. ¿Qué haces?',o:['Dominar el ego sirviendo: empoderar a otros y escuchar más que hablar','Imponerte con firmeza para que quede clara tu autoridad','Recordar tus logros para ganar respeto','Competir con quien cuestione tu criterio'],c:0,e:'El líder busca el autodominio para ayudar a otros; se preocupa por empoderar, no por tener poder.'},
+  {q:'¿Qué haces para sostener tu propio autodominio como líder?',o:['Dedicar tiempo a personas más sabias que tú y a quienes tienen necesidades mayores','Rodearte solo de quienes te admiran','Evitar mostrar cualquier vulnerabilidad','Enfocarte solo en tus propias metas'],c:0,e:'Dedicar tiempo a los más sabios y a quienes más necesitan acelera el autodominio.'}
+ ]}
 ];
 
 /* ================= CENTRO DE APRENDIZAJE (multi-curso) ================= */
@@ -1791,7 +1997,7 @@ function ckey(n){return 'gh_'+((typeof COURSE!=='undefined'&&COURSE)?COURSE.id:'
 var COURSE=null;
 var COURSES=[
  {id:'pnl',name:'Programación Neurolingüística',short:'Curso · PNL',tag:'Ventas y comunicación de alto impacto · teoría, práctica avanzada, simulador y retos.',color1:'#00041C',color2:'#0045D5',ready:true,MODULES:MODULES,BANK:BANK,SIMS:SIMS,RETOS:RETOS,hasSim:true,count:BANK.length},
- {id:'excelencia',name:'Excelencia Interior',short:'Excelencia Interior',tag:'Desarrollo personal · basado en el libro Inner Excellence de Jim Murphy.',color1:'#062B1C',color2:'#1E8449',ready:true,MODULES:MODULES2,BANK:BANK2,hasSim:false,count:BANK2.length,grad:'linear-gradient(135deg,#052a1c 0%,#0b5c39 55%,#1e8449 100%)',accent:'#0b6b3a',card:'linear-gradient(135deg,#0b5c39,#1e8449)',carde:'linear-gradient(135deg,#03251c 0%,#0a4a30 100%)'}
+ {id:'excelencia',name:'Excelencia Interior',short:'Excelencia Interior',tag:'Desarrollo personal · basado en el libro Inner Excellence de Jim Murphy.',color1:'#062B1C',color2:'#1E8449',ready:true,MODULES:MODULES2,BANK:BANK2,hasSim:true,SIMS:SIMS2,RETOS:RETOS2,count:BANK2.length,grad:'linear-gradient(135deg,#052a1c 0%,#0b5c39 55%,#1e8449 100%)',accent:'#0b6b3a',card:'linear-gradient(135deg,#0b5c39,#1e8449)',carde:'linear-gradient(135deg,#03251c 0%,#0a4a30 100%)',simName:'Momentos de presión',simDesc:'Situaciones internas reales: eliges cómo responder bajo presión. Cada decisión te muestra la reacción.',retoName:'Casos de maestría',retoDesc:'Casos integradores: 5 decisiones encadenadas aplicando varios principios a la vez.',simWin:'Respondiste con maestría',simLose:'Te ganó la reacción',retoWin:'Maestría sostenida',retoMid:'Casi la sostienes',retoLose:'Te ganó la reacción',simBadge:'#1E8449',simCard:'linear-gradient(135deg,#116149,#2aa06a)',retoCard:'linear-gradient(135deg,#1f7a3a,#4bad5a)'}
 ];
 function enterCourse(c){COURSE=c;MODULES=c.MODULES;BANK=c.BANK;SIMS=c.SIMS||[];RETOS=c.RETOS||[];var tt=document.querySelector('.tt');if(tt)tt.textContent=c.short||c.name;renderHome();}
 goHome=function(){ if(COURSE) renderHome(); else renderCenter(); };
