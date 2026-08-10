@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- build:excelencia-filtros-avanzado -->
+<!-- build:excelencia-verde2 -->
 <html lang="es">
 <head>
 <meta charset="utf-8">
@@ -1616,7 +1616,7 @@ renderHome=function(){
     '<div class="ds"><div class="dv"><i data-lucide="layers"></i>'+st.seen+'/'+st.total+'</div><div class="dk">vistas</div></div>'+
     '</div>'+
     '<button class="startbig" id="goDaily"><i data-lucide="zap"></i> Empezar sesión de hoy</button>';
-  app.appendChild(d);d.querySelector('#goDaily').onclick=startDaily;
+  app.appendChild(d);d.querySelector('#goDaily').onclick=startDaily;if(COURSE&&COURSE.grad)d.style.background=COURSE.grad;if(COURSE&&COURSE.accent){var _sb=d.querySelector('.startbig');if(_sb)_sb.style.color=COURSE.accent;}
 
   var c=el('<div class="card"></div>');
   c.innerHTML='<div class="ov">O elige un modo</div><h2 class="big" style="font-size:22px">Practica a tu manera</h2>'+
@@ -1626,7 +1626,7 @@ renderHome=function(){
     '<button class="mode e" onclick="cfg(false)"><div class="mi"><i data-lucide="medal"></i></div><h3>Examen</h3><p>Evalúate: mezcla aleatoria, calificación al final y desglose por módulo.</p></button>'+
     '</div>'+
     '<button class="ghost-btn" onclick="renderHistory()"><i data-lucide="trending-up"></i> Ver mi progreso</button>';
-  app.appendChild(c);if(COURSE&&COURSE.hasSim){c.querySelector('#mSim').onclick=startRandomSim;c.querySelector('#mReto').onclick=startRandomReto;}else{var _a=c.querySelector('#mSim');if(_a)_a.remove();var _b=c.querySelector('#mReto');if(_b)_b.remove();}
+  app.appendChild(c);if(COURSE&&COURSE.hasSim){c.querySelector('#mSim').onclick=startRandomSim;c.querySelector('#mReto').onclick=startRandomReto;}else{var _a=c.querySelector('#mSim');if(_a)_a.remove();var _b=c.querySelector('#mReto');if(_b)_b.remove();}if(COURSE&&COURSE.card){var _mp=c.querySelector('.mode.p');if(_mp)_mp.style.background=COURSE.card;}if(COURSE&&COURSE.carde){var _me=c.querySelector('.mode.e');if(_me)_me.style.background=COURSE.carde;}
 
   var info=el('<div class="card plain"></div>');
   info.innerHTML='<div class="ov">Sobre esta herramienta</div><p class="lead" style="margin-top:8px">Banco de <b>'+BANK.length+' preguntas</b> sobre los '+Object.keys(MODULES).length+' módulos, con <b>repaso espaciado</b> que reprograma lo que fallas, <b>confianza calibrada</b> para cazar puntos ciegos. Tu progreso se guarda en este navegador.</p>';
@@ -1636,14 +1636,14 @@ renderHome=function(){
 };
 
 var MODULES2 = {
- 1:{name:"La búsqueda de más y el virus PALMS",short:"PALMS",color:"#B5651D"},
- 2:{name:"Los monstruos internos y los 3 oponentes",short:"Oponentes",color:"#8C3B2B"},
- 3:{name:"Los tres pilares y la zoé",short:"Pilares",color:"#C0892E"},
- 4:{name:"Dominar el ego: el código del samurái",short:"Ego samurái",color:"#6B4E2E"},
- 5:{name:"Cambia tu estado, cambia tu vida",short:"Tu estado",color:"#A0522D"},
- 6:{name:"Creencias que apoyan tus sueños",short:"Creencias",color:"#9C6B3F"},
- 7:{name:"Estar plenamente presente",short:"Presencia",color:"#7A5230"},
- 8:{name:"Maestría bajo presión y liderazgo",short:"Maestría",color:"#5C3A21"}
+ 1:{name:"La búsqueda de más y el virus PALMS",short:"PALMS",color:"#0E7C4A"},
+ 2:{name:"Los monstruos internos y los 3 oponentes",short:"Oponentes",color:"#2E9E57"},
+ 3:{name:"Los tres pilares y la zoé",short:"Pilares",color:"#0B6B57"},
+ 4:{name:"Dominar el ego: el código del samurái",short:"Ego samurái",color:"#3C8C3C"},
+ 5:{name:"Cambia tu estado, cambia tu vida",short:"Tu estado",color:"#157F5A"},
+ 6:{name:"Creencias que apoyan tus sueños",short:"Creencias",color:"#1E8449"},
+ 7:{name:"Estar plenamente presente",short:"Presencia",color:"#4E9E5F"},
+ 8:{name:"Maestría bajo presión y liderazgo",short:"Maestría",color:"#0F5C3A"}
 };
 var BANK2 = [
 /* ===== M1 · PALMS ===== */
@@ -1791,7 +1791,7 @@ function ckey(n){return 'gh_'+((typeof COURSE!=='undefined'&&COURSE)?COURSE.id:'
 var COURSE=null;
 var COURSES=[
  {id:'pnl',name:'Programación Neurolingüística',short:'Curso · PNL',tag:'Ventas y comunicación de alto impacto · teoría, práctica avanzada, simulador y retos.',color1:'#00041C',color2:'#0045D5',ready:true,MODULES:MODULES,BANK:BANK,SIMS:SIMS,RETOS:RETOS,hasSim:true,count:BANK.length},
- {id:'excelencia',name:'Excelencia Interior',short:'Excelencia Interior',tag:'Desarrollo personal · basado en el libro Inner Excellence de Jim Murphy.',color1:'#241206',color2:'#B5651D',ready:true,MODULES:MODULES2,BANK:BANK2,hasSim:false,count:BANK2.length}
+ {id:'excelencia',name:'Excelencia Interior',short:'Excelencia Interior',tag:'Desarrollo personal · basado en el libro Inner Excellence de Jim Murphy.',color1:'#062B1C',color2:'#1E8449',ready:true,MODULES:MODULES2,BANK:BANK2,hasSim:false,count:BANK2.length,grad:'linear-gradient(135deg,#052a1c 0%,#0b5c39 55%,#1e8449 100%)',accent:'#0b6b3a',card:'linear-gradient(135deg,#0b5c39,#1e8449)',carde:'linear-gradient(135deg,#03251c 0%,#0a4a30 100%)'}
 ];
 function enterCourse(c){COURSE=c;MODULES=c.MODULES;BANK=c.BANK;SIMS=c.SIMS||[];RETOS=c.RETOS||[];var tt=document.querySelector('.tt');if(tt)tt.textContent=c.short||c.name;renderHome();}
 goHome=function(){ if(COURSE) renderHome(); else renderCenter(); };
