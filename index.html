@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- build:pnl-conversacion -->
+<!-- build:set-de-sies -->
 <html lang="es">
 <head>
 <meta charset="utf-8">
@@ -3924,6 +3924,58 @@ BANK.push.apply(BANK,PNL_CONV);
 SIMS.push.apply(SIMS,SIMS_CONV);
 RETOS.push.apply(RETOS,RETOS_CONV);
 
+
+
+/* ====== PNL: set de síes ====== */
+var SETSIES_BANK=[
+{m:7,t:"unica",d:"avanzado",caso:true,q:"En una reunión, antes de proponer tu consultoría dices tres cosas obvias que el cliente confirma con un 'sí' y luego lanzas tu propuesta. ¿Qué patrón de PNL estás usando?",o:["El anclaje de un estado emocional positivo en el cliente","El reencuadre de la objeción del cliente antes de que aparezca","El set de síes: afirmaciones verdaderas y luego la propuesta","La calibración del cambio de estado emocional del cliente"],c:2,e:"El set de síes encadena afirmaciones verdaderas y fáciles de comprobar para entrenar a la mente a asentir, y luego llega la propuesta."},
+{m:7,t:"unica",d:"avanzado",caso:true,q:"¿Por qué un set de síes bien hecho te da autoridad y afinidad al mismo tiempo?",o:["Porque lo obligas a aceptar sin que pueda pensarlo con calma","Porque escondes tu propuesta hasta el último momento posible","Porque hablas más que el cliente y controlas toda la reunión","Porque demuestras que entiendes su realidad y se siente comprendido"],c:3,e:"Las afirmaciones verdaderas prueban que conoces su mundo (autoridad) y hacen que se sienta entendido (afinidad); no es imponer, es sintonizar."},
+{m:7,t:"unica",d:"avanzado",caso:true,q:"Estás por proponer un diagnóstico a una pyme. ¿Cuál es la mejor secuencia de síes antes de la propuesta?",o:["'Seguro nadie te ha ofrecido algo así antes', 'esto es único en el mercado', 'te va a encantar'","'Llevas años en esto', 'el equipo comercial es tu motor', 'quieres crecer sin perder el foco'","'Tu competencia te está ganando terreno', 'vas muy tarde con esto', 'necesitas ayuda ya'","'Confía en mí sin dudarlo', 'esto siempre funciona', 'no lo pienses tanto'"],c:1,e:"Los buenos síes son verdaderos, fáciles de comprobar y relevantes para el cliente. Exagerar, asustar o presionar rompe el patrón."},
+{m:7,t:"unica",d:"avanzado",caso:true,q:"Un colega arma su set de síes con halagos exagerados que el cliente no puede confirmar ('eres el mejor del sector'). ¿Qué riesgo corre?",o:["Que el cliente sienta un truco y se pierda la confianza","Que el cliente asienta con demasiada fuerza y te compre","Que el patrón funcione igual porque son elogios sinceros","Que ganes autoridad aunque pierdas algo de afinidad"],c:0,e:"Si las afirmaciones son falsas o no comprobables, el cliente percibe manipulación; el set de síes solo funciona con verdades genuinas."},
+{m:7,t:"vf",d:"avanzado",caso:true,q:"El set de síes funciona igual de bien aunque las afirmaciones sean discutibles o exageradas, porque igual entrenan a asentir.",o:["Verdadero","Falso"],c:1,e:"Falso: las afirmaciones deben ser verdaderas y fáciles de comprobar. Una afirmación discutible rompe la cadena de síes y despierta la defensa."},
+{m:7,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Vas a proponerle a un gerente que contrate tu acompañamiento. Sientes que si lanzas la propuesta en frío, la rechaza. ¿Cuál es tu próxima jugada?",o:["Lanzar la propuesta de una y defenderla con tus mejores argumentos","Bajar el precio de entrada para que le cueste menos decir que no","Preguntarle directamente si te va a contratar hoy mismo o no","Encadenar tres o cuatro verdades que él confirme y recién ahí proponer"],c:3,e:"El set de síes prepara el terreno: varias verdades que el cliente confirma lo predisponen a asentir a la propuesta que sigue."},
+{m:7,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"Un set de síes para un cliente: ① 'Llevas tiempo en el mercado'; ② 'Tu equipo trabaja duro'; ③ 'Seguro soy el único que puede ayudarte'; ④ 'Quieres mejores resultados'. ¿Cuál afirmación rompe el patrón?",o:["① 'Llevas tiempo en el mercado'","② 'Tu equipo trabaja duro'","③ 'Seguro soy el único que puede ayudarte'","④ 'Quieres mejores resultados'"],c:2,e:"Las otras tres son verdades fáciles de comprobar; la ③ es una afirmación no verificable y presuntuosa que quiebra la cadena y suena a venta."},
+{m:7,t:"unica",d:"avanzado",caso:true,q:"¿Cómo son, en esencia, las afirmaciones que componen un set de síes efectivo?",o:["Muchas, genéricas y repetidas para reforzar bien el mensaje","Pocas, verdaderas, fáciles de comprobar y relevantes para él","Ambiciosas y elogiosas para elevar el ánimo del cliente","Provocadoras, para sacudir al cliente antes de proponerle"],c:1,e:"El patrón clásico son unas cuatro afirmaciones verdaderas y comprobables, ligadas a la realidad del cliente, seguidas de la propuesta."},
+{m:7,t:"unica",d:"avanzado",caso:true,q:"Después de encadenar tres síes verdaderos, ¿cuál es el momento y la forma de introducir tu propuesta?",o:["Mucho después, para que no note la relación entre una cosa y otra","Antes de los síes, y usarlos para defenderla si la llega a rechazar","Justo después del último sí, ligándola a lo que él acaba de confirmar","En otra reunión, para no mezclar los síes con tu propuesta final"],c:2,e:"La propuesta llega enseguida del último sí y se conecta con lo confirmado: la mente, entrenada a asentir, la recibe con menos resistencia."}
+];
+var SETSIES_SIM={id:'setsies',titulo:'Construye tu set de síes',perfil:'Preparar el terreno antes de proponer',
+ contexto:'Estás a punto de proponerle tu consultoría al dueño de una empresa mediana. Tu misión: construir un <b>set de síes</b> —afirmaciones verdaderas que él confirme— antes de lanzar la propuesta, en vez de proponer en frío.',
+ start:'n1',
+ nodes:{
+  n1:{who:'El momento',cliente:'El dueño te escucha; sientes que si propones de una, se cierra. ¿Por dónde empiezas?',
+    ops:[
+     {t:'Empiezas por una verdad simple que él confirme: "Llevas varios años construyendo esto, ¿cierto?"',fx:'good',fb:'Arrancaste el set de síes con una verdad fácil de confirmar. La mente empieza a asentir.',to:'n2'},
+     {t:'Lanzas tu propuesta completa de una vez para no dar rodeos.',fx:'bad',fb:'Proponer en frío dispara la defensa. Te saltaste el terreno que prepara el sí.',to:'n2b'},
+     {t:'Abres con un halago grande: "Eres el mejor empresario que he conocido."',fx:'mid',fb:'Un elogio no comprobable no es un buen sí: suena a adulación y resta credibilidad.',to:'n2'}
+    ]},
+  n2:{who:'La cadena',cliente:'Asintió a la primera. ¿Qué afirmaciones encadenas ahora?',
+    ops:[
+     {t:'Dos o tres verdades más, ligadas a él: "El equipo comercial es clave para ti" y "quieres crecer sin perder foco".',fx:'good',fb:'Verdaderas, comprobables y relevantes: la cadena de síes se sostiene y crece la afinidad.',to:'n3'},
+     {t:'Afirmaciones exageradas: "Esto nunca falla" y "nadie más puede ayudarte".',fx:'bad',fb:'Afirmaciones no verificables rompen el patrón; el cliente huele el truco y sube la guardia.',to:'n2b'},
+     {t:'Repites la misma idea con otras palabras para sumar síes.',fx:'mid',fb:'Rellenar con síes vacíos se nota; el patrón pierde fuerza si no aportan nada nuevo.',to:'n3'}
+    ]},
+  n2b:{who:'El rescate',cliente:'El cliente se pone algo escéptico: "¿A dónde quieres llegar?"',
+    ops:[
+     {t:'Vuelves a lo genuino: "Solo quiero confirmar que entendí tu realidad antes de proponerte nada."',fx:'good',fb:'Recuperas la honestidad del patrón: los síes sirven para sintonizar, no para atrapar.',to:'n3'},
+     {t:'Sigues acumulando afirmaciones grandilocuentes para convencerlo.',fx:'bad',fb:'Insistir con síes forzados confirma la sensación de manipulación. Se pierde la confianza.',to:'lose'}
+    ]},
+  n3:{who:'La propuesta',cliente:'Ya confirmó tres verdades y está receptivo. ¿Cómo introduces tu propuesta?',
+    ops:[
+     {t:'La ligas al último sí: "Justo por eso te propongo un diagnóstico que cuide ese foco mientras crece tu comercial."',fx:'good',fb:'Conectaste la propuesta con lo que él mismo confirmó: la mente, entrenada a asentir, la recibe abierta.',to:'win'},
+     {t:'Cambias de tema y propones algo sin relación con los síes.',fx:'bad',fb:'Desperdiciaste el patrón: si la propuesta no se liga a los síes, la cadena no te ayuda.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'El dueño asintió también a la propuesta y pidió ver cómo sería el diagnóstico.',
+    msg:'Construiste un set de síes genuino —verdades comprobables y relevantes— y ligaste la propuesta al último sí. Entrenaste el asentimiento sin manipular: autoridad y afinidad a la vez.'},
+  lose:{end:true,res:'lose',cliente:'El cliente sintió que lo estabas llevando y se cerró: "Déjame pensarlo".',
+    msg:'El set de síes solo funciona con verdades genuinas y una propuesta ligada a ellas. Forzar síes o proponer en frío rompe el patrón y la confianza.'}
+ }};
+var SETSIES_FASE={fase:'7 · El set de síes',color:'#C2185B',clave:'Cuatro afirmaciones verdaderas y fáciles de comprobar, y luego tu propuesta. Entrena la mente a asentir; deben ser genuinas, nunca forzadas.',preguntas:[
+ 'Plantilla: sí 1 (verdad obvia) + sí 2 (verdad de su realidad) + sí 3 (lo que quiere lograr) + sí 4 (lo que le duele) → propuesta ligada al último sí.',
+ 'Ejemplo: "Llevas años en esto (sí). El equipo comercial es tu motor (sí). Quieres crecer sin perder el foco (sí). Y cerrar más grandes te quitaría presión (sí). Por eso te propongo un diagnóstico de 30 días."',
+ 'Regla de oro: si una afirmación no es verdadera y comprobable, no la uses; un solo sí falso rompe la cadena y despierta la defensa.']};
+BANK.push.apply(BANK,SETSIES_BANK);
+SIMS.push(SETSIES_SIM);
+GUIONES_PNL.push(SETSIES_FASE);
 
 var COURSES=[
  {id:'pnl',name:'Programación Neurolingüística',short:'Curso · PNL',tag:'Ventas y comunicación de alto impacto · teoría, práctica avanzada, simulador y retos.',color1:'#00041C',color2:'#0045D5',ready:true,MODULES:MODULES,BANK:BANK,SIMS:SIMS,RETOS:RETOS,hasSim:true,count:BANK.length,guiones:GUIONES_PNL},
