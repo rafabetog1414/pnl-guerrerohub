@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- build:cinco-cursos -->
+<!-- build:pnl-conversacion -->
 <html lang="es">
 <head>
 <meta charset="utf-8">
@@ -723,6 +723,7 @@ function renderHome(){
     '</div>'+
     '<button class="ghost-btn" onclick="renderHistory()"><i data-lucide="trending-up"></i> Ver mi progreso</button>';
   app.appendChild(c);
+
   var info=el('<div class="card plain"></div>');
   info.innerHTML='<div class="ov">Sobre esta herramienta</div><p class="lead" style="margin-top:8px">Banco de <b>'+BANK.length+' preguntas</b> de 7 tipos y 3 niveles de dificultad, sobre los 8 módulos del curso. Cada test es <b>aleatorio</b> — preguntas y opciones se barajan, así que nunca es igual.</p>';
   app.appendChild(info);
@@ -1628,6 +1629,7 @@ renderHome=function(){
     '<button class="ghost-btn" onclick="renderHistory()"><i data-lucide="trending-up"></i> Ver mi progreso</button>';
   app.appendChild(c);if(COURSE&&COURSE.hasSim){c.querySelector('#mSim').onclick=startRandomSim;c.querySelector('#mReto').onclick=startRandomReto;}else{var _a=c.querySelector('#mSim');if(_a)_a.remove();var _b=c.querySelector('#mReto');if(_b)_b.remove();}if(COURSE&&COURSE.card){var _mp=c.querySelector('.mode.p');if(_mp)_mp.style.background=COURSE.card;}if(COURSE&&COURSE.carde){var _me=c.querySelector('.mode.e');if(_me)_me.style.background=COURSE.carde;}if(COURSE&&COURSE.simName){var _ms=c.querySelector('#mSim');if(_ms){var _h=_ms.querySelector('h3');if(_h)_h.textContent=COURSE.simName;var _pp=_ms.querySelector('p');if(_pp)_pp.textContent=COURSE.simDesc;}}if(COURSE&&COURSE.retoName){var _mr=c.querySelector('#mReto');if(_mr){var _h2=_mr.querySelector('h3');if(_h2)_h2.textContent=COURSE.retoName;var _p2=_mr.querySelector('p');if(_p2)_p2.textContent=COURSE.retoDesc;}}if(COURSE&&COURSE.simCard){var _msc=c.querySelector('#mSim');if(_msc)_msc.style.background=COURSE.simCard;}if(COURSE&&COURSE.retoCard){var _mrc=c.querySelector('#mReto');if(_mrc)_mrc.style.background=COURSE.retoCard;}
 
+  if(COURSE&&COURSE.guiones){var _gb=el('<button class="ghost-btn" style="margin-top:10px"><i data-lucide="list-checks"></i> Guiones de preguntas</button>');_gb.onclick=renderGuiones;c.appendChild(_gb);}
   var info=el('<div class="card plain"></div>');
   info.innerHTML='<div class="ov">Sobre esta herramienta</div><p class="lead" style="margin-top:8px">Banco de <b>'+BANK.length+' preguntas</b> sobre los '+Object.keys(MODULES).length+' módulos, con <b>repaso espaciado</b> que reprograma lo que fallas, <b>confianza calibrada</b> para cazar puntos ciegos. Tu progreso se guarda en este navegador.</p>';
   app.appendChild(info);
@@ -3676,8 +3678,255 @@ var SIMS3=SIMS_HAB,RETOS3=RETOS_HAB;
 var SIMS4=SIMS_CLUB,RETOS4=RETOS_CLUB;
 var SIMS5=SIMS_INFLU,RETOS5=RETOS_INFLU;
 
+
+/* ====== PNL: enriquecimiento conversación de venta ====== */
+var PNL_CONV = [
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"En una reunión con una pyme, el gerente dice: 'necesitamos mejorar el servicio'. ¿Cuál es tu mejor jugada?",o:["Presentar tu metodología de servicio","Preguntar qué es 'mejorar' para él","Ofrecer tu paquete de consultoría","Explicar tus casos de éxito"],c:1,e:"Frente a una frase difusa se rompe la omisión preguntando; recuerda que cuando el cliente habla está comprando."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"El cliente afirma: 'no estamos vendiendo bien'. Esa frase tiene una omisión. ¿Qué pregunta de precisión la recupera?",o:["¿Quieres que te muestre mi propuesta?","¿Te interesa un plan de ventas?","¿Vendiendo bien comparado con qué?","¿Reservamos otra reunión pronto?"],c:2,e:"Las preguntas de precisión de Wilson (qué/cómo/cuánto/comparado con qué) concretan lo difuso y sacan el dato faltante."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"Apenas el cliente menciona un problema de rotación de personal, sientes el impulso de hablar de tu solución. ¿Qué conviene hacer?",o:["Seguir preguntando el dolor real","Lanzar de una tus características","Mostrar el beneficio del servicio","Cerrar con tu mejor descuento"],c:0,e:"El error típico es lanzarse a la solución; la disciplina es seguir preguntando hasta entender el dolor real."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"Quieres que el cliente hable más y tú expongas menos durante la reunión. ¿Qué tipo de pregunta lo logra mejor?",o:["Una cerrada de sí o no colocada","Una que confirme tu propuesta","Una que valide tu experiencia","Una abierta sobre su operación"],c:3,e:"Las preguntas abiertas (no de sí/no) ponen a hablar al cliente; cuando el cliente habla está comprando."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"El dueño de una distribuidora dice: 'el equipo no está comprometido'. ¿Qué pregunta de implicación sigue mejor?",o:["¿Te muestro nuestro modelo?","¿Y eso qué te está costando?","¿Contratamos para el lunes?","¿Prefieres verlo por email luego?"],c:1,e:"La pregunta de implicación ('¿qué te cuesta eso?') cuantifica el dolor y profundiza en vez de proponer."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"Cliente: 'siempre tenemos problemas con las entregas'. La palabra 'siempre' es una generalización. ¿Qué haces?",o:["Aceptar el 'siempre' y proponer","Ignorar y pasar al precio","Preguntar '¿siempre, siempre?'","Prometer que tú lo resuelves"],c:2,e:"Ante generalizaciones ('siempre', 'nunca') se cuestiona con precisión para recuperar los casos concretos omitidos."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"En la apertura quieres que el cliente defina la agenda con sus propias palabras. ¿Qué preguntas primero?",o:["¿Qué te trajo a esta reunión?","¿Te presento ya mi propuesta?","¿Firmamos el acuerdo marco hoy?","¿Reviso tu web antes de seguir?"],c:0,e:"Abrir con una pregunta que hace hablar al cliente encuadra desde su motivo; el vendedor escucha, no expone."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"El cliente responde difuso: 'queremos algo más moderno'. ¿Cuál rompe mejor la omisión?",o:["Te enseño mi portafolio completo","Suena bien, coticemos eso","Lo moderno se puede lograr","¿Moderno en qué exactamente?"],c:3,e:"'Moderno' es una nominalización vacía; preguntar 'en qué exactamente' recupera el criterio concreto del cliente."},
+  {m:3,t:"unica",d:"avanzado",caso:true,q:"Un prospecto dice: 'los clientes se quejan mucho'. Quieres cuantificar. ¿Qué pregunta de precisión usas?",o:["¿Te mando la propuesta esta tarde?","¿Cuántas quejas por semana?","¿Empezamos el proyecto ya?","¿Vemos mi caso de retail?"],c:1,e:"'Mucho' omite la cantidad; la pregunta de precisión '¿cuántas?' recupera el dato para dimensionar el dolor."},
+  {m:3,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Escena: presentas veinte minutos tus servicios; el cliente asiente en silencio y no pregunta nada. Sientes que perdiste el hilo. ¿Cuál es tu próxima jugada?",o:["Seguir exponiendo más beneficios","Ofrecer descuento por cerrar","Callar y devolverle preguntas","Agendar una segunda demo larga"],c:2,e:"Si el vendedor habla, se vende a sí mismo; hay que devolver la palabra con preguntas para que el cliente compre."},
+  {m:3,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"Reunión con una fábrica. ① Preguntas '¿qué te hizo buscarnos?'. ② El cliente dice 'tenemos fugas de dinero'. ③ Sueltas de una tu plan de eficiencia y precios. ④ Él se cierra y dice que lo pensará. ¿Cuál es el error?",o:["① abrir con esa pregunta","② hablar de 'fugas de dinero'","③ saltar a plan y precios","④ que él lo pensará luego"],c:2,e:"El error es el paso ③: ante el dolor recién asomado, saltar a la solución y al precio corta la indagación."},
+  {m:3,t:"vf",d:"avanzado",caso:true,q:"Afirmación: en la conversación de venta conviene que hable más el vendedor que el cliente, porque así demuestra dominio del tema.",o:["Verdadero","Falso"],c:1,e:"Falso. Cuando el vendedor habla vende, pero cuando el cliente habla está comprando; el objetivo es hacerlo hablar."},
+
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"Un cliente pide 'un CRM nuevo'. Según el dolor de fondo, ¿qué te está comprando en realidad?",o:["El alivio de su caos comercial","El software CRM en sí mismo","La marca del proveedor CRM","El precio más bajo posible del mercado"],c:0,e:"No te compran el taladro sino el hueco: el cliente no compra el CRM, compra lo que el CRM le resuelve, el caos."},
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"Estás abriendo la conversación de valor. Según Dolor→Beneficio→Ventaja, ¿por dónde debes empezar?",o:["Por la ventaja diferencial","Por el precio y el alcance","Por el beneficio del servicio","Por el dolor que él reconoce"],c:3,e:"Se abre por el dolor, no por la ventaja: primero se hace reconocer el dolor, luego alivia el beneficio y libera la ventaja."},
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"El cliente ya reconoció su dolor y hay dos competidores en la mesa. La 'ventaja' que ofreces responde, sobre todo, ¿a qué pregunta?",o:["¿Cuánto cuesta tu servicio?","¿Cuándo podemos arrancar?","¿Por qué tú y no otro?","¿Qué incluye el paquete?"],c:2,e:"La ventaja es lo que solo tú das y responde '¿por qué tú y no otro?'; es lo que libera el dolor de fondo."},
+  {m:5,t:"unica",d:"avanzado",caso:true,q:"Vendes consultoría de CX. El comprador insiste en 'reducir tiempos de respuesta'. ¿Cómo llegas al dolor de fondo?",o:["Cotizando el proyecto ya mismo","Preguntando qué gana si baja","Listando todas tus funciones","Mostrando tu tabla de precios"],c:1,e:"El pedido explícito, bajar tiempos, es el taladro; preguntar qué gana con eso destapa el hueco, el motivo real."},
+  {m:5,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Escena: el cliente dice 'quiero capacitar a mi equipo en ventas'. Tú intuyes que el problema real es que factura menos cada trimestre. ¿Cuál es tu próxima jugada?",o:["Enviar el temario completo del curso","Cotizar de una la capacitación","Agendar el taller cuanto antes","Preguntar qué pasa si no vende"],c:3,e:"La capacitación es el taladro; el dolor de fondo es facturar menos. Preguntar por eso lleva del pedido al motivo real."},
+  {m:5,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"Reunión con una clínica. ① Detectas que pierden pacientes por mala atención. ② Explicas el beneficio de tu programa. ③ Antes de nombrar el dolor, ya rematas con tu ventaja diferencial. ④ El cliente no siente urgencia. ¿Cuál es el error?",o:["① detectar la fuga de pacientes","② explicar el beneficio","③ rematar con la ventaja antes","④ que no sienta urgencia"],c:2,e:"El error es ③: dar la ventaja antes de hacer reconocer el dolor rompe la secuencia Dolor→Beneficio→Ventaja."},
+  {m:5,t:"multiple",d:"avanzado",caso:true,q:"Del enfoque 'dolor de fondo', ¿cuáles afirmaciones son correctas? (elige 2)",o:["El motivo real suele ser inconsciente","Se abre por la ventaja diferencial fuerte","No compran el taladro, sino el hueco","El precio es siempre el dolor real"],c:[0,2],e:"El motivo real vive en el 95% inconsciente y no compran el taladro sino el hueco; se abre por el dolor, no por la ventaja."},
+
+  {m:6,t:"unica",d:"avanzado",caso:true,q:"El gerente habla rápido, interrumpe y solo quiere el resultado final. ¿Qué color es y cómo le preguntas?",o:["Analítico: le das todo el detalle","Relacional: hablas de las personas","Directo: vas al grano y al ROI","Verde: alargas el rapport inicial"],c:2,e:"Ritmo rápido y foco en resultados es perfil directo; se le pregunta y presenta al grano, orientado a resultado y ROI."},
+  {m:6,t:"unica",d:"avanzado",caso:true,q:"La compradora pide referencias, pregunta por el equipo y cómo trabajaréis juntos. ¿Cómo adaptas tus preguntas?",o:["Enfócate en personas y confianza","Bombardéala con cifras y datos","Apúrala hacia el cierre rápido","Céntrate solo en el precio y plazo"],c:0,e:"El foco en la gente y en la relación marca perfil relacional; se pregunta por personas, confianza y trabajo conjunto."},
+  {m:6,t:"unica",d:"avanzado",caso:true,q:"El cliente pide el detalle metodológico, los datos y la evidencia antes de decidir. ¿Qué perfil es y qué le das?",o:["Directo: solo el titular y ya","Analítico: datos y método","Relacional: pura charla amena","Impulsivo: cierras al instante"],c:1,e:"Pedir datos, método y evidencia es perfil analítico; se le adapta con rigor y cifras antes de pedir la decisión."},
+  {m:6,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Escena: empezaste con charla cálida sobre el equipo, pero el cliente se impacienta y pide 'ir al punto'. Leíste mal su color. ¿Cuál es tu próxima jugada?",o:["Insistir con más charla amena","Contar otra anécdota personal","Extender el rapport un poco más","Cambiar a resultados concretos"],c:3,e:"Se recalibra el color en vivo: si muestra perfil directo, se corta el rodeo y se pasa a resultados y ritmo ágil."},
+  {m:6,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"Reunión con un CFO analítico. ① Llegas con datos y método. ② Él pide el desglose de supuestos. ③ Le respondes 'confía en mí, funciona' sin cifras. ④ Pide otra reunión con números. ¿Cuál es el error?",o:["③ responder sin dar cifras","① llegar con datos y método claro","② que pida el desglose","④ pedir otra reunión"],c:0,e:"El error es ③: a un perfil analítico se le responde con datos y método; 'confía en mí' rompe su código de decisión."},
+
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"Llegas a una primera reunión con un prospecto frío. Según el rapport, ¿qué haces antes de vender?",o:["Soltar el pitch de una vez","Generar afinidad, ser amigos","Pedir la firma del contrato","Mostrar tu tabla de tarifas completa"],c:1,e:"'Primero ser amigos': la afinidad y la validación mutua generan confianza y autoridad antes de intentar vender."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"A mitad de reunión el cliente cruza los brazos y su tono se enfría. ¿Qué indica y qué haces?",o:["Nada; sigues con tu guion","Es la hora de bajar el precio","Cambió de mood; recalibras","Debes cerrar ya mismo hoy"],c:2,e:"Calibrar el estado: cuando el cliente cambia de mood, el vendedor lo nota y ajusta, sosteniendo con preguntas."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"Quieres fijar el marco de la reunión antes de que el cliente lo imponga. ¿Cómo encuadras?",o:["Dices para qué están y qué lograr","Esperas a que él dirija todo","Empiezas por tu presentación","Dejas la agenda totalmente abierta"],c:0,e:"Encuadrar es fijar el marco (para qué estamos, qué lograremos) antes de que el cliente lo fije por su cuenta."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"El interlocutor está entusiasmado pero no menciona a nadie más. Necesitas ubicar el poder. ¿Qué preguntas?",o:["¿Te gustó lo que te mostré?","¿Arrancamos el lunes o martes?","¿Cuál es tu presupuesto tope?","¿Quién más decide contigo?"],c:3,e:"Identificar el poder es clave: se pregunta quién más decide de verdad para no venderle a quien no puede aprobar."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"El cliente dispara: 'ustedes son muy caros'. Aplicas fogging. ¿Cuál es la respuesta correcta?",o:["'Se equivoca, precio justo'","'Puede ser; ¿qué te preocupa?'","'No, compara con la competencia'","'Caro es no resolverlo'"],c:1,e:"Fogging es aceptar sin discutir ('puede ser') para quitarle fuerza y destapar el fondo; no se confronta la objeción."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"Ya desactivaste una objeción con fogging y el cliente la repite con más fuerza. ¿Qué toca ahora?",o:["Aplicar fogging una vez más igual","Ignorarla y seguir vendiendo","Atenderla de frente esta vez","Cerrar antes de que insista"],c:2,e:"El fogging solo desactiva una objeción una vez; si el cliente insiste, hay que atenderla de frente, no neblinarla otra vez."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"El cliente objeta el plazo de entrega. Quieres validar sin confrontar. ¿Qué fórmula usas?",o:["'Sí, pero te equivocas del todo'","'No es tan largo el plazo'","'Sí, pero es lo normal'","'Sí, y además ganas calidad'"],c:3,e:"'Sí… y además' valida y suma en vez de confrontar; el 'sí, pero' contradice y activa la defensa del cliente."},
+  {m:7,t:"unica",d:"avanzado",caso:true,q:"Intuyes que la última duda del cliente es si tendrás tiempo para atenderlo. ¿Qué haces para anticipar el cierre?",o:["Sacar tú esa duda y aliviarla","Esperar a que él la mencione solo","Presionar para firmar ya hoy","Ocultar el tema por completo"],c:0,e:"Anticipar el cierre es sacar tú mismo la última objeción y aliviarla antes de que frene la decisión."},
+  {m:7,t:"unica",d:"avanzado",caso:true,fmt:"jugada",q:"Escena: todo va bien, pero notas que el cliente titubea al final; sospechas que teme un costo de implementación oculto. ¿Cuál es tu próxima jugada?",o:["Bajar el precio sin que él lo pida","Nombrar tú el temor y calmarlo","Callar y esperar que decida","Insistir en firmar de inmediato"],c:1,e:"Anticipar el cierre: si sospechas la última objeción, la sacas tú y la alivias; esperar deja que ella frene el sí."},
+  {m:7,t:"unica",d:"avanzado",caso:true,fmt:"detecta",q:"Reunión de cierre. ① Generas rapport y encuadras bien. ② El cliente dice 'lo tengo que ver con mi socio'. ③ Respondes 'sí, pero decídelo tú hoy'. ④ Él se incomoda y frena. ¿Cuál es el error?",o:["① el rapport y el encuadre","② que consulte con su socio antes","③ el 'sí, pero' que confronta","④ que se incomode al final"],c:2,e:"El error es ③: el 'sí, pero' confronta e ignora el poder (el socio decide); tocaba 'sí, y además', validando."},
+  {m:7,t:"vf",d:"avanzado",caso:true,q:"Afirmación: en el rapport, ser amigos y generar afinidad va antes de intentar vender.",o:["Verdadero","Falso"],c:0,e:"Verdadero. 'Primero ser amigos': la afinidad y la validación mutua preceden a la venta y construyen la confianza."},
+  {m:7,t:"multiple",d:"avanzado",caso:true,q:"Sobre el manejo de objeciones y el cierre, ¿qué afirmaciones son correctas? (elige 2)",o:["El fogging se usa siempre sin ningún límite","Se dice 'sí y además', no 'sí pero'","El precio siempre gana la objeción","Anticipas el cierre sacando la duda"],c:[1,3],e:"Se valida con 'sí y además' y se anticipa el cierre sacando la última duda; el fogging solo desactiva una objeción una vez."}
+];
+var SIMS_CONV=[
+{id:'descubrir',titulo:'Hacer hablar al cliente',perfil:'Reunión de diagnóstico con una pyme',
+ contexto:'Primera reunión con el dueño de una pyme. Tu misión: <b>poner a hablar al cliente</b> y llegar al dolor de fondo, no salir a presentar tu servicio. Recuerda: cuando el vendedor habla, vende; cuando el cliente habla, está comprando.',
+ start:'n1',
+ nodes:{
+  n1:{who:'El encuadre',cliente:'El dueño te recibe: "Tengo 20 minutos. Cuéntame qué me vendes."',
+    ops:[
+     {t:'"Antes de contarte nada, cuéntame tú: ¿qué te hizo querer esta reunión?"',fx:'good',fb:'Encuadraste y le devolviste la palabra. Empieza a hablar él, no tú.',to:'n2'},
+     {t:'Arrancas tu presentación de servicios y beneficios de una vez.',fx:'bad',fb:'Te pusiste a vender. El cliente se cierra y tú aún no sabes su dolor.',to:'n2b'},
+     {t:'"Te traigo una propuesta que le sirve a empresas como la tuya."',fx:'mid',fb:'Sigue siendo tú hablando. Genérico, sin dolor identificado.',to:'n2b'}
+    ]},
+  n2:{who:'La frase difusa',cliente:'"La verdad es que las ventas no están funcionando como deberían."',
+    ops:[
+     {t:'"¿Qué es lo que más te está costando de eso, en concreto?"',fx:'good',fb:'Pregunta de precisión: rompes la omisión y lo haces concretar.',to:'n3'},
+     {t:'"Perfecto, justo para eso tengo un método de tres fases."',fx:'bad',fb:'Saltaste a la solución sobre una frase difusa. Aún no sabes qué significa "no funcionan".',to:'n2b'},
+     {t:'"¿Y cuánto han bajado las ventas este año?"',fx:'mid',fb:'Concretas un dato, pero cierras a un número; mejor abrir el dolor antes de cuantificar.',to:'n3'}
+    ]},
+  n2b:{who:'El rescate',cliente:'El cliente se recuesta, cruza los brazos: "Mira, ya me han ofrecido de todo."',
+    ops:[
+     {t:'"Tienes razón, y por eso prefiero entenderte antes de proponerte nada: ¿qué te gustaría que cambiara?"',fx:'good',fb:'Fogging + devolver la palabra: aceptas sin discutir y vuelves a hacerlo hablar.',to:'n3'},
+     {t:'Insistes en que lo tuyo sí es distinto y sigues presentando.',fx:'bad',fb:'Empujar contra la objeción la endurece. Perdiste la reunión.',to:'lose'}
+    ]},
+  n3:{who:'El dolor de fondo',cliente:'"Cerramos pocos negocios grandes. Y eso me tiene sin dormir, para ser honesto."',
+    ops:[
+     {t:'"¿Y qué te está costando a ti que se cierren pocos grandes?"',fx:'good',fb:'Bajas del síntoma (pocos cierres) al dolor real (lo que le cuesta). Ahí está el hueco, no el taladro.',to:'win'},
+     {t:'"Listo, con mi servicio cierras más grandes, te explico cómo."',fx:'bad',fb:'Justo cuando se abría, lo tapaste con tu pitch. El dolor de fondo quedó sin explorar.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'El dueño habló 15 de los 20 minutos, te contó su dolor real y te pidió una propuesta.',
+    msg:'Hiciste hablar al cliente: encuadraste, preguntaste con precisión y bajaste al dolor de fondo en vez de exponer. Cuando el cliente habla, está comprando.'},
+  lose:{end:true,res:'lose',cliente:'Hablaste tú casi todo el tiempo; el cliente escuchó, dijo "déjame pensarlo" y no volvió.',
+    msg:'Te ganó el impulso de vender: presentar antes de entender el dolor cierra al cliente. Primero preguntas, luego propones.'}
+ }},
+{id:'objecion',titulo:'La objeción del precio',perfil:'El cliente frena por costo',
+ contexto:'La conversación iba bien y aparece la objeción clásica. Tu misión: manejarla con <b>fogging</b> y "sí… y además", sin discutir ni salir a defender el precio.',
+ start:'n1',
+ nodes:{
+  n1:{who:'La objeción',cliente:'"Me interesa, pero está muy caro. Otros me cobran la mitad."',
+    ops:[
+     {t:'"Puede ser; ¿qué es lo que más te preocuparía si avanzáramos?"',fx:'good',fb:'Fogging: aceptas sin pelear y destapas la preocupación real detrás del precio.',to:'n2'},
+     {t:'"No es caro, si sumas todo lo que incluye sale barato."',fx:'bad',fb:'Discutiste la objeción de frente. El cliente se afianza en su postura.',to:'n2b'},
+     {t:'"¿Cuánto te cobran los otros exactamente?"',fx:'mid',fb:'Entras a comparar precio, el terreno donde pierdes. Mejor destapar el fondo.',to:'n2'}
+    ]},
+  n2:{who:'El fondo',cliente:'"Me preocupa pagar y que no pase nada, como la última vez."',
+    ops:[
+     {t:'"Te entiendo, y además de eso, ¿qué tendría que ver en las primeras semanas para quedarte tranquilo?"',fx:'good',fb:'Sí-y-además: validas y sumas, moviendo la charla del precio al resultado que él necesita.',to:'n3'},
+     {t:'"Eso no me va a pasar conmigo, te lo garantizo."',fx:'bad',fb:'Prometer sin entender el miedo suena a vendedor. No lo alivias, lo activas.',to:'n2b'}
+    ]},
+  n2b:{who:'La tensión',cliente:'El cliente se enfría: "Todos dicen lo mismo."',
+    ops:[
+     {t:'"Es justo lo que dirías si ya te decepcionaron. ¿Qué falló esa vez?"',fx:'good',fb:'Vuelves a fogging y lo haces hablar del fracaso previo: ahí está el verdadero freno.',to:'n3'},
+     {t:'Sigues defendiendo por qué tu precio vale la pena.',fx:'bad',fb:'Insististe sobre una objeción ya usada. El fogging solo desactiva una vez; esto ya es discutir.',to:'lose'}
+    ]},
+  n3:{who:'La ventaja',cliente:'"Si me aseguras que voy a ver algo pronto, lo considero en serio."',
+    ops:[
+     {t:'"Por eso arranco con un diagnóstico y una meta visible a 30 días: pagas por avanzar, no por esperar."',fx:'good',fb:'Convertiste el precio en ventaja que libera su dolor real (miedo a pagar y no ver nada).',to:'win'},
+     {t:'"Te puedo hacer un descuento para que te animes."',fx:'bad',fb:'Bajar el precio valida que eras caro y no toca su miedo de fondo.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'El cliente dejó de hablar de precio y pidió arrancar con el diagnóstico de 30 días.',
+    msg:'Manejaste la objeción sin discutir: fogging para destapar el fondo, "sí y además" para mover al resultado, y convertiste el precio en ventaja. La objeción del precio casi nunca es de precio.'},
+  lose:{end:true,res:'lose',cliente:'La charla se quedó en el regateo de precio y el cliente dijo que "lo iba a comparar".',
+    msg:'Te metiste a defender el precio en vez de destapar el miedo de fondo. Discutir la objeción la endurece; acéptala y llévala al dolor real.'}
+ }},
+{id:'mood',titulo:'El cliente cambia de mood',perfil:'Calibrar y recuperar la reunión',
+ contexto:'A mitad de una buena reunión el cliente cambia de energía y se enfría. Tu misión: <b>calibrar el cambio de mood</b> y recuperar la afinidad, en vez de seguir con tu guion como si nada.',
+ start:'n1',
+ nodes:{
+  n1:{who:'La señal',cliente:'Venía asintiendo; de pronto se cruza de brazos, mira el reloj y responde seco.',
+    ops:[
+     {t:'Paras, bajas el ritmo: "Te noto distinto, ¿pasó algo o toqué un punto?"',fx:'good',fb:'Calibraste el cambio de estado y lo nombraste con cuidado. Le das espacio para reabrirse.',to:'n2'},
+     {t:'Sigues con tu presentación en el mismo tono, para no perder el hilo.',fx:'bad',fb:'Ignoraste la señal. El cliente se cierra más mientras tú hablas solo.',to:'n2b'},
+     {t:'Aceleras para terminar rápido antes de que se enfríe del todo.',fx:'mid',fb:'Apurar la venta cuando el otro se enfría se siente como presión. Riesgo alto.',to:'n2b'}
+    ]},
+  n2:{who:'La causa',cliente:'"Nada… es que ahorita me acordé de un problema en la operación."',
+    ops:[
+     {t:'"¿Quieres que lo dejemos aquí y sigamos otro día, o te sirve que hablemos de eso?"',fx:'good',fb:'Priorizas a la persona sobre tu agenda: primero ser amigos. Eso reconstruye la afinidad.',to:'n3'},
+     {t:'"Entiendo, pero terminemos rápido esto que es importante."',fx:'bad',fb:'Pusiste tu agenda por encima de su estado. La afinidad se rompe.',to:'lose'}
+    ]},
+  n2b:{who:'El enfriamiento',cliente:'"Mira, mejor déjame la info y yo reviso."',
+    ops:[
+     {t:'Frenas y validas: "Claro. Antes de irme, ¿qué cambió para ti en estos minutos?"',fx:'good',fb:'Rescate: nombras el cambio de mood aunque tarde, y lo invitas a hablar.',to:'n3'},
+     {t:'"Perfecto, te mando todo por correo entonces." y cierras la laptop.',fx:'bad',fb:'Te rendiste al enfriamiento sin calibrar. La reunión se apagó.',to:'lose'}
+    ]},
+  n3:{who:'La recuperación',cliente:'"La verdad hoy ando saturado, disculpa."',
+    ops:[
+     {t:'"Tranquilo, agendemos cuando estés más libre; hoy no quiero robarte cabeza."',fx:'good',fb:'Respetar su estado construye confianza; volverá con mejor mood y más abierto.',to:'win'},
+     {t:'"Son solo cinco minutos más, aprovechemos que ya estamos."',fx:'bad',fb:'Insististe contra su estado. Confundiste cerrar hoy con cuidar la relación.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'Agradeció que lo entendieras, reagendó él mismo y llegó a la siguiente reunión mucho más receptivo.',
+    msg:'Calibraste el cambio de mood y pusiste la relación antes que tu agenda. Primero amigos: leer el estado del otro sostiene la venta más que cualquier guion.'},
+  lose:{end:true,res:'lose',cliente:'Terminaste la reunión a la fuerza; el cliente quedó incómodo y no respondió tus seguimientos.',
+    msg:'Seguiste tu guion mientras el cliente se enfriaba. No calibrar el cambio de estado rompe la afinidad, y sin afinidad no hay venta.'}
+ }},
+{id:'cierre',titulo:'Anticipar la última objeción',perfil:'El momento del cierre',
+ contexto:'Todo fue bien y llega el cierre. Tu misión: <b>anticipar la última objeción</b>, sacarla tú mismo y aliviarla, en vez de presionar o quedarte esperando el "sí".',
+ start:'n1',
+ nodes:{
+  n1:{who:'El momento',cliente:'"Me gustó todo. Déjame pensarlo y te aviso." (clásico freno final)',
+    ops:[
+     {t:'"Claro. Si te soy sincero, a esta altura la mayoría duda de una cosa: el tiempo que les va a quitar. ¿Es tu caso?"',fx:'good',fb:'Anticipaste la última objeción y la pusiste tú sobre la mesa. Le das permiso de decir su freno real.',to:'n2'},
+     {t:'"¿Lo cerramos hoy y arrancamos ya?" con tono de urgencia.',fx:'bad',fb:'Presionar el cierre cuando pide pensar dispara la defensa. Retrocede.',to:'n2b'},
+     {t:'"Ok, quedo atento a tu respuesta." y terminas ahí.',fx:'mid',fb:'Dejaste la última objeción escondida. "Lo pienso" sin destapar casi siempre es un no.',to:'n2b'}
+    ]},
+  n2:{who:'La objeción real',cliente:'"Sí, algo de eso… me da miedo empezar y no tener el tiempo para acompañarlo."',
+    ops:[
+     {t:'"Justo por eso lo diseño para que te quite poco tiempo y yo cargo el peso operativo. ¿Eso te destraba?"',fx:'good',fb:'Aliviaste la última objeción directamente. El freno real desactivado abre el cierre.',to:'win'},
+     {t:'"El tiempo siempre se saca si algo importa de verdad."',fx:'bad',fb:'Minimizar su miedo lo hace sentir juzgado, no aliviado.',to:'n2b'}
+    ]},
+  n2b:{who:'El freno',cliente:'"Es que si no lo pienso bien, no me decido."',
+    ops:[
+     {t:'"Perfecto, pensémoslo juntos aquí: ¿qué es lo único que te haría dudar?"',fx:'good',fb:'Conviertes el "lo pienso" en una última objeción concreta que sí puedes aliviar.',to:'n2'},
+     {t:'"Te doy hasta mañana y te llamo para cerrar."',fx:'bad',fb:'Poner plazo es presión disfrazada; la objeción sigue oculta y el cliente huye.',to:'lose'}
+    ]},
+  win:{end:true,res:'win',cliente:'Con el miedo aliviado, el cliente dijo "así sí, arranquemos" sin que tuvieras que presionar.',
+    msg:'Anticipaste la última objeción, la sacaste tú y se la aliviaste. El cierre llega solo cuando el último freno deja de existir, no cuando empujas.'},
+  lose:{end:true,res:'lose',cliente:'Se fue "a pensarlo" con la objeción escondida y no regresó.',
+    msg:'Presionar o esperar dejaron el último freno bajo la mesa. Anticipa la última objeción y aliviársela: el cierre se prepara, no se fuerza.'}
+ }}
+];
+var RETOS_CONV=[
+{id:'reunionpyme',titulo:'La reunión completa con una pyme',perfil:'De rapport a cierre en un solo caso',
+ contexto:'Primera reunión con el dueño de una pyme. Aplica toda la conversación: rapport, preguntas para hacerlo hablar, dolor de fondo, objeción y cierre.',
+ pasos:[
+  {q:'Te recibe apurado y algo a la defensiva. ¿Con qué abres?',o:['Buscas afinidad y encuadras: por qué están aquí y qué quiere lograr','Arrancas de una con tu presentación para no perderle el tiempo','Le sueltas el precio desde el inicio para filtrarlo rápido','Le muestras tu portafolio de clientes grandes para impresionar'],c:0,e:'Primero ser amigos y encuadrar: sin afinidad ni marco, el cliente no se abre. La autoridad y la confianza se generan a la vez.'},
+  {q:'Dice: "las ventas no están como deberían". ¿Qué haces?',o:['Preguntas con precisión qué le está costando en concreto','Le presentas tu método de ventas de tres fases','Asumes que necesita más prospección y lo propones','Le preguntas cuánto factura al mes'],c:0,e:'Frase difusa = omisión. Pregunta de Wilson (qué/cómo/cuánto) para hacerlo concretar, en vez de saltar a la solución.'},
+  {q:'Cuenta el síntoma: "cerramos pocos negocios grandes". ¿Cómo llegas al dolor de fondo?',o:['"¿Y eso qué te está costando a ti?" para bajar al hueco real','Le explicas tú por qué se le cierran pocos negocios grandes','Le ofreces de una un taller de cierre de ventas para el equipo','Le preguntas cuántos vendedores tiene hoy en el equipo'],c:0,e:'No te compran el taladro, te compran el hueco: del síntoma (pocos cierres) bajas al dolor real y al motivo inconsciente.'},
+  {q:'Objeta: "suena bien, pero está caro". ¿Cuál es la jugada?',o:['Fogging: "puede ser; ¿qué te preocuparía si avanzáramos?"','Le explicas todo lo que incluye para justificar el precio','Le ofreces un descuento para destrabarlo','Comparas tu precio con el de la competencia'],c:0,e:'Aceptar sin discutir (fogging) y destapar el fondo. Discutir el precio te lleva al terreno donde pierdes.'},
+  {q:'Al final dice "déjame pensarlo". ¿Cómo cierras?',o:['Anticipas su última objeción, la sacas tú y se la alivias','Le pones un plazo para decidir y lo llamas mañana','Le dices que la oferta vence hoy','Aceptas y esperas su respuesta por correo'],c:0,e:'"Lo pienso" suele esconder una última objeción. Sácala tú y aliviársela: el cierre se anticipa, no se presiona.'}
+ ]},
+{id:'empresa',titulo:'Varios decisores en la mesa',perfil:'Necesidad, poder y encuadre en una empresa',
+ contexto:'Reunión en una empresa mediana con tres personas. Debes leer necesidades, identificar el poder real y sostener la conversación con preguntas.',
+ pasos:[
+  {q:'Están tres personas y no sabes quién decide. ¿Qué haces primero?',o:['Encuadras y preguntas cómo se toma normalmente una decisión así','Le hablas al que tiene el cargo más alto en la tarjeta','Repartes tu propuesta impresa a los tres','Empiezas a presentar para todos por igual'],c:0,e:'Identificar el poder es parte del discovery: quién decide de verdad no siempre es el del cargo. Encuadra y pregúntalo.'},
+  {q:'Uno es directo y de resultados; otro, relacional; otro, de datos. ¿Cómo preguntas?',o:['Adaptas la pregunta y el ritmo al color de cada uno','Usas el mismo guion con los tres para ser parejo','Te enfocas solo en el más simpático','Le hablas de datos a todos porque es más serio'],c:0,e:'Leer el color del cliente: al directo, resultados; al relacional, personas; al analítico, datos. Adaptas preguntas y ritmo.'},
+  {q:'El relacional se abre y menciona un dolor; el de datos lo minimiza. ¿Qué haces?',o:['Validas a ambos y preguntas qué les costaría no resolverlo','Le das la razón al de datos para no incomodar','Ignoras al relacional y sigues con el de poder','Zanjas el debate con tu opinión de experto'],c:0,e:'Validación mutua y pregunta de implicación: mantienes la afinidad con los dos y llevas el dolor al terreno común.'},
+  {q:'El de poder objeta: "ya lo intentamos y no funcionó". ¿Cómo respondes?',o:['"Tienes razón, y además, ¿qué fue lo que falló esa vez?"','"Conmigo sí va a funcionar porque mi método es distinto"','"Esta vez inviertan un poco más y ahora sí verán resultados"','Cambias rápido de tema para evitar la incomodidad del momento'],c:0,e:'Sí-y-además + hacerlo hablar del fracaso previo: ahí está el verdadero freno y la información que necesitas.'},
+  {q:'Cierran diciendo "lo llevamos a comité". ¿Cómo aseguras el avance?',o:['Anticipas la objeción del comité y preparas al aliado interno para aliviarla','Dejas la propuesta impresa y esperas a que el comité te responda','Presionas para que tomen la decisión hoy mismo en la sala','Ofreces un descuento especial si el comité decide rápido'],c:0,e:'Anticipar el cierre también es preparar la última objeción del que sí decide. Equipas a tu aliado para que la alivie por ti.'}
+ ]},
+{id:'objetor',titulo:'El cliente que objeta todo',perfil:'Neblina y sí-y-además bajo presión',
+ contexto:'Un cliente escéptico que responde con objeciones a cada paso. Sostén el rapport y desactívalas sin discutir.',
+ pasos:[
+  {q:'Abre con "seguro me vas a vender humo como todos". ¿Qué haces?',o:['Fogging: "puede que te haya pasado; ¿qué te vendieron así antes?"','Le aseguras que tú eres diferente y una persona seria','Le muestras tus certificados para probarle que no es humo','Te ríes del comentario y sigues con tu presentación normal'],c:0,e:'Aceptar sin pelear (neblina) y hacerlo hablar del desencanto previo desarma la defensa mejor que defenderte.'},
+  {q:'Objeta el precio antes de saber qué ofreces. ¿Cuál es la jugada?',o:['Devuelves al valor: "¿qué tendría que resolverte para que el precio dé igual?"','Le das directamente el precio final y le justificas cada ítem que incluye','Le bajas un poco el precio para que baje la guardia y te escuche','Le respondes que "lo barato sale caro" y sigues adelante'],c:0,e:'Objeción de precio prematura = falta de dolor reconocido. Vuelves a hacerlo hablar del resultado que necesita.'},
+  {q:'Ya usaste neblina y vuelve con la misma objeción. ¿Qué corresponde?',o:['Ahora sí la atiendes de frente, porque el fogging solo desactiva una vez','La vuelves a ignorar con otra frase de neblina como la anterior','Te molestas y le dices que entonces esto no es para él','Cambias de tema con la esperanza de que la olvide pronto'],c:0,e:'Ignorar una objeción con neblina solo se puede una vez; si insiste, es real y hay que atenderla de verdad.'},
+  {q:'Suelta un dolor real entre tantas objeciones. ¿Cómo lo aprovechas?',o:['Frenas las objeciones y profundizas ese dolor con preguntas','Aprovechas de una para cerrar presentándole tu solución','Sigues respondiendo la objeción anterior que quedó pendiente','Le dices que ese problema es justo el que tú resuelves'],c:0,e:'Cuando el objetor deja ver el dolor de fondo, ahí está la venta: profundiza con preguntas antes de proponer.'},
+  {q:'Al final duda por "el riesgo de que no funcione". ¿Cómo cierras?',o:['Alivias la última objeción con un arranque de bajo riesgo y meta visible','Le juras que esta vez va a funcionar sí o sí, sin ninguna falta','Le pones un plazo corto para que se decida cuanto antes de una vez','Le ofreces otro descuento más para compensar el riesgo que él teme'],c:0,e:'La última objeción del objetor es el riesgo. Se alivia con un arranque de bajo riesgo, no con promesas ni descuentos.'}
+ ]},
+{id:'frio',titulo:'El cliente frío que no habla',perfil:'Hacer hablar a quien no quiere',
+ contexto:'Un prospecto desinteresado, de respuestas cortas. El reto es generar afinidad y hacerlo hablar sin presionar.',
+ pasos:[
+  {q:'Responde con monosílabos y mira el celular. ¿Qué haces?',o:['Bajas el ritmo, generas afinidad y preguntas algo abierto de su negocio','Le sueltas tu mejor argumento de una para engancharlo rápido','Le preguntas directo si le interesa o no lo que le traes','Aceleras la reunión para no quitarle mucho tiempo'],c:0,e:'Con el cliente frío, primero afinidad y preguntas abiertas: presionar o vender de una lo cierra más.'},
+  {q:'Suelta algo cortante: "estamos bien así". ¿Cómo sigues?',o:['"Me alegra; por curiosidad, ¿qué es lo que mejor les funciona hoy?"','"¿Seguro? porque yo veo varias oportunidades de mejora ahí"','Le enumeras los riesgos de quedarse igual que hasta hoy','Le pides que al menos te dé una oportunidad de mostrarle'],c:0,e:'Validar y preguntar desde la curiosidad, sin contradecir, mantiene la puerta abierta y lo invita a hablar.'},
+  {q:'Empieza a soltar frases más largas. ¿Qué señal es y qué haces?',o:['Cambió el mood a favor: profundizas con más preguntas','Es tu momento de cerrar rápido antes de que se enfríe','Aprovechas para presentar todo tu servicio','Le pides los datos para enviarle la propuesta'],c:0,e:'Calibras el cambio de estado: cuando empieza a hablar, está entrando; sostienes con preguntas, no cortas para vender.'},
+  {q:'Menciona al pasar un problema que le molesta. ¿Cómo reaccionas?',o:['Lo tomas y preguntas qué le está generando eso','Le dices que tú resuelves exactamente eso','Sigues con tu guion para no desviarte','Anotas y continúas con la siguiente pregunta genérica'],c:0,e:'El dolor de un cliente frío es oro: cuando aparece, profundízalo con una pregunta de implicación antes de proponer.'},
+  {q:'Se muestra algo más abierto pero aún cauto. ¿Cómo avanzas?',o:['Propones un siguiente paso pequeño y de bajo compromiso','Le pides cerrar el trato en esta misma reunión','Le mandas toda tu propuesta por correo y esperas','Le insistes en agendar una reunión más larga ya'],c:0,e:'Con quien recién se abre, un paso pequeño y de bajo compromiso respeta su ritmo y construye confianza hacia el cierre.'}
+ ]}
+];
+
+var GUIONES_PNL=[
+ {fase:'1 · Apertura y encuadre',color:'#0045D5',clave:'Devuélvele la palabra y fija el marco antes de que él lo fije. Que empiece a hablar él, no tú.',preguntas:[
+   'Antes de contarte nada, cuéntame tú: ¿qué te hizo querer esta reunión?',
+   '¿Qué te gustaría que saliera de esta conversación para que valga la pena tu tiempo?',
+   '¿Cómo está funcionando hoy [el área o proceso] del que hablamos?']},
+ {fase:'2 · Dolor: de la superficie al fondo',color:'#001B7F',clave:'Del síntoma al motivo real. No te compran el taladro: te compran el hueco en la pared.',preguntas:[
+   '¿Qué es lo que más te está costando de eso, en concreto?',
+   'Y eso, ¿qué te está generando a ti / qué te está costando?',
+   'Si sigue así los próximos seis meses, ¿qué pasa?',
+   '¿Qué has intentado antes y por qué no terminó de funcionar?']},
+ {fase:'3 · Color y estilo del cliente',color:'#7A3FF2',clave:'Lee su color y pregúntale en su código: al directo resultados, al relacional personas, al analítico datos.',preguntas:[
+   'Directo/resultados: ¿qué resultado concreto te haría decir que valió la pena?',
+   'Relacional/personas: ¿a quién de tu equipo le cambiaría la vida esto?',
+   'Analítico/datos: ¿qué números estás mirando hoy para saber si vas bien?']},
+ {fase:'4 · Necesidad y poder',color:'#122A8C',clave:'Descubre qué necesita de verdad y quién decide. El del cargo no siempre es el del poder.',preguntas:[
+   'Si resolviéramos esto, ¿qué cambiaría para ti en el día a día?',
+   'Además de ti, ¿quién más necesita ver esto para que avance?',
+   '¿Cómo se toma normalmente una decisión así por aquí?']},
+ {fase:'5 · Manejo de objeciones',color:'#2E6BE0',clave:'Fogging: acepta sin discutir (solo desactiva una vez). Y usa "sí… y además", nunca "sí, pero".',preguntas:[
+   'Puede ser; ¿qué es lo que más te preocuparía si avanzáramos?',
+   'Te entiendo, y además de eso, ¿qué tendría que pasar para que sí?',
+   'Tienes razón que te decepcionaron antes; ¿qué fue lo que falló esa vez?']},
+ {fase:'6 · Última objeción y cierre',color:'#12A594',clave:'Anticipa la última objeción, sácala tú mismo y aliviársela. El cierre se prepara, no se fuerza.',preguntas:[
+   'A esta altura la mayoría duda de una cosa: [X]. ¿Es tu caso?',
+   'Pensémoslo aquí juntos: ¿qué es lo único que te haría dudar?',
+   '¿Qué te falta para decir que sí hoy?']}
+];
+function renderGuiones(){
+  app.innerHTML='';
+  app.appendChild(el('<button class="backlink" onclick="goHome()"><i data-lucide="arrow-left"></i> Atrás</button>'));
+  var c=el('<div class="card"></div>');
+  c.innerHTML='<div class="ov">Curso · PNL</div><h2 class="big">Guiones de preguntas</h2><p class="lead">Preguntas-llave para poner a hablar al cliente en cada fase de la reunión. Cuando el vendedor habla, vende; cuando el cliente habla, está comprando.</p>';
+  app.appendChild(c);
+  GUIONES_PNL.forEach(function(g){
+    var b=el('<div class="card plain"></div>');
+    var lis=g.preguntas.map(function(p){return '<div style="padding:10px 13px;border-left:3px solid '+g.color+';background:#F6F8FF;border-radius:8px;margin-bottom:8px;font-size:14px;line-height:1.45;color:#16213e">'+p+'</div>';}).join('');
+    b.innerHTML='<div class="ov" style="color:'+g.color+'">'+g.fase+'</div><p class="lead" style="margin:6px 0 12px">'+g.clave+'</p>'+lis;
+    app.appendChild(b);
+  });
+  app.appendChild(el('<div class="foot">Guiones personales de Rafael Guerrero · úsalos y adáptalos en tus reuniones</div>'));
+  done();
+}
+BANK.push.apply(BANK,PNL_CONV);
+SIMS.push.apply(SIMS,SIMS_CONV);
+RETOS.push.apply(RETOS,RETOS_CONV);
+
+
 var COURSES=[
- {id:'pnl',name:'Programación Neurolingüística',short:'Curso · PNL',tag:'Ventas y comunicación de alto impacto · teoría, práctica avanzada, simulador y retos.',color1:'#00041C',color2:'#0045D5',ready:true,MODULES:MODULES,BANK:BANK,SIMS:SIMS,RETOS:RETOS,hasSim:true,count:BANK.length},
+ {id:'pnl',name:'Programación Neurolingüística',short:'Curso · PNL',tag:'Ventas y comunicación de alto impacto · teoría, práctica avanzada, simulador y retos.',color1:'#00041C',color2:'#0045D5',ready:true,MODULES:MODULES,BANK:BANK,SIMS:SIMS,RETOS:RETOS,hasSim:true,count:BANK.length,guiones:GUIONES_PNL},
  {id:'excelencia',name:'Excelencia Interior',short:'Excelencia Interior',tag:'Desarrollo personal · basado en el libro Inner Excellence de Jim Murphy.',color1:'#062B1C',color2:'#1E8449',ready:true,MODULES:MODULES2,BANK:BANK2,hasSim:true,SIMS:SIMS2,RETOS:RETOS2,count:BANK2.length,grad:'linear-gradient(135deg,#052a1c 0%,#0b5c39 55%,#1e8449 100%)',accent:'#0b6b3a',card:'linear-gradient(135deg,#0b5c39,#1e8449)',carde:'linear-gradient(135deg,#03251c 0%,#0a4a30 100%)',simName:'Momentos de presión',simDesc:'Situaciones internas reales: eliges cómo responder bajo presión. Cada decisión te muestra la reacción.',retoName:'Casos de maestría',retoDesc:'Casos integradores: 5 decisiones encadenadas aplicando varios principios a la vez.',simWin:'Respondiste con maestría',simLose:'Te ganó la reacción',retoWin:'Maestría sostenida',retoMid:'Casi la sostienes',retoLose:'Te ganó la reacción',simBadge:'#1E8449',simCard:'linear-gradient(135deg,#116149,#2aa06a)',retoCard:'linear-gradient(135deg,#1f7a3a,#4bad5a)'},
  {id:'habitos',name:'Hábitos Atómicos',short:'Hábitos Atómicos',tag:'Comportamiento y sistemas · basado en el libro Atomic Habits de James Clear.',color1:'#2A1503',color2:'#D97706',ready:true,MODULES:MODULES3,BANK:BANK3,hasSim:true,SIMS:SIMS3,RETOS:RETOS3,count:BANK3.length,grad:'linear-gradient(135deg,#2a1503 0%,#8a4b0a 55%,#d97706 100%)',accent:'#b45309',card:'linear-gradient(135deg,#8a4b0a,#d97706)',carde:'linear-gradient(135deg,#241202 0%,#5c3208 100%)',simName:'Momentos decisivos',simDesc:'Situaciones reales donde una micro-decisión define las próximas horas. Eliges y ves la consecuencia.',retoName:'Retos de sistema',retoDesc:'Casos integradores: 5 decisiones encadenadas aplicando las leyes del hábito.',simWin:'Ganaste el momento',simLose:'Te ganó el piloto automático',retoWin:'Sistema sostenido',retoMid:'Casi lo sostienes',retoLose:'Se quebró el sistema',simBadge:'#D97706',simCard:'linear-gradient(135deg,#9a5410,#e0821e)',retoCard:'linear-gradient(135deg,#7c3f08,#c2740f)'},
  {id:'club5am',name:'El Club de las 5 AM',short:'Club de las 5 AM',tag:'Productividad y bienestar · basado en el libro The 5 AM Club de Robin Sharma.',color1:'#1A0B3A',color2:'#7C3AED',ready:true,MODULES:MODULES4,BANK:BANK4,hasSim:true,SIMS:SIMS4,RETOS:RETOS4,count:BANK4.length,grad:'linear-gradient(135deg,#160a33 0%,#4c1d95 55%,#7c3aed 100%)',accent:'#6d28d9',card:'linear-gradient(135deg,#4c1d95,#7c3aed)',carde:'linear-gradient(135deg,#120827 0%,#2e1065 100%)',simName:'Momentos de disciplina',simDesc:'Situaciones reales de madrugada y jornada: eliges entre la reacción y el sistema.',retoName:'Casos de alto rendimiento',retoDesc:'Casos integradores: 5 decisiones encadenadas aplicando el método 20/20/20 y los 4 imperios.',simWin:'Ganaste la mañana',simLose:'Te ganó la reacción',retoWin:'Día ganado',retoMid:'Casi lo ganas',retoLose:'Se te fue el día',simBadge:'#7C3AED',simCard:'linear-gradient(135deg,#5b21b6,#8b5cf6)',retoCard:'linear-gradient(135deg,#4c1d95,#7c3aed)'},
