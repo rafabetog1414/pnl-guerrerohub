@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- build:len-fix2 -->
+<!-- build:racha-backfill -->
 <html lang="es">
 <head>
 <meta charset="utf-8">
@@ -756,7 +756,7 @@ function renderConfig(isP){
   done();
 }
 function pool(){return BANK.filter(function(q){if(S.practica&&S.module&&q.m!==S.module)return false;if(S.diff!=='todas'&&q.d!==S.diff)return false;return true;});}
-function startQuiz(){S.srs=false;var p=pool();if(!p.length){alert('No hay preguntas con esos filtros. Prueba otra combinación.');return;}
+function startQuiz(){markActivity();S.srs=false;var p=pool();if(!p.length){alert('No hay preguntas con esos filtros. Prueba otra combinación.');return;}
   var n=Math.min(S.count,p.length),q;
   var seen=store(ckey('seen'))||[];
   var pend=p.filter(function(x){return seen.indexOf(x.q)<0;});
@@ -979,7 +979,7 @@ function bumpStreak(){var s=getStreak(),t=dayKey();if(s.last===t)return;
   s.count=(s.last===dayKey(y))?(s.count+1):1;s.last=t;store(ckey('streak'),s);}
 
 /* ---------- Sesión diaria (Practicar hoy) ---------- */
-function startDaily(){
+function startDaily(){markActivity();
   var all=srsAll(),now=nowTs(),N=12;
   var tagged=BANK.map(function(q){return {q:q,r:all[qid(q)]};});
   var due=tagged.filter(function(x){return x.r&&x.r.due&&x.r.due<=now;}).sort(function(a,b){return a.r.due-b.r.due;});
@@ -1377,7 +1377,7 @@ function renderSimList(){
   });
   app.appendChild(list);done();
 }
-function startSim(sim){SS={sim:sim,node:sim.start,hist:[],good:0,bad:0,picks:0,intro:true};renderSimNode();}
+function startSim(sim){markActivity();SS={sim:sim,node:sim.start,hist:[],good:0,bad:0,picks:0,intro:true};renderSimNode();}
 function renderSimNode(){
   var sim=SS.sim,node=sim.nodes[SS.node];
   if(node.end)return renderSimEnd(node);
@@ -1548,7 +1548,7 @@ function renderRetoList(){
   });
   app.appendChild(list);done();
 }
-function startReto(r){RS={reto:r,i:0,ok:0,ans:[]};renderReto();}
+function startReto(r){markActivity();RS={reto:r,i:0,ok:0,ans:[]};renderReto();}
 function renderReto(){
   var r=RS.reto,paso=r.pasos[RS.i];app.innerHTML='';
   var prog=el('<div></div>');
@@ -7860,9 +7860,151 @@ var COURSES=[
 ];
 function enterCourse(c){COURSE=c;MODULES=c.MODULES;BANK=c.BANK;SIMS=c.SIMS||[];RETOS=c.RETOS||[];var tt=document.querySelector('.tt');if(tt)tt.textContent=c.short||c.name;renderHome();}
 goHome=function(){ if(COURSE) renderHome(); else renderCenter(); };
+/* ====== Racha global (cualquier actividad, cualquier curso) ====== */
+function _dayKey(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function _todayKey(){return _dayKey(new Date());}
+function _prevKey(k){var p=new Date(k+'T00:00:00');p.setDate(p.getDate()-1);return _dayKey(p);}
+function activityDays(){try{var v=localStorage.getItem('gh_activity_days');return v?JSON.parse(v):[];}catch(e){return [];}}
+function markActivity(){try{var days=activityDays();var t=_todayKey();if(days.indexOf(t)<0){days.push(t);days.sort();localStorage.setItem('gh_activity_days',JSON.stringify(days));}if(typeof COURSE!=='undefined'&&COURSE){var ck='gh_'+COURSE.id+'_acts';var n=parseInt(localStorage.getItem(ck)||'0',10)||0;localStorage.setItem(ck,String(n+1));}}catch(e){}}
+function courseActs(id){try{return parseInt(localStorage.getItem('gh_'+id+'_acts')||'0',10)||0;}catch(e){return 0;}}
+function globalStreak(){
+  var days=activityDays();var set={};days.forEach(function(d){set[d]=1;});
+  var today=_todayKey();var start=null;
+  if(set[today])start=today; else if(set[_prevKey(today)])start=_prevKey(today);
+  var cur=0;if(start){var c=start;while(set[c]){cur++;c=_prevKey(c);}}
+  var sorted=days.slice().sort();var best=0,run=0,prev=null;
+  sorted.forEach(function(k){if(prev&&_prevKey(k)===prev)run++;else run=1;if(run>best)best=run;prev=k;});
+  var now=new Date();var mk=now.getFullYear()+'-'+('0'+(now.getMonth()+1)).slice(-2);
+  var monthDays=days.filter(function(d){return d.indexOf(mk)===0;}).length;
+  return {current:cur,best:Math.max(best,cur),set:set,total:days.length,monthDays:monthDays};
+}
+function _histAll(){var out=[];COURSES.forEach(function(c){try{var v=localStorage.getItem('gh_'+c.id+'_hist');var arr=v?JSON.parse(v):[];arr.forEach(function(h){out.push({c:c,date:h.date,pct:h.pct,total:h.total||0,secs:h.secs||0});});}catch(e){}});return out;}
+function backfillActivity(){try{var set={};activityDays().forEach(function(d){set[d]=1;});var ch=false;_histAll().forEach(function(h){if(!h.date)return;var k=_dayKey(new Date(h.date));if(k&&!set[k]){set[k]=1;ch=true;}});if(ch)localStorage.setItem('gh_activity_days',JSON.stringify(Object.keys(set).sort()));}catch(e){}}
+function _fmtMin(s){if(!s)return '0 min';var m=Math.round(s/60);if(m<60)return m+' min';var h=Math.floor(m/60);return h+' h '+(m%60)+' min';}
+function _streakCSS(){
+  if(document.getElementById('_streakcss'))return;
+  var s=document.createElement('style');s.id='_streakcss';
+  s.textContent='\
+.streakhero{position:relative;overflow:hidden;border-radius:22px;padding:20px;margin-bottom:16px;display:flex;flex-wrap:wrap;align-items:center;gap:16px 24px;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease;\
+background:radial-gradient(130% 150% at 12% 8%,rgba(255,150,44,.30),transparent 46%),linear-gradient(135deg,#241606 0%,#170f09 56%,#0b0a09 100%);\
+border:1px solid rgba(255,170,64,.22);box-shadow:0 20px 48px -20px rgba(240,120,24,.6),inset 0 1px 0 rgba(255,255,255,.05)}\
+.streakhero:hover{transform:translateY(-2px);box-shadow:0 26px 56px -20px rgba(240,120,24,.72),inset 0 1px 0 rgba(255,255,255,.06)}\
+.streakhero:before{content:"";position:absolute;top:-40%;left:-10%;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,160,50,.35),transparent 62%);filter:blur(6px);pointer-events:none}\
+.sh-main{display:flex;align-items:center;gap:14px;position:relative;z-index:1}\
+.sh-flamewrap{position:relative;width:60px;height:74px;flex:none;display:flex;align-items:center;justify-content:center}\
+.sh-flamewrap:after{content:"";position:absolute;width:66px;height:66px;border-radius:50%;background:radial-gradient(circle,rgba(255,150,40,.55),transparent 60%);filter:blur(10px);animation:shglow 2.6s ease-in-out infinite}\
+.sh-flame{width:54px;height:68px;position:relative;z-index:1;transform-origin:50% 90%;animation:shflick 2.4s ease-in-out infinite}\
+.sh-stats{display:flex;align-items:stretch;gap:16px}\
+.sh-stat .sh-num{font:800 clamp(34px,10vw,50px)/1 var(--fsans,system-ui);letter-spacing:-1.5px}\
+.sh-stat.racha .sh-num{color:#fff;text-shadow:0 0 22px rgba(255,170,60,.55)}\
+.sh-stat.mes .sh-num{color:#FFC978}\
+.sh-stat .sh-lbl{font:700 11px/1.2 var(--fsans,system-ui);color:#FCD9A0;text-transform:uppercase;letter-spacing:.05em;margin-top:5px}\
+.sh-stat.mes .sh-lbl{color:#C9954F}\
+.sh-vdiv{width:1px;align-self:stretch;background:linear-gradient(180deg,transparent,rgba(255,180,80,.28),transparent)}\
+.sh-track{flex:1;min-width:240px;position:relative;z-index:1}\
+.sh-cap{display:flex;justify-content:space-between;align-items:center;gap:8px;font:700 10.5px/1.3 var(--fsans,system-ui);color:#E9A64d;text-transform:uppercase;letter-spacing:.1em;margin-bottom:11px;opacity:.95}\
+.sh-see{color:#fff;background:rgba(255,180,70,.16);border:1px solid rgba(255,180,70,.3);padding:5px 10px;border-radius:999px;white-space:nowrap;letter-spacing:.04em}\
+.sh-days{display:flex;gap:8px}\
+.sh-day{flex:1;min-width:0;text-align:center}\
+.sh-cell{height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font:800 14px/1 var(--fsans,system-ui);background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.4)}\
+.sh-cell.on{background:linear-gradient(160deg,#FFC24D,#F97316);border-color:transparent;color:#3a1c02;box-shadow:0 6px 16px -6px rgba(249,115,22,.85),inset 0 1px 0 rgba(255,255,255,.4)}\
+.sh-cell.today{box-shadow:0 0 0 2px rgba(255,205,110,.95),0 6px 16px -6px rgba(249,115,22,.7)}\
+.sh-cell.today:not(.on){color:#FCD9A0}\
+.sh-dnum{font:600 10px/1 var(--fsans,system-ui);color:rgba(255,255,255,.42);margin-top:5px}\
+.sh-foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:6px}\
+.sh-msg{font:700 12.5px/1 var(--fsans,system-ui);color:#fff}\
+.sh-best{font:600 11.5px/1 var(--fsans,system-ui);color:#F0B968;background:rgba(255,180,70,.12);border:1px solid rgba(255,180,70,.25);padding:6px 10px;border-radius:999px}\
+@keyframes shflick{0%,100%{transform:scale(1,1) translateY(0);opacity:1}45%{transform:scale(1.06,1.09) translateY(-1.5px);opacity:.94}70%{transform:scale(.98,1.02) translateY(.5px);opacity:1}}\
+@keyframes shglow{0%,100%{opacity:.75;transform:scale(1)}50%{opacity:1;transform:scale(1.12)}}\
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px}\
+.cal-h{text-align:center;font:700 10px/1 var(--fsans,system-ui);color:#8a93ad;text-transform:uppercase;letter-spacing:.05em;padding-bottom:4px}\
+.cal-d{aspect-ratio:1;border-radius:9px;display:flex;align-items:center;justify-content:center;font:600 12.5px/1 var(--fsans,system-ui);background:#F3F5FB;color:#9aa3b8}\
+.cal-d.on{background:linear-gradient(160deg,#FFB531,#F97316);color:#fff;font-weight:800;box-shadow:0 5px 12px -5px rgba(249,115,22,.7)}\
+.cal-d.today{box-shadow:0 0 0 2px #F97316}\
+.cal-d.empty{background:transparent}\
+.monthnav{display:flex;align-items:center;justify-content:space-between;gap:10px}\
+.mtitle{font:700 13px/1 var(--fsans,system-ui);color:#0c1330;text-transform:uppercase;letter-spacing:.08em}\
+.mnav{width:34px;height:34px;border-radius:10px;border:1.5px solid #E5E9F5;background:#fff;color:#3a4467;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s}\
+.mnav:hover:not([disabled]){border-color:#F97316;color:#F97316}\
+.mnav[disabled]{opacity:.32;cursor:default}\
+.mnav svg{width:18px;height:18px}\
+@media(max-width:520px){.streakhero{padding:16px}.sh-track{min-width:100%}.sh-stat .sh-num{font-size:38px}}';
+  document.head.appendChild(s);
+}
+function _flameSVG(cls){return '<svg class="'+cls+'" viewBox="0 0 48 72" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="_shf" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#F97316"/><stop offset=".5" stop-color="#FBBF24"/><stop offset="1" stop-color="#FDE68A"/></linearGradient></defs><path d="M25 2 C 34 17, 42 24, 39 40 C 44 37, 44 29, 44 29 C 48 45, 38 70, 24 70 C 11 70, 3 57, 8 41 C 10 47, 15 49, 15 49 C 10 33, 21 27, 20 13 C 24 18, 28 20, 25 2 Z" fill="url(#_shf)"/><path d="M25 30 C 31 37, 33 44, 29 52 C 27 58, 23 60, 20 56 C 16 51, 17 43, 22 39 C 24 36, 25 34, 25 30 Z" fill="#FFF4D6" opacity=".92"/></svg>';}
+function _streakHero(){
+  _streakCSS();
+  var st=globalStreak();var LET=['D','L','M','X','J','V','S'];
+  var cells='';var today=new Date();
+  for(var i=6;i>=0;i--){var d=new Date();d.setDate(today.getDate()-i);var k=_dayKey(d);var on=!!st.set[k];var isToday=(i===0);cells+='<div class="sh-day"><div class="sh-cell'+(on?' on':'')+(isToday?' today':'')+'">'+LET[d.getDay()]+'</div><div class="sh-dnum">'+d.getDate()+'</div></div>';}
+  var n=st.current;
+  var msg = n===0 ? 'Empieza tu racha hoy' : (st.set[_todayKey()] ? '¡Vas encendido, no la sueltes!' : 'Haz 1 actividad hoy y súmala');
+  var html='<div class="streakhero">\
+<div class="sh-main"><div class="sh-flamewrap">'+_flameSVG('sh-flame')+'</div>\
+<div class="sh-stats"><div class="sh-stat racha"><div class="sh-num">'+n+'</div><div class="sh-lbl">día'+(n===1?'':'s')+' de racha</div></div>\
+<div class="sh-vdiv"></div><div class="sh-stat mes"><div class="sh-num">'+st.monthDays+'</div><div class="sh-lbl">días este mes</div></div></div></div>\
+<div class="sh-track"><div class="sh-cap"><span>Tu constancia · 1 actividad al día</span><span class="sh-see">Ver estadísticas ›</span></div><div class="sh-days">'+cells+'</div>\
+<div class="sh-foot"><span class="sh-msg">'+msg+'</span><span class="sh-best">Mejor racha: '+st.best+' día'+(st.best===1?'':'s')+'</span></div></div></div>';
+  var node=el(html);node.onclick=renderStreakStats;return node;
+}
+function _monthsBack(){var all=activityDays().slice();_histAll().forEach(function(h){all.push(String(h.date).slice(0,10));});if(!all.length)return 0;all.sort();var f=all[0];var n=new Date();return Math.max(0,(n.getFullYear()-(+f.slice(0,4)))*12+(n.getMonth()-(+f.slice(5,7)-1)));}
+function renderStreakStats(off){
+  _streakCSS();app.innerHTML='';off=off||0;var _mx=_monthsBack();if(off>_mx)off=_mx;if(off<0)off=0;
+  app.appendChild(el('<button class="backlink" onclick="renderCenter()"><i data-lucide="arrow-left"></i> Todos los cursos</button>'));
+  var st=globalStreak();
+  var head=el('<div class="card"></div>');
+  head.innerHTML='<div class="ov">Centro de aprendizaje · Rafael Guerrero</div><h2 class="big">Estadísticas de actividad</h2><p class="lead">Tu constancia día a día: racha, actividad del mes y cuánto has hecho en cada curso.</p>';
+  app.appendChild(head);
+  // Ember summary
+  var sum=el('<div class="streakhero" style="cursor:default"></div>');
+  sum.innerHTML='<div class="sh-main"><div class="sh-flamewrap">'+_flameSVG('sh-flame')+'</div>\
+<div class="sh-stats"><div class="sh-stat racha"><div class="sh-num">'+st.current+'</div><div class="sh-lbl">día'+(st.current===1?'':'s')+' de racha</div></div>\
+<div class="sh-vdiv"></div><div class="sh-stat mes"><div class="sh-num">'+st.monthDays+'</div><div class="sh-lbl">días este mes</div></div></div></div>\
+<div class="sh-track"><div class="sh-cap"><span>Constancia</span></div><div class="sh-foot" style="margin-top:2px"><span class="sh-msg">Sigue sumando días</span><span class="sh-best">Mejor racha: '+st.best+' día'+(st.best===1?'':'s')+'</span></div></div>';
+  app.appendChild(sum);
+  // Monthly calendar (navegable)
+  var _MES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  var base=new Date();base.setDate(1);base.setMonth(base.getMonth()-off);var y=base.getFullYear(),m=base.getMonth();
+  var now=new Date();var isCur=(y===now.getFullYear()&&m===now.getMonth());
+  var mk=y+'-'+('0'+(m+1)).slice(-2);var monthCount=activityDays().filter(function(d){return String(d).indexOf(mk)===0;}).length;
+  var offset=(new Date(y,m,1).getDay()+6)%7;var dim=new Date(y,m+1,0).getDate();
+  var cal='<div class="cal">';['L','M','X','J','V','S','D'].forEach(function(h){cal+='<div class="cal-h">'+h+'</div>';});
+  for(var b=0;b<offset;b++)cal+='<div class="cal-d empty"></div>';
+  for(var dd=1;dd<=dim;dd++){var key=_dayKey(new Date(y,m,dd));var on=!!st.set[key];var isT=(isCur&&dd===now.getDate());cal+='<div class="cal-d'+(on?' on':'')+(isT?' today':'')+'">'+dd+'</div>';}
+  cal+='</div>';
+  var calCard=el('<div class="card"></div>');
+  calCard.innerHTML='<div class="monthnav"><button class="mnav" id="mprev"'+(off>=_mx?' disabled':'')+'><i data-lucide="chevron-left"></i></button><div class="mtitle">'+_MES[m].charAt(0).toUpperCase()+_MES[m].slice(1)+' '+y+'</div><button class="mnav" id="mnext"'+(off<=0?' disabled':'')+'><i data-lucide="chevron-right"></i></button></div><p class="lead" style="margin:9px 0 2px;font-size:14px"><b style="color:#F97316">'+monthCount+'</b> días con actividad.</p>'+cal;
+  app.appendChild(calCard);
+  var _pv=calCard.querySelector('#mprev'),_nx=calCard.querySelector('#mnext');
+  if(_pv&&off<_mx)_pv.onclick=function(){renderStreakStats(off+1);};
+  if(_nx&&off>0)_nx.onclick=function(){renderStreakStats(off-1);};
+  // Monthly figures from hist
+  var hist=_histAll();var thisM=hist.filter(function(h){var d=new Date(h.date);return d.getFullYear()===y&&d.getMonth()===m;});
+  var sesM=thisM.length,qM=thisM.reduce(function(a,h){return a+h.total;},0),tM=thisM.reduce(function(a,h){return a+h.secs;},0);
+  var fig=el('<div class="card"></div>');
+  fig.innerHTML='<div class="ov">Cifras de '+_MES[m]+'</div><div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px">'+
+    _perfTile(monthCount,'Días activos','#F97316')+_perfTile(sesM,'Sesiones')+_perfTile(qM,'Preguntas')+_perfTile(_fmtMin(tM),'Tiempo')+'</div>';
+  app.appendChild(fig);
+  // Per course activity
+  var rows=COURSES.map(function(c){
+    var hk='gh_'+c.id+'_hist';var arr=[];try{var v=localStorage.getItem(hk);arr=v?JSON.parse(v):[];}catch(e){}
+    var ses=arr.length,q=arr.reduce(function(a,h){return a+(h.total||0);},0);var acts=Math.max(courseActs(c.id),ses);
+    return {c:c,acts:acts,ses:ses,q:q};
+  }).filter(function(r){return r.acts>0||r.ses>0;}).sort(function(a,b){return b.acts-a.acts;});
+  var pc=el('<div class="card"></div>');
+  var body=rows.length?rows.map(function(r){return '<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #EEF1F7"><span style="width:11px;height:11px;border-radius:50%;background:'+r.c.color2+';flex:none"></span><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:14px;color:#0c1330;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+r.c.short+'</div><div style="font-size:12px;color:#8a93ad">'+r.ses+' sesiones · '+r.q+' preguntas</div></div><div style="font:700 17px/1 var(--fsans,system-ui);color:'+r.c.color2+'">'+r.acts+'</div></div>';}).join(''):'<div class="empty">Aún no hay actividad registrada.</div>';
+  pc.innerHTML='<div class="ov">Actividad total por curso</div><p class="lead" style="margin:6px 0 2px;font-size:12px;color:#8a93ad">Acumulado histórico. El número es el total de actividades (prácticas, exámenes y casos).</p><div style="margin-top:6px">'+body+'</div>';
+  app.appendChild(pc);
+  // link to desempeno
+  var link=el('<button class="ghost-btn" style="width:100%"><i data-lucide="bar-chart-3"></i> Ver desempeño completo</button>');link.onclick=renderDesempeno;app.appendChild(link);
+  app.appendChild(el('<div class="foot">Estadísticas de actividad · datos guardados en este navegador</div>'));
+  done();
+}
+
 function renderCenter(){
   COURSE=null;var tt=document.querySelector('.tt');if(tt)tt.textContent='Centro de Aprendizaje';
   app.innerHTML='';
+  app.appendChild(_streakHero());
   var head=el('<div class="card"></div>');
   head.innerHTML='<div class="ov">Centro de aprendizaje personal · Rafael Guerrero</div><h2 class="big">Elige tu curso</h2><p class="lead">Cada curso es un entrenador completo: teoría, práctica de alta exigencia y repaso espaciado. Tu progreso se guarda por separado en cada uno.</p>';
   app.appendChild(head);
@@ -7887,6 +8029,7 @@ var _LENFIX={"Para cerrar, lo recomendable es…|~~|[\"Dar instrucciones claras 
 var _LENFIX2={"Un cliente responde solo con datos, sin emoción, y no cierra. ¿Qué te falta?|~~|[\"Sumar el impacto emocional de resolver su dolor\",\"Darle todavía más especificaciones técnicas\",\"Bajar el precio para desempatar\",\"Repetir otra vez las características\"]":["Sumar el impacto emocional de resolver su dolor","Darle todavía más especificaciones y fichas técnicas muy detalladas","Bajar el precio para desempatar y cerrar rápido la negociación","Repetir otra vez las características del producto una por una"],"Un cliente exige el cronograma exacto, quién hace cada tarea y llega puntual. ¿Qué color es y qué le das al presentar?|~~|[\"Verde; el plan por fases y el paso a paso\",\"Amarillo; la visión disruptiva a futuro\",\"Rojo; una charla cercana y emotiva\",\"Azul; únicamente cifras de retorno\"]":["Verde; el plan por fases y el paso a paso","Amarillo; la gran visión disruptiva y creativa hacia el futuro lejano","Rojo; una charla cercana, cálida y muy emotiva de persona a persona","Azul; únicamente las cifras frías de retorno sobre la inversión"],"Presentas a un comité que solo pide datos y KPIs, sin ninguna emoción, y la decisión se estanca. Según los hemisferios, ¿qué te falta?|~~|[\"Llevar el dato a la emoción de resolver su problema\",\"Aportar todavía más KPIs y tablas de respaldo\",\"Reducir el precio para destrabar el sí\",\"Insistir con el mismo dato pero más fuerte\"]":["Llevar el dato a la emoción de resolver su problema","Aportar todavía más KPIs, tablas, gráficos y cuadros de respaldo detallados","Reducir el precio para destrabar rápido el sí del comité","Insistir con el mismo dato pero diciéndolo mucho más fuerte"],"Preparas la apertura para el dueño de una ferretería que pierde ventas por quiebres de inventario. ¿Cuál set de síes sirve?|~~|[\"'Tienes buena rotación, hoy entran clientes, y aun así a veces no está el producto y se van, ¿cierto?'\",\"'Tu ferretería seguro está muy mal administrada'\",\"'Nadie, absolutamente nadie en todo este rubro ferretero, controla bien su inventario hoy en día'\",\"'Mi sistema es el mejor del mercado, sin duda'\"]":["'Tienes buena rotación, hoy entran clientes, y aun así a veces no está el producto y se van, ¿cierto?'","'Tu ferretería, con toda seguridad, está pésimamente administrada y por eso pierdes tantísimas ventas'","'Nadie, absolutamente nadie en todo este amplio rubro ferretero de la región, controla ni gestiona bien su inventario hoy en día'","'Mi sistema de gestión es sin ninguna duda el mejor y más completo de todo el mercado actual'"],"Una inmobiliaria reconoció que pierde leads por responder tarde y se ve incómoda con el tema. ¿Cuál es tu siguiente jugada?|~~|[\"Mostrar el beneficio con un dato y la emoción de dejar de perderlos\",\"Pasar de una a la lista de funciones del portal\",\"Cerrar de una antes de que se arrepienta de haberlo reconocido\",\"Cambiar de tema para no incomodarla más\"]":["Mostrar el beneficio con un dato y la emoción de dejar de perderlos","Pasar de inmediato a recitar la lista completa y detallada de funciones del portal","Cerrar de una antes de que se arrepienta de haberlo reconocido abiertamente","Cambiar por completo de tema para no incomodarla más con el asunto"],"Arrancas la rama de PROBLEMA. ¿Con qué tres preguntas la aterrizas?|~~|[\"¿Qué quiere lograr, qué le falta y qué ya tiene?\",\"¿Cuánto factura, cuántos vende y cuánto gasta?\",\"¿Quién es, dónde está y desde cuándo opera?\",\"¿Qué producto, qué precio y qué competencia?\"]":["¿Qué quiere lograr, qué le falta y qué ya tiene?","¿Cuánto factura, cuántos productos vende y cuánto dinero gasta al mes?","¿Quién es, dónde está ubicada y desde cuándo opera en el mercado?","¿Qué producto ofrece, a qué precio y contra qué competencia directa?"],"El fundador cede: “si es para cuidar a mis clientes, lo escucho. ¿Qué sigue?”. ¿Cómo cierras?|~~|[\"“Les mando el plan hoy; su hija revisa los datos y el viernes vemos una sede”\",\"“Cuando lo hablen en familia con calma me cuentan qué fue lo que decidieron”\",\"“Piénsenlo tranquilos, sin ningún afán, y me avisan cualquier cosa después”\",\"“Les dejo la propuesta impresa y quedo atento a lo que la familia resuelva”\"]":["“Les mando el plan hoy; su hija revisa los datos y el viernes vemos una sede”","“Cuando lo hablen en familia, con toda la calma del mundo, me cuentan luego qué decidieron”","“Piénsenlo tranquilos, sin ningún afán, y me avisan cualquier cosa después”","“Les dejo la propuesta impresa y quedo atento a lo que la familia resuelva”"],"El dueño presume: “capto muchísimos socios cada mes”. ¿Cómo instalas el dolor que no ve?|~~|[\"Tu gimnasio está mal administrado y por eso la gente se te va tan rápido\",\"Cada socio que se va a los tres meses es plata que gastaste una vez en traerlo\",\"Te ofrezco un paquete completo con muchas herramientas de fidelización\",\"Es normal, todos los gimnasios pierden socios, no deberías preocuparte tanto\"]":["Tu gimnasio, sin duda, está muy mal administrado y por eso toda la gente se te va tan rápido","Cada socio que se va a los tres meses es plata que gastaste una vez en traerlo","Te ofrezco un paquete completo con muchas herramientas de fidelización","Es normal, todos los gimnasios pierden socios, no deberías preocuparte tanto"],"Ambos interesados. ¿Cómo cierras?|~~|[\"Arrancamos esta semana; me dan los datos y en 15 días vemos el riesgo. ¿El jueves?\",\"Cuando lo definan tranquilamente en el consejo directivo, me avisan y coordinamos\",\"Lo dejo a su consideración para que lo revisen con toda la calma\",\"Piénsenlo tranquilos, sin ningún afán, y ya me contarán qué decidieron\"]":["Arrancamos esta semana; me dan los datos y en 15 días vemos el riesgo. ¿El jueves?","Cuando lo definan con calma en el próximo consejo directivo, me avisan y luego coordinamos una fecha","Lo dejo a su consideración para que lo revisen con toda la calma","Piénsenlo tranquilos, sin ningún afán, y ya me contarán qué decidieron"],"Te ofrecen un proyecto muy rentable pero que ni te exige crecer ni te importa de fondo. ¿Qué te preguntas según el libro?|~~|[\"Qué vida pago por esto y si me exige lo mejor o solo lo suficiente\",\"Cuánto pagará comparado con mis otros proyectos actuales en curso\",\"Cuánto estatus y reconocimiento me dará frente a otras personas\",\"Si será mucho más fácil y cómodo que mi proyecto anterior\"]":["Qué vida pago por esto y si me exige lo mejor o solo lo suficiente","Cuánto dinero exacto pagará comparado con todos mis otros proyectos que tengo actualmente en marcha y en curso","Cuánto estatus y reconocimiento me dará frente a otras personas","Si será mucho más fácil y cómodo que mi proyecto anterior"],"Mides tu valor por el número de seguidores y reconocimiento; un mes flojo te destroza. ¿Qué corrige el libro?|~~|[\"Trasladar el ancla de tu identidad a lo que sí controlas: tus virtudes internas\",\"Conseguir más seguidores para sentirte mejor\",\"Compararte constantemente con perfiles mucho más grandes para exigirte más\",\"Aceptar que tu valor depende de esos números\"]":["Trasladar el ancla de tu identidad a lo que sí controlas: tus virtudes internas","Conseguir más seguidores para sentirte mejor","Compararte constantemente con perfiles ajenos mucho más grandes y exitosos para exigirte todavía mucho más","Aceptar que tu valor depende de esos números"],"Escuchas en tu cabeza 'no eres suficiente para este nivel'. ¿Qué oponente es y qué herramienta central propone Murphy?|~~|[\"El Crítico; meditar, visualizar y servir a otros para sacar el foco de ti\",\"La Mente Mono; conviene llenarte de todavía muchos más análisis y datos\",\"El Embaucador; repasar tus fallos pasados\",\"Ninguno; conviene obedecer esa voz\"]":["El Crítico; meditar, visualizar y servir a otros para sacar el foco de ti","La Mente Mono; conviene llenarte de todavía muchísimos más análisis, datos y cifras muy concretas","El Embaucador; repasar tus fallos pasados","Ninguno; conviene obedecer esa voz"],"Cometes un error frente a otros, sientes vergüenza y quieres esconderte. ¿Es ego o autodominio, y qué hacer?|~~|[\"Es ego (se avergüenza fácil); el autodominio no gira en torno a sí y aprende del fallo\",\"Es autodominio sano; esconderte protege tu reputación\",\"Es una clara señal de humildad sana; conviene alimentar y sostener esa vergüenza\",\"No es ni uno ni otro; es simple mala suerte\"]":["Es ego (se avergüenza fácil); el autodominio no gira en torno a sí y aprende del fallo","Es autodominio sano; esconderte protege tu reputación","Es una clara señal de humildad sana y madura; conviene alimentar, cultivar y sostener con cuidado esa vergüenza","No es ni uno ni otro; es simple mala suerte"],"Un deseo (la gratificación inmediata) te controla y quieres cambiarlo. ¿Por dónde empieza Murphy?|~~|[\"Pensar a fondo en lo que más quieres: vivir con plenitud y gozo, más allá del éxito mundano\",\"Reprimir del todo ese deseo usando únicamente pura fuerza de voluntad y mucha disciplina\",\"Satisfacerlo lo más rápido posible para quitártelo de encima\",\"Compararte constantemente con quien ya lo domina del todo\"]":["Pensar a fondo en lo que más quieres: vivir con plenitud y gozo, más allá del éxito mundano","Reprimir por completo ese deseo usando únicamente la pura fuerza de voluntad y mucha, mucha disciplina férrea diaria","Satisfacerlo lo más rápido posible para quitártelo de encima","Compararte constantemente con quien ya lo domina del todo"],"Anotas tus metas pero las sientes abstractas y sin fuerza para moverte. Según el cap. 7, ¿qué falta?|~~|[\"Ver y sentir esas metas cada día con carga emocional, aunque sea un segundo\",\"Escribirlas con muchísimo más detalle y en muchas más listas y cuadros\",\"Fijar metas más grandes y ambiciosas\",\"Contárselas a más gente para comprometerte\"]":["Ver y sentir esas metas cada día con carga emocional, aunque sea un segundo","Escribirlas con muchísimo más detalle y ordenarlas en muchas más listas, tablas y cuadros nuevos","Fijar metas más grandes y ambiciosas","Contárselas a más gente para comprometerte"],"Intentas controlar cada variable de un proyecto y terminas disperso y agotado. ¿Qué paradoja aplica Murphy?|~~|[\"Renunciar al control de lo incontrolable libera energía para lo que sí importa\",\"Controlar aún más detalles te dará por fin la calma\",\"Delegar absolutamente todo el control en otras personas resuelve el problema\",\"La dispersión es inevitable en proyectos grandes\"]":["Renunciar al control de lo incontrolable libera energía para lo que sí importa","Controlar aún más detalles te dará por fin la calma","Delegar absolutamente todo el control del proyecto en otras personas de tu confianza resuelve el problema de raíz","La dispersión es inevitable en proyectos grandes"],"La rutina de un profesional: ① ancla su valor en sus logros y su estatus; ② madruga; ③ entrena; ④ sirve a otros. ¿Cuál es el error de excelencia interior?|~~|[\"① Anclar su valor en logros y estatus\",\"② Madrugar muy temprano cada día\",\"③ Entrenar el cuerpo con disciplina\",\"④ Servir a otros\"]":["① Anclar su valor en logros y estatus","② Madrugar muy temprano todos y cada uno de los días","③ Entrenar el cuerpo con disciplina","④ Servir a otros"],"Con noches fragmentadas, ¿cuál es la mejor política los días duros?|~~|[\"Saltarte el hábito por completo y compensar luego\",\"Exigirte la versión completa o no hacer nada\",\"Hacer la versión de 2 minutos para no romper la cadena\",\"Esperar a dormir bien para retomar con todo\"]":["Saltarte por completo el hábito de hoy y ya lo compensarás con calma más adelante","Exigirte la versión completa o no hacer nada","Hacer la versión de 2 minutos para no romper la cadena","Esperar a dormir bien para retomar con todo"]};
 (function(){var SEP="|~~|";function ap(q){if(q&&q.q&&Array.isArray(q.o)){var k=q.q+SEP+JSON.stringify(q.o);if(_LENFIX2[k])q.o=_LENFIX2[k];}}COURSES.forEach(function(c){(c.BANK||[]).forEach(ap);(c.RETOS||[]).forEach(function(r){(r.pasos||[]).forEach(ap);});});})();
 
+backfillActivity();
 renderCenter();
 </script>
 </body>
