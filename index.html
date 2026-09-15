@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- build:racha-backfill -->
+<!-- build:racha-fix -->
 <html lang="es">
 <head>
 <meta charset="utf-8">
@@ -7949,7 +7949,7 @@ function _streakHero(){
 }
 function _monthsBack(){var all=activityDays().slice();_histAll().forEach(function(h){all.push(String(h.date).slice(0,10));});if(!all.length)return 0;all.sort();var f=all[0];var n=new Date();return Math.max(0,(n.getFullYear()-(+f.slice(0,4)))*12+(n.getMonth()-(+f.slice(5,7)-1)));}
 function renderStreakStats(off){
-  _streakCSS();app.innerHTML='';off=off||0;var _mx=_monthsBack();if(off>_mx)off=_mx;if(off<0)off=0;
+  _streakCSS();app.innerHTML='';off=(typeof off==='number'&&off===off)?off:0;var _mx=_monthsBack();if(off>_mx)off=_mx;if(off<0)off=0;
   app.appendChild(el('<button class="backlink" onclick="renderCenter()"><i data-lucide="arrow-left"></i> Todos los cursos</button>'));
   var st=globalStreak();
   var head=el('<div class="card"></div>');
